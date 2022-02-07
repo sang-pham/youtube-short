@@ -17,13 +17,13 @@ import {
   View,
 } from 'react-native';
 
-import {NavigationContainer} from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {NativeBaseProvider} from 'native-base';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { NativeBaseProvider } from 'native-base';
 // import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
 import HomeScreen from './screens/home';
-import {SigninScreen, SignupScreen} from './screens/auth';
+import { SigninScreen, SignupScreen } from './screens/auth';
 
 const Stack = createNativeStackNavigator();
 
@@ -60,5 +60,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
 });
+
+
 
 export default App;
