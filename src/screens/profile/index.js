@@ -1,13 +1,13 @@
-import React, {useEffect, useState} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
-import {ScrollView, Text} from 'react-native';
-import {Button, Box, Center, Avatar, Input, FormControl} from 'native-base';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { ScrollView, Text } from 'react-native';
+import { Button, Box, Center, Avatar, Input, FormControl } from 'native-base';
 import globalStyle from '../../styles';
-import {useForm, Controller} from 'react-hook-form';
-import {yupResolver} from '@hookform/resolvers/yup';
+import { useForm, Controller } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import {logout} from '../../redux/reducers/user';
-import {baseURL} from '../../libs/config';
+import { logout } from '../../redux/reducers/user';
+import { baseURL } from '../../libs/config';
 
 const schema = yup
   .object({
@@ -18,14 +18,14 @@ const schema = yup
   })
   .required();
 
-const ProfileScreen = ({navigation}) => {
+const ProfileScreen = ({ navigation }) => {
   const userReducer = useSelector(state => state.user);
   const dispatch = useDispatch();
   const {
     control,
     setValue,
     handleSubmit,
-    formState: {errors},
+    formState: { errors },
   } = useForm({
     defaultValues: {
       email: userReducer.user.email,
@@ -75,9 +75,9 @@ const ProfileScreen = ({navigation}) => {
           rules={{
             required: true,
           }}
-          render={({field: {onChange, onBlur, value}}) => (
+          render={({ field: { onChange, onBlur, value } }) => (
             <FormControl
-              style={{marginBottom: '5%'}}
+              style={{ marginBottom: '5%' }}
               w={{
                 base: '80%',
                 md: '25%',
@@ -109,9 +109,9 @@ const ProfileScreen = ({navigation}) => {
           rules={{
             required: true,
           }}
-          render={({field: {onChange, onBlur, value}}) => (
+          render={({ field: { onChange, onBlur, value } }) => (
             <FormControl
-              style={{marginBottom: '5%'}}
+              style={{ marginBottom: '5%' }}
               w={{
                 base: '80%',
                 md: '25%',
@@ -143,9 +143,9 @@ const ProfileScreen = ({navigation}) => {
           rules={{
             required: true,
           }}
-          render={({field: {onChange, onBlur, value}}) => (
+          render={({ field: { onChange, onBlur, value } }) => (
             <FormControl
-              style={{marginBottom: '5%'}}
+              style={{ marginBottom: '5%' }}
               w={{
                 base: '80%',
                 md: '25%',
@@ -177,9 +177,9 @@ const ProfileScreen = ({navigation}) => {
           rules={{
             required: true,
           }}
-          render={({field: {onChange, onBlur, value}}) => (
+          render={({ field: { onChange, onBlur, value } }) => (
             <FormControl
-              style={{marginBottom: '5%'}}
+              style={{ marginBottom: '5%' }}
               w={{
                 base: '80%',
                 md: '25%',
@@ -206,20 +206,20 @@ const ProfileScreen = ({navigation}) => {
             {errors.user_name?.message}
           </Text>
         )}
-        <Box alignItems={'right'}>
-          <Button size="sm" onPress={cancel()}>
-            Cancel
-          </Button>
-          <Button size="sm" onPress={handleSubmit(onSubmit)}>
-            Save
-          </Button>
-        </Box>
-        <Box alignItems="center">
-          <Button onPress={handleLogout}>Log out </Button>
-        </Box>
+        {/* <Box alignItems={'right'}> */}
+        <Button size="sm" onPress={cancel()}>
+          Cancel
+        </Button>
+        <Button size="sm" onPress={handleSubmit(onSubmit)}>
+          Save
+        </Button>
+        {/* </Box>
+        <Box alignItems="center"> */}
+        <Button onPress={handleLogout}>Log out </Button>
+        {/* </Box> */}
       </Center>
     </ScrollView>
   );
 };
 
-export default ProfileScreen;
+export { ProfileScreen };

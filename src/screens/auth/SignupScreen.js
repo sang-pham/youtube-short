@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {View, Text, ScrollView} from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, ScrollView } from 'react-native';
 import {
   Center,
   Input,
@@ -11,10 +11,10 @@ import {
   Modal,
 } from 'native-base';
 import globalStyle from '../../styles';
-import {useForm, Controller} from 'react-hook-form';
-import {yupResolver} from '@hookform/resolvers/yup';
+import { useForm, Controller } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import {axiosInstance} from '../../libs/utils';
+import { axiosInstance } from '../../libs/utils';
 
 const schema = yup
   .object({
@@ -32,12 +32,12 @@ const schema = yup
   })
   .required();
 
-const SignupScreen = ({navigation}) => {
+const SignupScreen = ({ navigation }) => {
   const {
     control,
     handleSubmit,
     setValue,
-    formState: {errors},
+    formState: { errors },
   } = useForm({
     defaultValues: {
       first_name: '',
@@ -83,7 +83,7 @@ const SignupScreen = ({navigation}) => {
               rules={{
                 required: true,
               }}
-              render={({field: {onChange, onBlur, value}}) => (
+              render={({ field: { onChange, onBlur, value } }) => (
                 <Input
                   w={{
                     base: '75%',
@@ -114,7 +114,7 @@ const SignupScreen = ({navigation}) => {
               rules={{
                 required: true,
               }}
-              render={({field: {onChange, onBlur, value}}) => (
+              render={({ field: { onChange, onBlur, value } }) => (
                 <Input
                   w={{
                     base: '75%',
@@ -145,7 +145,7 @@ const SignupScreen = ({navigation}) => {
               rules={{
                 required: true,
               }}
-              render={({field: {onChange, onBlur, value}}) => (
+              render={({ field: { onChange, onBlur, value } }) => (
                 <Input
                   w={{
                     base: '75%',
@@ -176,7 +176,7 @@ const SignupScreen = ({navigation}) => {
               rules={{
                 required: true,
               }}
-              render={({field: {onChange, onBlur, value}}) => (
+              render={({ field: { onChange, onBlur, value } }) => (
                 <Input
                   w={{
                     base: '75%',
@@ -207,7 +207,7 @@ const SignupScreen = ({navigation}) => {
               rules={{
                 required: true,
               }}
-              render={({field: {onChange, onBlur, value}}) => (
+              render={({ field: { onChange, onBlur, value } }) => (
                 <Input
                   w={{
                     base: '75%',
@@ -238,7 +238,7 @@ const SignupScreen = ({navigation}) => {
               rules={{
                 required: true,
               }}
-              render={({field: {onChange, onBlur, value}}) => (
+              render={({ field: { onChange, onBlur, value } }) => (
                 <Input
                   w={{
                     base: '75%',
@@ -323,4 +323,4 @@ const SignupScreen = ({navigation}) => {
   );
 };
 
-export {SignupScreen};
+export { SignupScreen };

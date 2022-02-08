@@ -1,13 +1,13 @@
-import React, {useState, useEffect} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
-import {View, Text} from 'react-native';
-import {Center, Input, Stack, Button} from 'native-base';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { View, Text } from 'react-native';
+import { Center, Input, Stack, Button } from 'native-base';
 import globalStyle from '../../styles';
-import {useForm, Controller} from 'react-hook-form';
-import {yupResolver} from '@hookform/resolvers/yup';
+import { useForm, Controller } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import {axiosInstance} from '../../libs/utils';
-import {signin} from '../../redux/reducers/user';
+import { axiosInstance } from '../../libs/utils';
+import { signin } from '../../redux/reducers/user';
 
 const schema = yup
   .object({
@@ -19,13 +19,13 @@ const schema = yup
   })
   .required();
 
-const SigninScreen = ({navigation}) => {
+const SigninScreen = ({ navigation }) => {
   const dispatch = useDispatch();
   const userReducer = useSelector(state => state.user);
   const {
     control,
     handleSubmit,
-    formState: {errors},
+    formState: { errors },
   } = useForm({
     defaultValues: {
       email: '',
@@ -40,7 +40,7 @@ const SigninScreen = ({navigation}) => {
     try {
       let res = await axiosInstance.post('/signin', data);
       if (res.status === 200) {
-        dispatch(signin({data: res.data}));
+        dispatch(signin({ data: res.data }));
       }
     } catch (err) {
       console.log(err);
@@ -67,7 +67,7 @@ const SigninScreen = ({navigation}) => {
             rules={{
               required: true,
             }}
-            render={({field: {onChange, onBlur, value}}) => (
+            render={({ field: { onChange, onBlur, value } }) => (
               <Input
                 w={{
                   base: '75%',
@@ -98,7 +98,7 @@ const SigninScreen = ({navigation}) => {
             rules={{
               required: true,
             }}
-            render={({field: {onChange, onBlur, value}}) => (
+            render={({ field: { onChange, onBlur, value } }) => (
               <Input
                 w={{
                   base: '75%',
@@ -154,4 +154,4 @@ const SigninScreen = ({navigation}) => {
   );
 };
 
-export {SigninScreen};
+export { SigninScreen };

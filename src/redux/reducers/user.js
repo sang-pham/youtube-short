@@ -1,4 +1,4 @@
-import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import EncryptedStorage from 'react-native-encrypted-storage';
 
 const initialState = {
@@ -11,12 +11,13 @@ const initialState = {
 
 export const isAuthenticated = createAsyncThunk(
   'user/isAuthenticated',
-  async ({}, {rejectWithValue}) => {
+  async ({ }, { rejectWithValue }) => {
     try {
       let session = await EncryptedStorage.getItem('user_session');
+      console.log(session);
       session = JSON.parse(session);
       if (session && session.token) {
-        return {session};
+        return { session };
       } else {
         throw 'Not authenticated';
       }
@@ -29,11 +30,11 @@ export const isAuthenticated = createAsyncThunk(
 
 export const signin = createAsyncThunk(
   'user/signin',
-  async ({data}, {rejectWithValue}) => {
+  async ({ data }, { rejectWithValue }) => {
     console.log(data);
     try {
       await EncryptedStorage.setItem('user_session', JSON.stringify(data));
-      return {data};
+      return { data };
     } catch (error) {
       console.log(error);
       return rejectWithValue(error);
@@ -43,7 +44,7 @@ export const signin = createAsyncThunk(
 
 export const logout = createAsyncThunk(
   'user/logout',
-  async ({}, {rejectWithValue}) => {
+  async ({ }, { rejectWithValue }) => {
     try {
       await EncryptedStorage.removeItem('user_session');
       return 'success';
@@ -59,9 +60,9 @@ export const userSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: {
-    [isAuthenticated.pending]: () => {},
+    [isAuthenticated.pending]: () => { },
     [isAuthenticated.fulfilled]: (state, action) => {
-      let {session} = action.payload;
+      let { session } = action.payload;
       session.token = undefined;
       state.user = session;
       state.authenticated = true;
@@ -72,7 +73,7 @@ export const userSlice = createSlice({
       state.authenticated = false;
     },
     [signin.fulfilled]: (state, action) => {
-      let {data} = action.payload;
+      let { data } = action.payload;
       console.log(data);
       data.token = undefined;
       state.user = data;

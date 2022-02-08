@@ -1,8 +1,8 @@
 import React from 'react';
-import {useSelector} from 'react-redux';
-import {View, Text, Button} from 'react-native';
+import { useSelector } from 'react-redux';
+import { View, Text, Button } from 'react-native';
 
-export default function HomeScreen({navigation}) {
+const HomeScreen = ({ navigation }) => {
   const userReducer = useSelector(state => state.user);
 
   return (
@@ -19,3 +19,5 @@ export default function HomeScreen({navigation}) {
     </View>
   );
 }
+
+export { HomeScreen }
