@@ -22,6 +22,8 @@ import HomeScreen from './screens/home';
 import {SigninScreen, SignupScreen} from './screens/auth';
 import ProfileScreen from './screens/profile';
 
+import Icon from 'react-native-vector-icons/FontAwesome';
+
 const App = () => {
   const dispatch = useDispatch();
   const userReducer = useSelector(state => state.user);
@@ -60,8 +62,24 @@ const App = () => {
           </Stack.Navigator>
         ) : (
           <Stack.Navigator>
-            <Stack.Screen name="Home" component={HomeScreen} />
-            <Stack.Screen name="Profile" component={ProfileScreen} />
+            <Stack.Screen
+              name="Home"
+              options={{
+                tabBarIcon: ({color}) => (
+                  <Icon color={color} name="home" size={26} />
+                ),
+              }}
+              component={HomeScreen}
+            />
+            <Stack.Screen
+              name="Profile"
+              options={{
+                tabBarIcon: ({color}) => (
+                  <Icon color={color} name="user-circle" size={26} />
+                ),
+              }}
+              component={ProfileScreen}
+            />
           </Stack.Navigator>
         )}
       </NativeBaseProvider>
