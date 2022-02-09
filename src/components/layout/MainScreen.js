@@ -1,30 +1,30 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StatusBar, Platform } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import { HomeScreen, InboxScreen, ProfileScreen } from '../../screens';
-import { HomeButton } from '../button';
+import { RecordButton } from '../button';
 
 const Tab = createMaterialBottomTabNavigator();
 
 const MainScreen = () => {
   const [home, setHome] = useState(true);
 
-  StatusBar.setBarStyle('dark-content');
-
-  if (Platform.OS === 'android') StatusBar.setBackgroundColor('#fff');
-
-  if (home) {
-    StatusBar.setHidden(true);
+  useEffect(() => {
+    StatusBar.setBarStyle('dark-content');
     if (Platform.OS === 'android') {
-      StatusBar.setBackgroundColor('#fff');
-      StatusBar.setBarStyle('light-content');
+      if (home) {
+        StatusBar.setBackgroundColor('#000');
+        StatusBar.setBarStyle('light-content');
+      } else {
+        StatusBar.setBackgroundColor('#fff');
+      }
     }
-  } else {
-    StatusBar.setHidden(false);
-  }
+
+  }, [home])
 
   return (
     <Tab.Navigator
@@ -55,7 +55,7 @@ const MainScreen = () => {
         options={{
           tabBarLabel: 'Discover',
           tabBarIcon: ({ color }) => (
-            <AntDesign name="search1" size={24} color={color} />
+            <FontAwesome5 name="compass" size={24} color={color} />
           ),
         }}
       />
@@ -64,15 +64,13 @@ const MainScreen = () => {
         component={HomeScreen}
         listeners={({ navigation }) => ({
           tabPress: e => {
-            // Prevent default action
             e.preventDefault();
-            // Do something with the `navigation` object
             navigation.navigate('Record');
           },
         })}
         options={{
           tabBarLabel: '',
-          tabBarIcon: () => <HomeButton home={home} />,
+          tabBarIcon: () => <RecordButton home={home} />,
         }}
       />
       <Tab.Screen

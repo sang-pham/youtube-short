@@ -5,7 +5,7 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { Container, Button } from './styles';
 
 
-const HomeButton = ({ home }) => {
+const RecordButton = ({ home }) => {
   return (
     <Container home={home}>
       <Button>
@@ -15,4 +15,4 @@ const HomeButton = ({ home }) => {
   );
 };
 
-export { HomeButton };
+export { RecordButton };
