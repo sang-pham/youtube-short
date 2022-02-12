@@ -63,7 +63,7 @@ export const updateProfile = createAsyncThunk(
       const formData = new FormData();
       if (avatar) {
         formData.append('avatar', {
-          name: '50k.jpg',
+          name: 'avatar-image.jpg',
           uri: avatar.path,
           type: avatar.mime,
         });
