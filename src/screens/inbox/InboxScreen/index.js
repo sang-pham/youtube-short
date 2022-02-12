@@ -5,7 +5,8 @@ import Feather from 'react-native-vector-icons/Feather';
 
 import { Container, Title, Header } from './styles';
 
-const InboxScreen = () => {
+const InboxScreen = ({ navigation }) => {
+
   return (
     <Container>
       <Header>
@@ -16,6 +17,10 @@ const InboxScreen = () => {
           name="send"
           size={24}
           color="black"
+          onPress={(e) => {
+            e.preventDefault();
+            navigation.navigate('DirectMessage');
+          }}
         />
       </Header>
     </Container>

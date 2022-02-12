@@ -1,1 +1,1 @@
-export * from './HomeButton';
+export * from './RecordButton';

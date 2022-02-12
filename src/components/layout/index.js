@@ -85,13 +85,12 @@
 // export { Layout }
 
 import React, { useEffect, useMemo } from 'react';
-import { createStackNavigator } from '@react-navigation/stack';
+import { createStackNavigator, CardStyleInterpolators } from '@react-navigation/stack';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { MainScreen } from './MainScreen';
-import { DirectMessage, HomeScreen, RecordScreen, SigninScreen, SignupScreen } from '../../screens';
+import { DirectMessage, HomeScreen, NewChatScreen, RecordScreen, SigninScreen, SignupScreen } from '../../screens';
 import { useDispatch, useSelector } from 'react-redux';
 import { isAuthenticated } from '../../redux/reducers';
-
 
 const Layout = () => {
 	const dispatch = useDispatch();
@@ -120,9 +119,12 @@ const Layout = () => {
 					<Stack.Screen name="Signup" component={SignupScreen} />
 				</Stack.Navigator>
 				:
-				<Stack.Navigator screenOptions={{
-					presentation: "modal"
-				}}>
+				<Stack.Navigator
+					screenOptions={{
+						transitionConfig: () => ({
+							screenInterpolator: CardStyleInterpolators.forHorizontalIOS,
+						}),
+					}}>
 					<Stack.Screen
 						name="Main"
 						component={MainScreen}
@@ -134,9 +136,16 @@ const Layout = () => {
 						component={RecordScreen}
 					/>
 					<Stack.Screen
-						options={{ headerShown: false }}
+						options={{
+							headerShown: false,
+						}}
 						name="DirectMessage"
 						component={DirectMessage}
+					/>
+					<Stack.Screen
+						options={{ headerShown: false }}
+						name="NewChat"
+						component={NewChatScreen}
 					/>
 				</Stack.Navigator>
 			}

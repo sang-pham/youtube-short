@@ -14,11 +14,28 @@ export const Header = styled.View`
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  border-bottom-width: 0.5px;
-  border-bottom-color: #dadada;
 `;
 
 export const Title = styled.Text`
   font-size: 18px;
   font-weight: bold;
+`;
+
+export const SearchView = styled.View`
+  margin: 5px;
+  flex-direction: row;
+  align-items: center;
+`;
+
+export const Search = styled.View`
+  flex: 1;
+  border-radius: 5px;
+  align-items: center;
+  padding: 10px 15px;
+  background: #ececec;
+  flex-direction: row;
+`;
+export const Input = styled.TextInput`
+  flex: 1;
+  font-size: 16px;
 `;
