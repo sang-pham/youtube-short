@@ -1,18 +1,16 @@
-import React, {useEffect, useState} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
-import {ScrollView, View, Text, TouchableOpacity} from 'react-native';
-import {Button, Box, Center, Avatar, Input, FormControl} from 'native-base';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { ScrollView, View, Text, TouchableOpacity } from 'react-native';
+import { Button, Box, Center, Avatar, Input, FormControl } from 'native-base';
 import globalStyle from '../../styles';
-import {useForm, Controller} from 'react-hook-form';
-import {yupResolver} from '@hookform/resolvers/yup';
+import { useForm, Controller } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import {logout} from '../../redux/reducers/user';
-import {baseURL} from '../../libs/config';
+import { logout } from '../../redux/reducers/user';
+import { baseURL } from '../../libs/config';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import DocumentPicker from 'react-native-document-picker';
 import ImagePicker from 'react-native-image-crop-picker';
-// import FormData from 'form-data';
-import {updateProfile} from '../../redux/reducers';
+import { updateProfile } from '../../redux/reducers';
 
 const schema = yup
   .object({
@@ -23,7 +21,7 @@ const schema = yup
   })
   .required();
 
-const ProfileScreen = ({navigation}) => {
+const ProfileScreen = ({ navigation }) => {
   const userReducer = useSelector(state => state.user);
   const [avatar, setAvatar] = useState('');
   const dispatch = useDispatch();
@@ -31,7 +29,7 @@ const ProfileScreen = ({navigation}) => {
     control,
     setValue,
     handleSubmit,
-    formState: {errors},
+    formState: { errors },
   } = useForm({
     defaultValues: {
       email: userReducer.user.email,
@@ -128,9 +126,9 @@ const ProfileScreen = ({navigation}) => {
           rules={{
             required: true,
           }}
-          render={({field: {onChange, onBlur, value}}) => (
+          render={({ field: { onChange, onBlur, value } }) => (
             <FormControl
-              style={{marginBottom: '5%'}}
+              style={{ marginBottom: '5%' }}
               w={{
                 base: '80%',
                 md: '25%',
@@ -162,9 +160,9 @@ const ProfileScreen = ({navigation}) => {
           rules={{
             required: true,
           }}
-          render={({field: {onChange, onBlur, value}}) => (
+          render={({ field: { onChange, onBlur, value } }) => (
             <FormControl
-              style={{marginBottom: '5%'}}
+              style={{ marginBottom: '5%' }}
               w={{
                 base: '80%',
                 md: '25%',
@@ -196,9 +194,9 @@ const ProfileScreen = ({navigation}) => {
           rules={{
             required: true,
           }}
-          render={({field: {onChange, onBlur, value}}) => (
+          render={({ field: { onChange, onBlur, value } }) => (
             <FormControl
-              style={{marginBottom: '5%'}}
+              style={{ marginBottom: '5%' }}
               w={{
                 base: '80%',
                 md: '25%',
@@ -230,9 +228,9 @@ const ProfileScreen = ({navigation}) => {
           rules={{
             required: true,
           }}
-          render={({field: {onChange, onBlur, value}}) => (
+          render={({ field: { onChange, onBlur, value } }) => (
             <FormControl
-              style={{marginBottom: '5%'}}
+              style={{ marginBottom: '5%' }}
               w={{
                 base: '80%',
                 md: '25%',
@@ -291,4 +289,4 @@ const ProfileScreen = ({navigation}) => {
   );
 };
 
-export {ProfileScreen};
+export { ProfileScreen };

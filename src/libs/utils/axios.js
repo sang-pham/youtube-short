@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {baseURL} from '../config';
+import { baseURL } from '../config';
 import EncryptedStorage from 'react-native-encrypted-storage';
 
 const axiosAuth = axios.create({
@@ -43,4 +43,4 @@ const axiosInstance = axios.create({
   baseURL,
 });
 
-export {axiosAuth, axiosInstance};
+export { axiosAuth, axiosInstance };

@@ -1,6 +1,6 @@
-import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import EncryptedStorage from 'react-native-encrypted-storage';
-import {axiosAuth, axiosInstance} from '../../libs/utils';
+import { baseURL } from '../../libs';
 
 const initialState = {
   user: {},
@@ -12,13 +12,13 @@ const initialState = {
 
 export const isAuthenticated = createAsyncThunk(
   'user/isAuthenticated',
-  async ({}, {rejectWithValue}) => {
+  async ({ }, { rejectWithValue }) => {
     try {
       let session = await EncryptedStorage.getItem('user_session');
       console.log(session);
       session = JSON.parse(session);
       if (session && session.token) {
-        return {session};
+        return { session };
       } else {
         throw 'Not authenticated';
       }
@@ -31,11 +31,11 @@ export const isAuthenticated = createAsyncThunk(
 
 export const signin = createAsyncThunk(
   'user/signin',
-  async ({data}, {rejectWithValue}) => {
+  async ({ data }, { rejectWithValue }) => {
     console.log(data);
     try {
       await EncryptedStorage.setItem('user_session', JSON.stringify(data));
-      return {data};
+      return { data };
     } catch (error) {
       console.log(error);
       return rejectWithValue(error);
@@ -45,7 +45,7 @@ export const signin = createAsyncThunk(
 
 export const logout = createAsyncThunk(
   'user/logout',
-  async ({}, {rejectWithValue}) => {
+  async ({ }, { rejectWithValue }) => {
     try {
       await EncryptedStorage.removeItem('user_session');
       return 'success';
@@ -58,14 +58,13 @@ export const logout = createAsyncThunk(
 
 export const updateProfile = createAsyncThunk(
   'user/update',
-  async ({data, avatar, userId}, {rejectWithValue}) => {
+  async ({ data, avatar, userId }, { getState, rejectWithValue }) => {
     try {
       const formData = new FormData();
       if (avatar) {
         formData.append('avatar', {
-          // ...avatar,
+          name: '50k.jpg',
           uri: avatar.path,
-          name: '50k',
           type: avatar.mime,
         });
       }
@@ -73,19 +72,29 @@ export const updateProfile = createAsyncThunk(
       formData.append('first_name', data.first_name);
       formData.append('last_name', data.last_name);
       formData.append('user_name', data.user_name);
-      console.log(formData);
-      const res = await axiosAuth.put(`/user/${userId}/profile`, formData);
 
-      // const res = await axiosAuth({
-      //   method: 'put',
-      //   url: `/user/${userId}/profile`,
-      //   data: formData,
+      // const res = await axiosAuth.put(`/user/${userId}/profile`, formData, {
+      //   headers: {
+      //     Accept: 'application/json',
+      //     'Content-Type': 'multipart/form-data; charset=utf-8;',
+      //   }
       // });
+
+      const res = await fetch(`${baseURL}/user/${userId}/profile`, {
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'multipart/form-data',
+          'Authorization': getState().user.user.token,
+        },
+        method: 'PUT',
+        body: formData,
+      });
       if (res.status == 200) {
         let session = JSON.parse(
           await EncryptedStorage.getItem('user_session'),
         );
-        let {user} = res.data;
+        const data = await res.json();
+        let { user } = data;
         session = {
           ...session,
           ...user,
@@ -105,10 +114,10 @@ export const userSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: {
-    [isAuthenticated.pending]: () => {},
+    [isAuthenticated.pending]: () => { },
     [isAuthenticated.fulfilled]: (state, action) => {
-      let {session} = action.payload;
-      session.token = undefined;
+      let { session } = action.payload;
+      // session.token = undefined;
       state.user = session;
       state.authenticated = true;
       state.loaded = true;
@@ -118,9 +127,9 @@ export const userSlice = createSlice({
       state.authenticated = false;
     },
     [signin.fulfilled]: (state, action) => {
-      let {data} = action.payload;
+      let { data } = action.payload;
       console.log(data);
-      data.token = undefined;
+      // data.token = undefined;
       state.user = data;
       state.authenticated = true;
       state.loaded = true;
