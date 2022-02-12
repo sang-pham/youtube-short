@@ -1,31 +1,37 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { ScrollView, Text } from 'react-native';
-import { Button, Box, Center, Avatar, Input, FormControl } from 'native-base';
+import React, {useEffect, useState} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
+import {ScrollView, View, Text, TouchableOpacity} from 'react-native';
+import {Button, Box, Center, Avatar, Input, FormControl} from 'native-base';
 import globalStyle from '../../styles';
-import { useForm, Controller } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
+import {useForm, Controller} from 'react-hook-form';
+import {yupResolver} from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { logout } from '../../redux/reducers/user';
-import { baseURL } from '../../libs/config';
+import {logout} from '../../redux/reducers/user';
+import {baseURL} from '../../libs/config';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import DocumentPicker from 'react-native-document-picker';
+import ImagePicker from 'react-native-image-crop-picker';
+// import FormData from 'form-data';
+import {updateProfile} from '../../redux/reducers';
 
 const schema = yup
   .object({
     email: yup.string().required('Email must be filled'),
     first_name: yup.string().required('First name must be filled'),
-    last_name: yup.string().required('First name must be filled'),
-    user_name: yup.string().required('First name must be filled'),
+    last_name: yup.string().required('Last name must be filled'),
+    user_name: yup.string().required('User name must be filled'),
   })
   .required();
 
-const ProfileScreen = ({ navigation }) => {
+const ProfileScreen = ({navigation}) => {
   const userReducer = useSelector(state => state.user);
+  const [avatar, setAvatar] = useState('');
   const dispatch = useDispatch();
   const {
     control,
     setValue,
     handleSubmit,
-    formState: { errors },
+    formState: {errors},
   } = useForm({
     defaultValues: {
       email: userReducer.user.email,
@@ -37,7 +43,6 @@ const ProfileScreen = ({ navigation }) => {
   });
 
   const handleLogout = () => {
-    console.log('logout');
     dispatch(logout({}));
   };
 
@@ -46,10 +51,40 @@ const ProfileScreen = ({ navigation }) => {
     setValue('first_name', userReducer.user.first_name);
     setValue('last_name', userReducer.user.last_name);
     setValue('user_name', userReducer.user.user_name);
+    setAvatar('');
   };
 
   const onSubmit = async data => {
-    console.log(data);
+    dispatch(
+      updateProfile({
+        data,
+        avatar,
+        userId: userReducer.user.id,
+      }),
+    );
+  };
+
+  const selectFile = async () => {
+    try {
+      ImagePicker.openPicker({
+        width: 300,
+        height: 400,
+        cropping: true,
+      }).then(image => {
+        console.log(image);
+        setAvatar(image);
+      });
+    } catch (err) {
+      console.log(err);
+      setAvatar(null);
+      // if (DocumentPicker.isCancel(err)) {
+      //   alert('Canceled');
+      // } else {
+      //   // For Unknown Error
+      //   alert('Unknown Error: ' + JSON.stringify(err));
+      //   throw err;
+      // }
+    }
   };
 
   useEffect(() => {
@@ -64,20 +99,38 @@ const ProfileScreen = ({ navigation }) => {
         style={{
           marginTop: '5%',
         }}>
-        <Avatar
-          size="xl"
-          source={{
-            uri: `${baseURL}/user/avatar/${userReducer.user.id}`,
-          }}
-        />
+        <View
+          style={{
+            position: 'relative',
+            width: '100%',
+            alignItems: 'center',
+          }}>
+          <Avatar
+            size="xl"
+            source={{
+              uri:
+                (avatar && avatar.path) ||
+                `${baseURL}/user/${userReducer.user.id}/avatar`,
+            }}
+          />
+          <TouchableOpacity
+            onPress={selectFile}
+            style={{
+              position: 'absolute',
+              top: '65%',
+              right: '38%',
+            }}>
+            <Icon name="camera" size={24} />
+          </TouchableOpacity>
+        </View>
         <Controller
           control={control}
           rules={{
             required: true,
           }}
-          render={({ field: { onChange, onBlur, value } }) => (
+          render={({field: {onChange, onBlur, value}}) => (
             <FormControl
-              style={{ marginBottom: '5%' }}
+              style={{marginBottom: '5%'}}
               w={{
                 base: '80%',
                 md: '25%',
@@ -109,9 +162,9 @@ const ProfileScreen = ({ navigation }) => {
           rules={{
             required: true,
           }}
-          render={({ field: { onChange, onBlur, value } }) => (
+          render={({field: {onChange, onBlur, value}}) => (
             <FormControl
-              style={{ marginBottom: '5%' }}
+              style={{marginBottom: '5%'}}
               w={{
                 base: '80%',
                 md: '25%',
@@ -143,9 +196,9 @@ const ProfileScreen = ({ navigation }) => {
           rules={{
             required: true,
           }}
-          render={({ field: { onChange, onBlur, value } }) => (
+          render={({field: {onChange, onBlur, value}}) => (
             <FormControl
-              style={{ marginBottom: '5%' }}
+              style={{marginBottom: '5%'}}
               w={{
                 base: '80%',
                 md: '25%',
@@ -177,9 +230,9 @@ const ProfileScreen = ({ navigation }) => {
           rules={{
             required: true,
           }}
-          render={({ field: { onChange, onBlur, value } }) => (
+          render={({field: {onChange, onBlur, value}}) => (
             <FormControl
-              style={{ marginBottom: '5%' }}
+              style={{marginBottom: '5%'}}
               w={{
                 base: '80%',
                 md: '25%',
@@ -206,20 +259,36 @@ const ProfileScreen = ({ navigation }) => {
             {errors.user_name?.message}
           </Text>
         )}
-        {/* <Box alignItems={'right'}> */}
-        <Button size="sm" onPress={cancel()}>
-          Cancel
-        </Button>
-        <Button size="sm" onPress={handleSubmit(onSubmit)}>
-          Save
-        </Button>
-        {/* </Box>
-        <Box alignItems="center"> */}
-        <Button onPress={handleLogout}>Log out </Button>
-        {/* </Box> */}
+        <View
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'flex-end',
+            alignItems: 'flex-end',
+            width: '80%',
+            marginBottom: '5%',
+          }}>
+          <Button
+            variant="ghost"
+            size="sm"
+            style={{
+              marginRight: '5%',
+            }}
+            onPress={cancel}>
+            Cancel
+          </Button>
+          <Button size="sm" variant="ghost" onPress={handleSubmit(onSubmit)}>
+            Save
+          </Button>
+        </View>
+        <Box alignItems="center">
+          <Button variant="ghost" onPress={handleLogout}>
+            Log out{' '}
+          </Button>
+        </Box>
       </Center>
     </ScrollView>
   );
 };
 
-export { ProfileScreen };
+export {ProfileScreen};
