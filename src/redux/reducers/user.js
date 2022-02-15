@@ -1,6 +1,6 @@
-import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import EncryptedStorage from 'react-native-encrypted-storage';
-import {axiosAuth, baseURL} from '../../libs';
+import { axiosAuth, baseURL } from '../../libs';
 
 const initialState = {
   user: {},
@@ -17,16 +17,19 @@ const initialState = {
 
 export const isAuthenticated = createAsyncThunk(
   'user/isAuthenticated',
-  async ({}, {rejectWithValue}) => {
+  async ({ }, { rejectWithValue }) => {
     try {
       let session = await EncryptedStorage.getItem('user_session');
       console.log(session);
       session = JSON.parse(session);
       if (session && session.token) {
-        return {session};
+        const res = await axiosAuth.get('/user');
+        session = { ...session, ...res.data.user };
+        return { session };
       } else {
         throw 'Not authenticated';
       }
+
     } catch (error) {
       console.log(error);
       return rejectWithValue(error);
@@ -36,11 +39,11 @@ export const isAuthenticated = createAsyncThunk(
 
 export const signin = createAsyncThunk(
   'user/signin',
-  async ({data}, {rejectWithValue}) => {
+  async ({ data }, { rejectWithValue }) => {
     console.log(data);
     try {
       await EncryptedStorage.setItem('user_session', JSON.stringify(data));
-      return {data};
+      return { data };
     } catch (error) {
       console.log(error);
       return rejectWithValue(error);
@@ -50,7 +53,7 @@ export const signin = createAsyncThunk(
 
 export const logout = createAsyncThunk(
   'user/logout',
-  async ({}, {rejectWithValue}) => {
+  async ({ }, { rejectWithValue }) => {
     try {
       await EncryptedStorage.removeItem('user_session');
       return 'success';
@@ -63,7 +66,7 @@ export const logout = createAsyncThunk(
 
 export const updateProfile = createAsyncThunk(
   'user/update',
-  async ({data, avatar, userId}, {getState, rejectWithValue}) => {
+  async ({ data, avatar, userId }, { getState, rejectWithValue }) => {
     try {
       const formData = new FormData();
       if (avatar) {
@@ -92,7 +95,7 @@ export const updateProfile = createAsyncThunk(
           await EncryptedStorage.getItem('user_session'),
         );
         const data = await res.json();
-        let {user} = data;
+        let { user } = data;
         session = {
           ...session,
           ...user,
@@ -109,7 +112,7 @@ export const updateProfile = createAsyncThunk(
 
 export const getRelationship = createAsyncThunk(
   'user/relationship',
-  async ({}, {getState, rejectWithValue}) => {
+  async ({ }, { getState, rejectWithValue }) => {
     try {
       let userId = getState().user.user.id;
       let res = await axiosAuth.get(`/relationship/${userId}/friends`);
@@ -132,7 +135,7 @@ export const getRelationship = createAsyncThunk(
         relationshipId: block.id,
         ...block.receive,
       }));
-      return {friends, followers, followings, blocks};
+      return { friends, followers, followings, blocks };
     } catch (error) {
       console.log(error);
       return rejectWithValue(error);
@@ -142,11 +145,11 @@ export const getRelationship = createAsyncThunk(
 
 export const unfriend = createAsyncThunk(
   'user/unfriend',
-  async ({userId, relationshipId}, {rejectWithValue}) => {
+  async ({ userId, relationshipId }, { rejectWithValue }) => {
     try {
       let res = await axiosAuth.delete(`/relationship/${relationshipId}`);
       if (res.status == 200) {
-        return {userId, relationshipId};
+        return { userId, relationshipId };
       }
     } catch (error) {
       console.log(error);
@@ -157,11 +160,11 @@ export const unfriend = createAsyncThunk(
 
 export const unfollow = createAsyncThunk(
   'user/unfollow',
-  async ({userId, relationshipId}, {rejectWithValue}) => {
+  async ({ userId, relationshipId }, { rejectWithValue }) => {
     try {
       let res = await axiosAuth.delete(`/relationship/${relationshipId}`);
       if (res.status == 200) {
-        return {userId, relationshipId};
+        return { userId, relationshipId };
       }
     } catch (error) {
       return rejectWithValue(error);
@@ -174,10 +177,9 @@ export const userSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: {
-    [isAuthenticated.pending]: () => {},
+    [isAuthenticated.pending]: () => { },
     [isAuthenticated.fulfilled]: (state, action) => {
-      let {session} = action.payload;
-      // session.token = undefined;
+      let { session } = action.payload;
       state.user = session;
       state.authenticated = true;
       state.loaded = true;
@@ -187,9 +189,8 @@ export const userSlice = createSlice({
       state.authenticated = false;
     },
     [signin.fulfilled]: (state, action) => {
-      let {data} = action.payload;
+      let { data } = action.payload;
       console.log(data);
-      // data.token = undefined;
       state.user = data;
       state.authenticated = true;
       state.loaded = true;
@@ -217,7 +218,7 @@ export const userSlice = createSlice({
       }
     },
     [getRelationship.fulfilled]: (state, action) => {
-      let {friends, followings, followers, blocks} = action.payload;
+      let { friends, followings, followers, blocks } = action.payload;
       state.friends = friends;
       state.followings = followings;
       state.followers = followers;
@@ -229,23 +230,23 @@ export const userSlice = createSlice({
       state.relationshipLoaded = true;
     },
     [unfriend.fulfilled]: (state, action) => {
-      let {relationshipId, userId} = action.payload;
+      let { relationshipId, userId } = action.payload;
       state.friends = state.friends.filter(
         friend => friend.relationshipId != relationshipId,
       );
     },
     [unfriend.rejected]: (state, action) => {
-      let {error} = action.payload;
+      let { error } = action.payload;
       console.log(error);
     },
     [unfollow.fulfilled]: (state, action) => {
-      let {relationshipId, userId} = action.payload;
+      let { relationshipId, userId } = action.payload;
       state.followings = state.followings.filter(
         following => following.relationshipId != relationshipId,
       );
     },
     [unfollow.rejected]: (state, action) => {
-      let {error} = action.payload;
+      let { error } = action.payload;
       console.log(error);
     },
   },

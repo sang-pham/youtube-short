@@ -26,7 +26,7 @@ axiosAuth.interceptors.response.use(
   async error => {
     try {
       if (
-        error.response.data.error === 'Unauthorized' &&
+        error.response.data?.error === 'Unauthorized' &&
         error.response.status === 401
       ) {
         await EncryptedStorage.removeItem('user_session');

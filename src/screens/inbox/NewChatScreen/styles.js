@@ -22,7 +22,7 @@ export const Title = styled.Text`
 `;
 
 export const SearchView = styled.View`
-  margin: 5px;
+  margin: 15px;
   flex-direction: row;
   align-items: center;
 `;
