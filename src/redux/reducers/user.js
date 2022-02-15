@@ -1,24 +1,29 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
 import EncryptedStorage from 'react-native-encrypted-storage';
-import { baseURL } from '../../libs';
+import {axiosAuth, baseURL} from '../../libs';
 
 const initialState = {
   user: {},
   error: null,
   authenticated: false,
+  friends: [],
+  followings: [],
+  followers: [],
+  blocks: [],
   loaded: false,
   status: 'active',
+  relationshipLoaded: false,
 };
 
 export const isAuthenticated = createAsyncThunk(
   'user/isAuthenticated',
-  async ({ }, { rejectWithValue }) => {
+  async ({}, {rejectWithValue}) => {
     try {
       let session = await EncryptedStorage.getItem('user_session');
       console.log(session);
       session = JSON.parse(session);
       if (session && session.token) {
-        return { session };
+        return {session};
       } else {
         throw 'Not authenticated';
       }
@@ -31,11 +36,11 @@ export const isAuthenticated = createAsyncThunk(
 
 export const signin = createAsyncThunk(
   'user/signin',
-  async ({ data }, { rejectWithValue }) => {
+  async ({data}, {rejectWithValue}) => {
     console.log(data);
     try {
       await EncryptedStorage.setItem('user_session', JSON.stringify(data));
-      return { data };
+      return {data};
     } catch (error) {
       console.log(error);
       return rejectWithValue(error);
@@ -45,7 +50,7 @@ export const signin = createAsyncThunk(
 
 export const logout = createAsyncThunk(
   'user/logout',
-  async ({ }, { rejectWithValue }) => {
+  async ({}, {rejectWithValue}) => {
     try {
       await EncryptedStorage.removeItem('user_session');
       return 'success';
@@ -58,7 +63,7 @@ export const logout = createAsyncThunk(
 
 export const updateProfile = createAsyncThunk(
   'user/update',
-  async ({ data, avatar, userId }, { getState, rejectWithValue }) => {
+  async ({data, avatar, userId}, {getState, rejectWithValue}) => {
     try {
       const formData = new FormData();
       if (avatar) {
@@ -73,18 +78,11 @@ export const updateProfile = createAsyncThunk(
       formData.append('last_name', data.last_name);
       formData.append('user_name', data.user_name);
 
-      // const res = await axiosAuth.put(`/user/${userId}/profile`, formData, {
-      //   headers: {
-      //     Accept: 'application/json',
-      //     'Content-Type': 'multipart/form-data; charset=utf-8;',
-      //   }
-      // });
-
       const res = await fetch(`${baseURL}/user/${userId}/profile`, {
         headers: {
-          'Accept': 'application/json',
+          Accept: 'application/json',
           'Content-Type': 'multipart/form-data',
-          'Authorization': getState().user.user.token,
+          Authorization: getState().user.user.token,
         },
         method: 'PUT',
         body: formData,
@@ -94,7 +92,7 @@ export const updateProfile = createAsyncThunk(
           await EncryptedStorage.getItem('user_session'),
         );
         const data = await res.json();
-        let { user } = data;
+        let {user} = data;
         session = {
           ...session,
           ...user,
@@ -109,14 +107,76 @@ export const updateProfile = createAsyncThunk(
   },
 );
 
+export const getRelationship = createAsyncThunk(
+  'user/relationship',
+  async ({}, {getState, rejectWithValue}) => {
+    try {
+      let userId = getState().user.user.id;
+      let res = await axiosAuth.get(`/relationship/${userId}/friends`);
+      let friends = res.data.friends.map(friend => ({
+        relationshipId: friend.id,
+        ...friend.own,
+      }));
+      res = await axiosAuth.get(`/relationship/${userId}/followers`);
+      let followers = res.data.followers.map(follower => ({
+        relationshipId: follower.id,
+        ...follower.own,
+      }));
+      res = await axiosAuth.get(`/relationship/${userId}/followings`);
+      let followings = res.data.followings.map(following => ({
+        relationshipId: following.id,
+        ...following.receive,
+      }));
+      res = await axiosAuth.get(`/relationship/blocks`);
+      let blocks = res.data.blocks.map(block => ({
+        relationshipId: block.id,
+        ...block.receive,
+      }));
+      return {friends, followers, followings, blocks};
+    } catch (error) {
+      console.log(error);
+      return rejectWithValue(error);
+    }
+  },
+);
+
+export const unfriend = createAsyncThunk(
+  'user/unfriend',
+  async ({userId, relationshipId}, {rejectWithValue}) => {
+    try {
+      let res = await axiosAuth.delete(`/relationship/${relationshipId}`);
+      if (res.status == 200) {
+        return {userId, relationshipId};
+      }
+    } catch (error) {
+      console.log(error);
+      return rejectWithValue(error);
+    }
+  },
+);
+
+export const unfollow = createAsyncThunk(
+  'user/unfollow',
+  async ({userId, relationshipId}, {rejectWithValue}) => {
+    try {
+      let res = await axiosAuth.delete(`/relationship/${relationshipId}`);
+      if (res.status == 200) {
+        return {userId, relationshipId};
+      }
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  },
+);
+
 export const userSlice = createSlice({
   name: 'User',
   initialState,
   reducers: {},
   extraReducers: {
-    [isAuthenticated.pending]: () => { },
+    [isAuthenticated.pending]: () => {},
     [isAuthenticated.fulfilled]: (state, action) => {
-      let { session } = action.payload;
+      let {session} = action.payload;
       // session.token = undefined;
       state.user = session;
       state.authenticated = true;
@@ -127,7 +187,7 @@ export const userSlice = createSlice({
       state.authenticated = false;
     },
     [signin.fulfilled]: (state, action) => {
-      let { data } = action.payload;
+      let {data} = action.payload;
       console.log(data);
       // data.token = undefined;
       state.user = data;
@@ -155,6 +215,38 @@ export const userSlice = createSlice({
       if (action.payload.error) {
         state.error = action.payload.error;
       }
+    },
+    [getRelationship.fulfilled]: (state, action) => {
+      let {friends, followings, followers, blocks} = action.payload;
+      state.friends = friends;
+      state.followings = followings;
+      state.followers = followers;
+      state.blocks = blocks;
+      state.relationshipLoaded = true;
+    },
+    [getRelationship.rejected]: (state, action) => {
+      console.log(action.payload);
+      state.relationshipLoaded = true;
+    },
+    [unfriend.fulfilled]: (state, action) => {
+      let {relationshipId, userId} = action.payload;
+      state.friends = state.friends.filter(
+        friend => friend.relationshipId != relationshipId,
+      );
+    },
+    [unfriend.rejected]: (state, action) => {
+      let {error} = action.payload;
+      console.log(error);
+    },
+    [unfollow.fulfilled]: (state, action) => {
+      let {relationshipId, userId} = action.payload;
+      state.followings = state.followings.filter(
+        following => following.relationshipId != relationshipId,
+      );
+    },
+    [unfollow.rejected]: (state, action) => {
+      let {error} = action.payload;
+      console.log(error);
     },
   },
 });

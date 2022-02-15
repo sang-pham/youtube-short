@@ -1,9 +1,15 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
-import { View, Text, Button } from 'react-native';
+import React, {useEffect} from 'react';
+import {useSelector, useDispatch} from 'react-redux';
+import {View, Text, Button} from 'react-native';
+import {getRelationship} from '../../redux/reducers';
 
-const HomeScreen = ({ navigation }) => {
+const HomeScreen = ({navigation}) => {
   const userReducer = useSelector(state => state.user);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getRelationship({}));
+  }, [userReducer.relationshipLoaded]);
 
   return (
     <View>
@@ -18,6 +24,6 @@ const HomeScreen = ({ navigation }) => {
       )}
     </View>
   );
-}
+};
 
-export { HomeScreen }
+export {HomeScreen};
