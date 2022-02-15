@@ -31,7 +31,7 @@ const MainScreen = () => {
   return (
     <Tab.Navigator
       screenOptions={{
-        headerShown: false
+        headerShown: false,
       }}
       initialRouteName="Home"
     >
