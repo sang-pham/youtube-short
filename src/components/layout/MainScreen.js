@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { StatusBar, Platform } from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {useSelector} from 'react-redux';
+import {StatusBar, Platform} from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { HomeScreen, InboxScreen, ProfileScreen } from '../../screens';
-import { RecordButton } from '../button';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {HomeScreen, InboxScreen, ProfileScreen} from '../../screens';
+import {RecordButton} from '../button';
 
 const Tab = createBottomTabNavigator();
 
@@ -33,8 +33,7 @@ const MainScreen = () => {
       screenOptions={{
         headerShown: false,
       }}
-      initialRouteName="Home"
-    >
+      initialRouteName="Home">
       <Tab.Screen
         name="Home"
         component={HomeScreen}
@@ -44,7 +43,7 @@ const MainScreen = () => {
         }}
         options={{
           tabBarLabel: 'Home',
-          tabBarIcon: ({ color }) => (
+          tabBarIcon: ({color}) => (
             <FontAwesome name="home" size={24} color={color} />
           ),
         }}
@@ -54,7 +53,7 @@ const MainScreen = () => {
         component={HomeScreen}
         options={{
           tabBarLabel: 'Discover',
-          tabBarIcon: ({ color }) => (
+          tabBarIcon: ({color}) => (
             <FontAwesome5 name="compass" size={24} color={color} />
           ),
         }}
@@ -62,7 +61,7 @@ const MainScreen = () => {
       <Tab.Screen
         name="Live"
         component={HomeScreen}
-        listeners={({ navigation }) => ({
+        listeners={({navigation}) => ({
           tabPress: e => {
             e.preventDefault();
             navigation.navigate('Record');
@@ -78,7 +77,7 @@ const MainScreen = () => {
         component={InboxScreen}
         options={{
           tabBarLabel: 'Inbox',
-          tabBarIcon: ({ color }) => (
+          tabBarIcon: ({color}) => (
             <MaterialCommunityIcons
               name="message-text-outline"
               size={24}
@@ -92,14 +91,14 @@ const MainScreen = () => {
         component={ProfileScreen}
         options={{
           tabBarLabel: 'Profile',
-          tabBarIcon: ({ color }) => (
+          tabBarIcon: ({color}) => (
             <AntDesign name="user" size={24} color={color} />
           ),
         }}
-        initialParams={{ userId: userReducer.user.id }}
+        initialParams={{userId: userReducer.user.id}}
       />
     </Tab.Navigator>
   );
 };
 
-export { MainScreen };
+export {MainScreen};

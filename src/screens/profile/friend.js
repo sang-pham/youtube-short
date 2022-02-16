@@ -2,14 +2,12 @@ import React, {useEffect, useState} from 'react';
 import {ScrollView} from 'react-native';
 import {Input, View, Center} from 'native-base';
 import UserFeed from '../../components/UserFeed';
-import ProfileNavbar from './navbar';
 import {axiosAuth} from '../../libs';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 
-const ProfileFriendsScreen = ({navigation, route}) => {
+const ProfileFriendsScreen = ({userId}) => {
   const [friends, setFriends] = useState([]);
   const [searchText, setSearchText] = useState('');
-  const {userId, userName} = route.params;
 
   useEffect(() => {
     getFriends();
@@ -33,14 +31,8 @@ const ProfileFriendsScreen = ({navigation, route}) => {
     <ScrollView>
       <Center
         style={{
-          marginTop: '5%',
+          marginTop: '2%',
         }}>
-        <ProfileNavbar
-          userName={userName}
-          userId={userId}
-          currentScreen="friend"
-          navigation={navigation}
-        />
         <Input
           w={{
             base: '90%',
@@ -49,7 +41,7 @@ const ProfileFriendsScreen = ({navigation, route}) => {
           value={searchText}
           onChangeText={value => setSearchText(value)}
           InputLeftElement={<FontAwesomeIcon name="search" />}
-          placeholder="Search text"
+          placeholder="Search"
         />
         <View w="90%">
           {friends

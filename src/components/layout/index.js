@@ -1,9 +1,9 @@
-import React, { useEffect, useMemo } from 'react';
+import React, {useEffect, useMemo} from 'react';
 import {
   createStackNavigator,
   CardStyleInterpolators,
 } from '@react-navigation/stack';
-import { MainScreen } from './MainScreen';
+import {MainScreen} from './MainScreen';
 import {
   DirectMessage,
   HomeScreen,
@@ -16,8 +16,9 @@ import {
   ProfileFollowingsScreen,
   ProfileFollowersScreen,
 } from '../../screens';
-import { useDispatch, useSelector } from 'react-redux';
-import { isAuthenticated } from '../../redux/reducers';
+import {useDispatch, useSelector} from 'react-redux';
+import {isAuthenticated} from '../../redux/reducers';
+import ProfileRelationship from '../../screens/profile/relationship';
 
 const Stack = createStackNavigator();
 
@@ -49,10 +50,10 @@ const Layout = () => {
           <Stack.Screen
             name="Main"
             component={MainScreen}
-            options={{ headerShown: false }}
+            options={{headerShown: false}}
           />
           <Stack.Screen
-            options={{ headerShown: false }}
+            options={{headerShown: false}}
             name="Record"
             component={RecordScreen}
           />
@@ -64,29 +65,19 @@ const Layout = () => {
             component={DirectMessage}
           />
           <Stack.Screen
-            options={{ headerShown: false }}
+            options={{headerShown: false}}
             name="NewChat"
             component={NewChatScreen}
           />
           <Stack.Screen
-            options={{ headerShown: false }}
+            options={{headerShown: false}}
             name="ProfileEdit"
             component={ProfileEditScreen}
           />
           <Stack.Screen
-            options={{ headerShown: false }}
-            name="ProfileFriend"
-            component={ProfileFriendsScreen}
-          />
-          <Stack.Screen
-            options={{ headerShown: false }}
-            name="ProfileFollowing"
-            component={ProfileFollowingsScreen}
-          />
-          <Stack.Screen
-            options={{ headerShown: false }}
-            name="ProfileFollower"
-            component={ProfileFollowersScreen}
+            options={{headerShown: false}}
+            name="ProfileRelationship"
+            component={ProfileRelationship}
           />
         </Stack.Navigator>
       )}
@@ -94,4 +85,4 @@ const Layout = () => {
   );
 };
 
-export { Layout };
+export {Layout};
