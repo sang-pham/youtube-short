@@ -6,7 +6,6 @@ const initialState = {
   user: {},
   error: null,
   authenticated: false,
-  friends: [],
   followings: [],
   followers: [],
   blocks: [],
@@ -114,12 +113,7 @@ export const getRelationship = createAsyncThunk(
   async ({}, {getState, rejectWithValue}) => {
     try {
       let userId = getState().user.user.id;
-      let res = await axiosAuth.get(`/relationship/${userId}/friends`);
-      let friends = res.data.friends.map(friend => ({
-        relationshipId: friend.id,
-        ...friend.own,
-      }));
-      res = await axiosAuth.get(`/relationship/${userId}/followers`);
+      let res = await axiosAuth.get(`/relationship/${userId}/followers`);
       let followers = res.data.followers.map(follower => ({
         relationshipId: follower.id,
         ...follower.own,
@@ -134,22 +128,7 @@ export const getRelationship = createAsyncThunk(
         relationshipId: block.id,
         ...block.receive,
       }));
-      return {friends, followers, followings, blocks};
-    } catch (error) {
-      console.log(error);
-      return rejectWithValue(error);
-    }
-  },
-);
-
-export const unfriend = createAsyncThunk(
-  'user/unfriend',
-  async ({userId, relationshipId}, {rejectWithValue}) => {
-    try {
-      let res = await axiosAuth.delete(`/relationship/${relationshipId}`);
-      if (res.status == 200) {
-        return {userId, relationshipId};
-      }
+      return {followers, followings, blocks};
     } catch (error) {
       console.log(error);
       return rejectWithValue(error);
@@ -217,8 +196,7 @@ export const userSlice = createSlice({
       }
     },
     [getRelationship.fulfilled]: (state, action) => {
-      let {friends, followings, followers, blocks} = action.payload;
-      state.friends = friends;
+      let {followings, followers, blocks} = action.payload;
       state.followings = followings;
       state.followers = followers;
       state.blocks = blocks;
@@ -227,16 +205,6 @@ export const userSlice = createSlice({
     [getRelationship.rejected]: (state, action) => {
       console.log(action.payload);
       state.relationshipLoaded = true;
-    },
-    [unfriend.fulfilled]: (state, action) => {
-      let {relationshipId, userId} = action.payload;
-      state.friends = state.friends.filter(
-        friend => friend.relationshipId != relationshipId,
-      );
-    },
-    [unfriend.rejected]: (state, action) => {
-      let {error} = action.payload;
-      console.log(error);
     },
     [unfollow.fulfilled]: (state, action) => {
       let {relationshipId, userId} = action.payload;

@@ -12,9 +12,6 @@ import {
   SigninScreen,
   SignupScreen,
   ProfileEditScreen,
-  ProfileFriendsScreen,
-  ProfileFollowingsScreen,
-  ProfileFollowersScreen,
 } from '../../screens';
 import {useDispatch, useSelector} from 'react-redux';
 import {isAuthenticated} from '../../redux/reducers';

@@ -4,7 +4,9 @@ import {Text, View, TouchableWithoutFeedback} from 'react-native';
 import {Avatar, Button} from 'native-base';
 import {baseURL} from '../../libs';
 import {useNavigation} from '@react-navigation/native';
-import {unfollow, unfriend} from '../../redux/reducers';
+import {unfollow} from '../../redux/reducers';
+import FollowerMenu from './FollowerMenu';
+import FollowingMenu from './FollowingMenu';
 
 export default function UserFeed({user, refresh}) {
   const userReducer = useSelector(state => state.user);
@@ -14,15 +16,6 @@ export default function UserFeed({user, refresh}) {
   const handleUnfollow = () => {
     dispatch(
       unfollow({
-        relationshipId: user.relationshipId,
-        userId: user.id,
-      }),
-    );
-  };
-
-  const handleUnfriend = () => {
-    dispatch(
-      unfriend({
         relationshipId: user.relationshipId,
         userId: user.id,
       }),
@@ -63,14 +56,11 @@ export default function UserFeed({user, refresh}) {
             {user.user_name}
           </Text>
         </View>
-        {userReducer.friends.find(friend => friend.id === user.id) && (
-          <Button>Unfriend</Button>
-        )}
         {userReducer.followers.find(follower => follower.id === user.id) && (
-          <Button>Confirm</Button>
+          <FollowerMenu user={user} />
         )}
         {userReducer.followings.find(following => following.id === user.id) && (
-          <Button>Unfollow</Button>
+          <FollowingMenu user={user} />
         )}
       </View>
     </TouchableWithoutFeedback>

@@ -11,7 +11,6 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const ProfileScreen = ({navigation, route}) => {
   const userReducer = useSelector(state => state.user);
-  const [friends, setFriends] = useState([]);
   const [followings, setFollowings] = useState([]);
   const [followers, setFollowers] = useState([]);
   const [userName, setUserName] = useState([]);
@@ -27,10 +26,6 @@ const ProfileScreen = ({navigation, route}) => {
     (async () => {
       try {
         let res = await axiosAuth.get(
-          `/relationship/${route.params.userId}/friends`,
-        );
-        setFriends(res.data.friends.map(friend => friend.own));
-        res = await axiosAuth.get(
           `/relationship/${route.params.userId}/followers`,
         );
         setFollowers(res.data.followers.map(follower => follower.own));
@@ -52,14 +47,6 @@ const ProfileScreen = ({navigation, route}) => {
 
   const handleLogout = () => {
     dispatch(logout({}));
-  };
-
-  const navigateToFriend = () => {
-    navigation.navigate('ProfileRelationship', {
-      userId: route.params.userId,
-      userName,
-      defaultTab: 'ProfileFriend',
-    });
   };
 
   const navigateToFollowing = () => {
@@ -146,17 +133,6 @@ const ProfileScreen = ({navigation, route}) => {
             width: '95%',
             marginTop: '3%',
           }}>
-          <View style={{flex: 1}}>
-            <Text
-              onPress={navigateToFriend}
-              style={{
-                fontWeight: 'bold',
-                fontSize: 16,
-                textAlign: 'center',
-              }}>
-              {friends.length} {friends.length >= 2 ? 'friends' : 'friend'}
-            </Text>
-          </View>
           <View style={{flex: 1}}>
             <Text
               onPress={navigateToFollowing}

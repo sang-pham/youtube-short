@@ -1,7 +1,6 @@
 import React from 'react';
 import {Animated, View, TouchableOpacity, Text, StyleSheet} from 'react-native';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
-import {ProfileFriendsScreen} from './friend';
 import {ProfileFollowersScreen} from './follower';
 import {ProfileFollowingsScreen} from './following';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -105,16 +104,10 @@ export default function ProfileRelationship({route}) {
   const {userId, userName, defaultTab} = route.params;
   return (
     <Tab.Navigator
-      initialRouteName={defaultTab || 'ProfileFriend'}
+      initialRouteName={defaultTab || 'ProfileFollowing'}
       tabBar={props => (
         <MyTabBar {...props} userId={userId} userName={userName} />
       )}>
-      <Tab.Screen
-        name="ProfileFriend"
-        children={() => <ProfileFriendsScreen userId={userId} />}
-        userId={userId}
-        options={{tabBarLabel: 'Friends'}}
-      />
       <Tab.Screen
         name="ProfileFollowing"
         children={() => <ProfileFollowingsScreen userId={userId} />}
