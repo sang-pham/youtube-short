@@ -8,12 +8,14 @@ import {logout} from '../../redux/reducers/user';
 import {axiosAuth} from '../../libs';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import {v4} from 'uuid';
 
 const ProfileScreen = ({navigation, route}) => {
   const userReducer = useSelector(state => state.user);
   const [followings, setFollowings] = useState([]);
   const [followers, setFollowers] = useState([]);
   const [userName, setUserName] = useState([]);
+  const [reload, setReload] = useState(v4());
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -101,7 +103,7 @@ const ProfileScreen = ({navigation, route}) => {
         <Avatar
           size={'xl'}
           source={{
-            uri: `${baseURL}/user/${route.params.userId}/avatar?${Date.now()}`,
+            uri: `${baseURL}/user/${route.params.userId}/avatar?${reload}`,
           }}
         />
         <Text

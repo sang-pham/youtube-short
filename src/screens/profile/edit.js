@@ -12,6 +12,7 @@ import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import ImagePicker from 'react-native-image-crop-picker';
 import {updateProfile} from '../../redux/reducers';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import {v4} from 'uuid';
 
 const schema = yup
   .object({
@@ -25,6 +26,7 @@ const schema = yup
 const ProfileEditScreen = ({navigation}) => {
   const userReducer = useSelector(state => state.user);
   const [avatar, setAvatar] = useState('');
+  const [reload, setReload] = useState(v4());
   const dispatch = useDispatch();
   const {
     control,
@@ -112,7 +114,7 @@ const ProfileEditScreen = ({navigation}) => {
             source={{
               uri:
                 (avatar && avatar.path) ||
-                `${baseURL}/user/${userReducer.user.id}/avatar?${Date.now()}`,
+                `${baseURL}/user/${userReducer.user.id}/avatar?${reload}`,
             }}
           />
           <TouchableOpacity

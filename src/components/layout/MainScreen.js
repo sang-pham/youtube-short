@@ -7,6 +7,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {HomeScreen, InboxScreen, ProfileScreen} from '../../screens';
+import {useNavigation} from '@react-navigation/native';
 import {RecordButton} from '../button';
 
 const Tab = createBottomTabNavigator();
@@ -14,6 +15,7 @@ const Tab = createBottomTabNavigator();
 const MainScreen = () => {
   const [home, setHome] = useState(true);
   const userReducer = useSelector(state => state.user);
+  const navigation = useNavigation();
 
   useEffect(() => {
     StatusBar.setBarStyle('dark-content');
@@ -27,6 +29,12 @@ const MainScreen = () => {
       StatusBar.setBackgroundColor('#fff');
     }
   }, [home]);
+
+  const backToProfile = () => {
+    navigation.navigate('Profile', {
+      userId: userReducer.user.id,
+    });
+  };
 
   return (
     <Tab.Navigator
@@ -92,7 +100,12 @@ const MainScreen = () => {
         options={{
           tabBarLabel: 'Profile',
           tabBarIcon: ({color}) => (
-            <AntDesign name="user" size={24} color={color} />
+            <AntDesign
+              name="user"
+              size={24}
+              color={color}
+              onPress={backToProfile}
+            />
           ),
         }}
         initialParams={{userId: userReducer.user.id}}
