@@ -13,6 +13,7 @@ import { Provider } from 'react-redux';
 import store from './redux';
 import { Layout } from './components';
 import { LogBox } from 'react-native';
+import { theme } from './styles'
 
 //ignore warning
 LogBox.ignoreLogs([
@@ -22,11 +23,9 @@ LogBox.ignoreLogs([
 
 const App = () => {
 
-
-
   return (
     <NavigationContainer>
-      <NativeBaseProvider>
+      <NativeBaseProvider >
         <Layout />
       </NativeBaseProvider>
     </NavigationContainer>

@@ -6,3 +6,4 @@ export * from './record';
 export * from './profile/edit';
 export * from './profile/following';
 export * from './profile/follower';
+export * from './welcome'

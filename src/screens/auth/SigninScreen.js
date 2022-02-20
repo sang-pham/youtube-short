@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { View, Text } from 'react-native';
-import { Center, Input, Stack, Button } from 'native-base';
-import globalStyle from '../../styles';
+import {
+  Center, Input, Stack, Button, View, Text,
+  Heading, VStack, FormControl, Box, Link, HStack,
+} from 'native-base';
+import { globalStyle } from '../../styles';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { axiosInstance } from '../../libs/utils';
 import { signin } from '../../redux/reducers/user';
+
+
 
 const schema = yup
   .object({
@@ -52,105 +56,126 @@ const SigninScreen = ({ navigation }) => {
     }
   };
 
-  useEffect(() => {
-    if (userReducer.authenticated) {
-      navigation.navigate('Home');
-    }
-  }, [userReducer.authenticated]);
+  // useEffect(() => {
+  //   if (userReducer.authenticated) {
+  //     navigation.navigate('Home');
+  //   }
+  // }, [userReducer.authenticated]);
 
   return (
-    <View>
-      <Center>
-        <Stack space={4} w="100%" alignItems="center">
-          <Controller
-            control={control}
-            rules={{
-              required: true,
-            }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <Input
-                w={{
-                  base: '75%',
-                  md: '25%',
-                }}
-                onBlur={onBlur}
-                onChangeText={onChange}
-                value={value}
-                placeholder="Email"
-                variant="underlined"
-                type="email"
-              />
+    <Center w="100%" >
+      <Box safeArea p="2" py="8" w="90%" maxW="290">
+        <Heading size="lg" fontWeight="600" color="coolGray.800" _dark={{
+          color: "warmGray.50"
+        }}>
+          Welcome
+        </Heading>
+        <Heading mt="1" _dark={{
+          color: "warmGray.200"
+        }} color="coolGray.600" fontWeight="medium" size="xs">
+          Sign in to continue!
+        </Heading>
+
+        <VStack space={3} mt="5">
+          <FormControl>
+            <FormControl.Label>Email</FormControl.Label>
+            <Controller
+              control={control}
+              rules={{
+                required: true,
+              }}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <Input
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  value={value}
+                  placeholder="Email"
+                  type="email"
+                />
+              )}
+              name="email"
+            />
+            {errors.email?.message && (
+              <Text
+                style={{
+                  ...globalStyle.errorColor,
+                  width: '75%',
+                  margin: 'auto',
+                }}>
+                {errors.email?.message}
+              </Text>
             )}
-            name="email"
-          />
-          {errors.email?.message && (
-            <Text
-              style={{
-                ...globalStyle.errorColor,
-                width: '75%',
-                margin: 'auto',
-              }}>
-              {errors.email?.message}
-            </Text>
-          )}
-          <Controller
-            control={control}
-            rules={{
-              required: true,
-            }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <Input
-                w={{
-                  base: '75%',
-                  md: '25%',
-                }}
-                onBlur={onBlur}
-                onChangeText={onChange}
-                value={value}
-                placeholder="Password"
-                variant="underlined"
-                type="password"
-              />
+          </FormControl>
+          <FormControl>
+            <FormControl.Label>Password</FormControl.Label>
+            <Controller
+              control={control}
+              rules={{
+                required: true,
+              }}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <Input
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  value={value}
+                  placeholder="Password"
+                  type="password"
+                />
+              )}
+              name="password"
+            />
+            {errors.password?.message && (
+              <Text
+                style={{
+                  ...globalStyle.errorColor,
+                  width: '75%',
+                  margin: 'auto',
+                }}>
+                {errors.password?.message}
+              </Text>
             )}
-            name="password"
-          />
-          {errors.password?.message && (
-            <Text
-              style={{
-                ...globalStyle.errorColor,
-                width: '75%',
-                margin: 'auto',
-              }}>
-              {errors.password?.message}
-            </Text>
-          )}
-          {error.length > 0 && (
-            <Text
-              style={{
-                ...globalStyle.errorColor,
-                width: '75%',
-                margin: 'auto',
-              }}>
-              {error}
-            </Text>
-          )}
-          <Text
-            onPress={() => navigation.navigate('Signup')}
-            style={globalStyle.baseBlueColor}>
-            Don't have account? Sign up here
-          </Text>
-          <View
-            style={{
-              justifyContent: 'center',
-              alignItems: 'flex-end',
+            {error.length > 0 && (
+              <Text
+                style={{
+                  ...globalStyle.errorColor,
+                  width: '75%',
+                  margin: 'auto',
+                }}>
+                {error}
+              </Text>
+            )}
+            <Link _text={{
+              fontSize: "xs",
+              fontWeight: "500",
+              color: "indigo.500"
+            }} alignSelf="flex-end" mt="1">
+              Forget Password?
+            </Link>
+          </FormControl>
+          <Button mt="2" colorScheme="indigo"
+            onPress={handleSubmit(onSubmit)}>
+            Sign in
+          </Button>
+          <HStack mt="6" justifyContent="center">
+            <Text fontSize="sm" color="coolGray.600" _dark={{
+              color: "warmGray.200"
             }}>
-            <Button size="sm" onPress={handleSubmit(onSubmit)}>
-              Log in
-            </Button>
-          </View>
-        </Stack>
-      </Center>
-    </View>
+              I'm a new user.{" "}
+            </Text>
+            <Link _text={{
+              color: "indigo.500",
+              fontWeight: "medium",
+              fontSize: "sm"
+            }}
+              onPress={() => navigation.navigate('Signup')}
+            >
+              Sign Up
+            </Link>
+          </HStack>
+        </VStack >
+      </Box >
+    </Center >
+
   );
 };
 

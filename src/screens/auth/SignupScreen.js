@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView } from 'react-native';
 import {
   Center,
   Input,
-  Stack,
   Button,
-  Alert,
+  Text,
   VStack,
   HStack,
   Modal,
+  ScrollView,
+  Heading, FormControl,
+  Link,
+  Box
 } from 'native-base';
-import globalStyle from '../../styles';
+import { globalStyle } from '../../styles';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -76,219 +78,218 @@ const SignupScreen = ({ navigation }) => {
   return (
     <>
       <ScrollView>
-        <Center>
-          <Stack space={4} w="100%" alignItems="center">
-            <Controller
-              control={control}
-              rules={{
-                required: true,
-              }}
-              render={({ field: { onChange, onBlur, value } }) => (
-                <Input
-                  w={{
-                    base: '75%',
-                    md: '25%',
+        <Center w="100%">
+          <Box safeArea p="2" w="90%" maxW="290" py="8">
+            <Heading size="lg" color="coolGray.800" _dark={{
+              color: "warmGray.50"
+            }} fontWeight="semibold">
+              Welcome
+            </Heading>
+            <Heading mt="1" color="coolGray.600" _dark={{
+              color: "warmGray.200"
+            }} fontWeight="medium" size="xs">
+              Sign up to continue!
+            </Heading>
+            <VStack space={3} mt="5">
+              <FormControl>
+                <FormControl.Label>First Name</FormControl.Label>
+                <Controller
+                  control={control}
+                  rules={{
+                    required: true,
                   }}
-                  onBlur={onBlur}
-                  onChangeText={onChange}
-                  value={value}
-                  placeholder="First name"
-                  variant="underlined"
-                  type="text"
+                  render={({ field: { onChange, onBlur, value } }) => (
+                    <Input
+                      onBlur={onBlur}
+                      onChangeText={onChange}
+                      value={value}
+                      type="text"
+                    />
+                  )}
+                  name="first_name"
                 />
-              )}
-              name="first_name"
-            />
-            {errors.first_name?.message && (
-              <Text
-                style={{
-                  ...globalStyle.errorColor,
-                  width: '75%',
-                  margin: 'auto',
-                }}>
-                {errors.first_name?.message}
-              </Text>
-            )}
-            <Controller
-              control={control}
-              rules={{
-                required: true,
-              }}
-              render={({ field: { onChange, onBlur, value } }) => (
-                <Input
-                  w={{
-                    base: '75%',
-                    md: '25%',
+                {errors.first_name?.message && (
+                  <Text
+                    style={{
+                      ...globalStyle.errorColor,
+                      width: '75%',
+                      margin: 'auto',
+                    }}>
+                    {errors.first_name?.message}
+                  </Text>
+                )}
+              </FormControl>
+              <FormControl>
+                <FormControl.Label>Last Name</FormControl.Label>
+                <Controller
+                  control={control}
+                  rules={{
+                    required: true,
                   }}
-                  onBlur={onBlur}
-                  onChangeText={onChange}
-                  value={value}
-                  placeholder="Last name"
-                  variant="underlined"
-                  type="text"
+                  render={({ field: { onChange, onBlur, value } }) => (
+                    <Input
+                      onBlur={onBlur}
+                      onChangeText={onChange}
+                      value={value}
+                      type="text"
+                    />
+                  )}
+                  name="last_name"
                 />
-              )}
-              name="last_name"
-            />
-            {errors.last_name?.message && (
-              <Text
-                style={{
-                  ...globalStyle.errorColor,
-                  width: '75%',
-                  margin: 'auto',
-                }}>
-                {errors.last_name?.message}
-              </Text>
-            )}
-            <Controller
-              control={control}
-              rules={{
-                required: true,
-              }}
-              render={({ field: { onChange, onBlur, value } }) => (
-                <Input
-                  w={{
-                    base: '75%',
-                    md: '25%',
+                {errors.last_name?.message && (
+                  <Text
+                    style={{
+                      ...globalStyle.errorColor,
+                      width: '75%',
+                      margin: 'auto',
+                    }}>
+                    {errors.last_name?.message}
+                  </Text>
+                )}
+              </FormControl>
+              <FormControl>
+                <FormControl.Label>User Name</FormControl.Label>
+                <Controller
+                  control={control}
+                  rules={{
+                    required: true,
                   }}
-                  onBlur={onBlur}
-                  onChangeText={onChange}
-                  value={value}
-                  placeholder="User name"
-                  variant="underlined"
-                  type="text"
+                  render={({ field: { onChange, onBlur, value } }) => (
+                    <Input
+                      onBlur={onBlur}
+                      onChangeText={onChange}
+                      value={value}
+                      type="text"
+                    />
+                  )}
+                  name="user_name"
                 />
-              )}
-              name="user_name"
-            />
-            {errors.user_name?.message && (
-              <Text
-                style={{
-                  ...globalStyle.errorColor,
-                  width: '75%',
-                  margin: 'auto',
-                }}>
-                {errors.user_name?.message}
-              </Text>
-            )}
-            <Controller
-              control={control}
-              rules={{
-                required: true,
-              }}
-              render={({ field: { onChange, onBlur, value } }) => (
-                <Input
-                  w={{
-                    base: '75%',
-                    md: '25%',
+                {errors.user_name?.message && (
+                  <Text
+                    style={{
+                      ...globalStyle.errorColor,
+                      width: '75%',
+                      margin: 'auto',
+                    }}>
+                    {errors.user_name?.message}
+                  </Text>
+                )}
+              </FormControl>
+              <FormControl>
+                <FormControl.Label>Email</FormControl.Label>
+                <Controller
+                  control={control}
+                  rules={{
+                    required: true,
                   }}
-                  onBlur={onBlur}
-                  onChangeText={onChange}
-                  value={value}
-                  placeholder="Email"
-                  variant="underlined"
-                  type="email"
+                  render={({ field: { onChange, onBlur, value } }) => (
+                    <Input
+                      onBlur={onBlur}
+                      onChangeText={onChange}
+                      value={value}
+                      type="email"
+                    />
+                  )}
+                  name="email"
                 />
-              )}
-              name="email"
-            />
-            {errors.email?.message && (
-              <Text
-                style={{
-                  ...globalStyle.errorColor,
-                  width: '75%',
-                  margin: 'auto',
-                }}>
-                {errors.email?.message}
-              </Text>
-            )}
-            <Controller
-              control={control}
-              rules={{
-                required: true,
-              }}
-              render={({ field: { onChange, onBlur, value } }) => (
-                <Input
-                  w={{
-                    base: '75%',
-                    md: '25%',
+                {errors.email?.message && (
+                  <Text
+                    style={{
+                      ...globalStyle.errorColor,
+                      width: '75%',
+                      margin: 'auto',
+                    }}>
+                    {errors.email?.message}
+                  </Text>
+                )}
+              </FormControl>
+              <FormControl>
+                <FormControl.Label>Password</FormControl.Label>
+                <Controller
+                  control={control}
+                  rules={{
+                    required: true,
                   }}
-                  onBlur={onBlur}
-                  onChangeText={onChange}
-                  value={value}
-                  placeholder="Password"
-                  variant="underlined"
-                  type="password"
+                  render={({ field: { onChange, onBlur, value } }) => (
+                    <Input
+                      onBlur={onBlur}
+                      onChangeText={onChange}
+                      value={value}
+                      type="password"
+                    />
+                  )}
+                  name="password"
                 />
-              )}
-              name="password"
-            />
-            {errors.password?.message && (
-              <Text
-                style={{
-                  ...globalStyle.errorColor,
-                  width: '75%',
-                  margin: 'auto',
-                }}>
-                {errors.password?.message}
-              </Text>
-            )}
-            <Controller
-              control={control}
-              rules={{
-                required: true,
-              }}
-              render={({ field: { onChange, onBlur, value } }) => (
-                <Input
-                  w={{
-                    base: '75%',
-                    md: '25%',
+                {errors.password?.message && (
+                  <Text
+                    style={{
+                      ...globalStyle.errorColor,
+                      width: '75%',
+                      margin: 'auto',
+                    }}>
+                    {errors.password?.message}
+                  </Text>
+                )}
+              </FormControl>
+              <FormControl>
+                <FormControl.Label>Confirm Password</FormControl.Label>
+                <Controller
+                  control={control}
+                  rules={{
+                    required: true,
                   }}
-                  onBlur={onBlur}
-                  onChangeText={onChange}
-                  value={value}
-                  placeholder="Confirm Password"
-                  variant="underlined"
-                  type="password"
+                  render={({ field: { onChange, onBlur, value } }) => (
+                    <Input
+                      onBlur={onBlur}
+                      onChangeText={onChange}
+                      value={value}
+                      type="password"
+                    />
+                  )}
+                  name="confirmPassword"
                 />
-              )}
-              name="confirmPassword"
-            />
-            {errors.confirmPassword?.message && (
-              <Text
-                style={{
-                  ...globalStyle.errorColor,
-                  width: '75%',
-                  margin: 'auto',
+                {errors.confirmPassword?.message && (
+                  <Text
+                    style={{
+                      ...globalStyle.errorColor,
+                      width: '75%',
+                      margin: 'auto',
+                    }}>
+                    {errors.confirmPassword?.message}
+                  </Text>
+                )}
+                {error.length > 0 && (
+                  <Text
+                    style={{
+                      ...globalStyle.errorColor,
+                      width: '75%',
+                      margin: 'auto',
+                    }}>
+                    {error}
+                  </Text>
+                )}
+              </FormControl>
+              <HStack mt="6" justifyContent="center">
+                <Text fontSize="sm" color="coolGray.600" _dark={{
+                  color: "warmGray.200"
                 }}>
-                {errors.confirmPassword?.message}
-              </Text>
-            )}
-            {error.length > 0 && (
-              <Text
-                style={{
-                  ...globalStyle.errorColor,
-                  width: '75%',
-                  margin: 'auto',
-                }}>
-                {error}
-              </Text>
-            )}
-            <Text
-              onPress={() => navigation.navigate('Signin')}
-              style={globalStyle.baseBlueColor}>
-              Already have account? Sign in now
-            </Text>
-            <View
-              style={{
-                justifyContent: 'center',
-                alignItems: 'flex-end',
-              }}>
-              <Button size="sm" onPress={handleSubmit(onSubmit)}>
+                  Already have account? {" "}
+                </Text>
+                <Link _text={{
+                  color: "indigo.500",
+                  fontWeight: "medium",
+                  fontSize: "sm"
+                }}
+                  onPress={() => navigation.navigate('Signin')}
+                >
+                  Sign in now
+                </Link>
+              </HStack>
+              <Button mt="2" colorScheme="indigo" onPress={handleSubmit(onSubmit)}>
                 Sign up
               </Button>
-            </View>
-          </Stack>
+            </VStack>
+          </Box>
         </Center>
       </ScrollView>
 
