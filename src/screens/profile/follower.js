@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react';
+import {useSelector} from 'react-redux';
 import {ScrollView} from 'react-native';
 import {Input, View, Center} from 'native-base';
 import UserFeed from '../../components/UserFeed';
@@ -8,6 +9,7 @@ import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 const ProfileFollowersScreen = ({userId}) => {
   const [followers, setFollowers] = useState([]);
   const [searchText, setSearchText] = useState('');
+  const userReducer = useSelector(state => state.user);
 
   useEffect(() => {
     getFollowers();
@@ -16,15 +18,20 @@ const ProfileFollowersScreen = ({userId}) => {
   const getFollowers = async () => {
     try {
       let res = await axiosAuth.get(`/relationship/${userId}/followers`);
-      setFollowers(
-        res.data.followers.map(follower => ({
-          relationshipId: follower.id,
-          ...follower.own,
-        })),
-      );
+      let followers = res.data.followers.filter(follower => {
+        return !userReducer.blocks.find(block => block.id == follower.id);
+      });
+      setFollowers(followers);
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const onBlockFollower = ({relationshipId}) => {
+    let _followers = followers.filter(
+      follower => follower.relationshipId != relationshipId,
+    );
+    setFollowers(_followers);
   };
 
   return (
@@ -53,7 +60,11 @@ const ProfileFollowersScreen = ({userId}) => {
               );
             })
             .map((follower, index) => (
-              <UserFeed user={follower} key={index} refresh={getFollowers} />
+              <UserFeed
+                user={follower}
+                key={index}
+                onBlockFollower={onBlockFollower}
+              />
             ))}
         </View>
       </Center>

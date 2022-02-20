@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react';
+import {useSelector} from 'react-redux';
 import {ScrollView} from 'react-native';
 import {Input, View, Center} from 'native-base';
 import UserFeed from '../../components/UserFeed';
@@ -8,6 +9,7 @@ import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 const ProfileFollowingsScreen = ({userId}) => {
   const [followings, setFollowings] = useState([]);
   const [searchText, setSearchText] = useState('');
+  const userReducer = useSelector(state => state.user);
 
   useEffect(() => {
     getFollowings();
@@ -16,15 +18,29 @@ const ProfileFollowingsScreen = ({userId}) => {
   const getFollowings = async () => {
     try {
       let res = await axiosAuth.get(`/relationship/${userId}/followings`);
-      setFollowings(
-        res.data.followings.map(following => ({
-          relationshipId: following.id,
-          ...following.receive,
-        })),
-      );
+      let followings = res.data.followings.filter(following => {
+        return !userReducer.blocks.find(block => block.id == following.id);
+      });
+      setFollowings(followings);
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const onUnfollow = ({relationshipId}) => {
+    if (userId == userReducer.user.id) {
+      let _followings = followings.filter(
+        following => following.relationshipId != relationshipId,
+      );
+      setFollowings(_followings);
+    }
+  };
+
+  const onBlockFollowing = ({relationshipId}) => {
+    let _followings = followings.filter(
+      following => following.relationshipId != relationshipId,
+    );
+    setFollowings(_followings);
   };
 
   return (
@@ -53,7 +69,12 @@ const ProfileFollowingsScreen = ({userId}) => {
               );
             })
             .map((following, index) => (
-              <UserFeed user={following} key={index} refresh={getFollowings} />
+              <UserFeed
+                user={following}
+                key={index}
+                onUnfollow={onUnfollow}
+                onBlockFollowing={onBlockFollowing}
+              />
             ))}
         </View>
       </Center>

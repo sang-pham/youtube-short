@@ -26,6 +26,7 @@
     "react-native": "0.67.2",
     "react-native-encrypted-storage": "^4.0.2",
     "react-native-gesture-handler": "^2.2.0",
+    "react-native-get-random-values": "^1.7.2",
     "react-native-image-crop-picker": "^0.37.2",
     "react-native-pager-view": "^5.4.11",
     "react-native-paper": "^4.11.2",
