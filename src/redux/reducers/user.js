@@ -114,20 +114,11 @@ export const getRelationship = createAsyncThunk(
     try {
       let userId = getState().user.user.id;
       let res = await axiosAuth.get(`/relationship/${userId}/followers`);
-      let followers = res.data.followers.map(follower => ({
-        relationshipId: follower.id,
-        ...follower.own,
-      }));
+      let followers = res.data.followers;
       res = await axiosAuth.get(`/relationship/${userId}/followings`);
-      let followings = res.data.followings.map(following => ({
-        relationshipId: following.id,
-        ...following.receive,
-      }));
+      let followings = res.data.followings;
       res = await axiosAuth.get(`/relationship/blocks`);
-      let blocks = res.data.blocks.map(block => ({
-        relationshipId: block.id,
-        ...block.receive,
-      }));
+      let blocks = res.data.blocks;
       return {followers, followings, blocks};
     } catch (error) {
       console.log(error);
@@ -143,6 +134,62 @@ export const unfollow = createAsyncThunk(
       let res = await axiosAuth.delete(`/relationship/${relationshipId}`);
       if (res.status == 200) {
         return {userId, relationshipId};
+      }
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  },
+);
+
+export const follow = createAsyncThunk(
+  'user/follow',
+  async (
+    {userId, first_name, last_name, user_name},
+    {getState, rejectWithValue},
+  ) => {
+    try {
+      let res = await axiosAuth.post('/relationship', {
+        relate_id: userId,
+        status: 'follow',
+        user_id: getState().user.user.id,
+      });
+      if (res.status == 200) {
+        let data = res.data.relationship;
+        return {
+          relationshipId: data.id,
+          first_name,
+          last_name,
+          user_name,
+          id: userId,
+        };
+      }
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  },
+);
+
+export const block = createAsyncThunk(
+  'user/block',
+  async (
+    {userId, first_name, last_name, user_name},
+    {getState, rejectWithValue},
+  ) => {
+    try {
+      let res = await axiosAuth.post('relationship', {
+        relate_id: userId,
+        status: 'block',
+        user_id: getState().user.user.id,
+      });
+      if (res.status === 200) {
+        let {relationship} = res.data;
+        return {
+          first_name,
+          user_name,
+          last_name,
+          id: userId,
+          relationshipId: relationship.id,
+        };
       }
     } catch (error) {
       return rejectWithValue(error);
@@ -208,13 +255,48 @@ export const userSlice = createSlice({
     },
     [unfollow.fulfilled]: (state, action) => {
       let {relationshipId, userId} = action.payload;
-      state.followings = state.followings.filter(
-        following => following.relationshipId != relationshipId,
+      let idx = state.followings.findIndex(
+        following => following.relationshipId == relationshipId,
       );
+      state.followings.splice(idx, 1);
     },
     [unfollow.rejected]: (state, action) => {
       let {error} = action.payload;
       console.log(error);
+    },
+    [follow.fulfilled]: (state, action) => {
+      let {relationshipId, first_name, last_name, user_name, id} =
+        action.payload;
+      state.followings.push({
+        relationshipId,
+        first_name,
+        last_name,
+        user_name,
+        id,
+      });
+    },
+    [follow.rejected]: (state, action) => {
+      let {error} = action.payload;
+      console.log(error);
+    },
+    [block.fulfilled]: (state, action) => {
+      let {userId, relationshipId, user_name, first_name, last_name} =
+        action.payload;
+      let idx = state.followers.findIndex(follower => follower.id == userId);
+      if (idx >= 0) {
+        state.followers.splice(idx, 1);
+      }
+      idx = state.followings.findIndex(following => following.id == userId);
+      if (idx >= 0) {
+        state.followings.splice(idx, 1);
+      }
+      state.blocks.push({
+        id: userId,
+        relationshipId,
+        first_name,
+        user_name,
+        last_name,
+      });
     },
   },
 });
