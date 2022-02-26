@@ -13,6 +13,7 @@ import {baseURL} from '../../libs';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import {timeDiff} from '../../libs';
 
 export default function VideoPost({post, currentShowId}) {
   const [loading, setLoading] = useState(true);
@@ -40,7 +41,7 @@ export default function VideoPost({post, currentShowId}) {
       ) : ( */}
         <Video
           source={{
-            uri: post.uri,
+            uri: `${baseURL}/video-post/${post.id}/video`,
           }}
           paused={paused}
           controls={false}
@@ -53,10 +54,14 @@ export default function VideoPost({post, currentShowId}) {
         />
         <View style={styles.textContainer}>
           <Text style={{color: '#fff'}}>
-            @{userReducer.user.user_name} 1h ago
+            @{post.user.user_name} . {timeDiff(post.createdAt)}
           </Text>
-          <Text style={{color: '#fff'}}>Sample Tags</Text>
-          <Text style={{color: '#fff'}}>Sample Caption</Text>
+          <Text style={{color: '#fff'}}>
+            {post.tags.slice(0, 3).reduce((tagStr, currentTag) => {
+              return tagStr + `#${currentTag.name} `;
+            }, '')}
+          </Text>
+          <Text style={{color: '#fff'}}>{post.caption}</Text>
         </View>
         <View style={styles.rightContainer}>
           <Avatar
