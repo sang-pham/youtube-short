@@ -1,10 +1,8 @@
-import React, {useEffect, useMemo} from 'react';
+import React, { useEffect, useMemo } from 'react';
 import {
-  createStackNavigator,
-  CardStyleInterpolators,
+  CardStyleInterpolators, createStackNavigator,
 } from '@react-navigation/stack';
-import {MainScreen} from './MainScreen';
-import {ActivityIndicator, View} from 'react-native';
+import { MainScreen } from './MainScreen';
 import {
   DirectMessage,
   ChatBox,
@@ -15,11 +13,14 @@ import {
   ProfileEditScreen,
   WelcomeScreen,
 } from '../../screens';
-import {useDispatch, useSelector} from 'react-redux';
-import {isAuthenticated} from '../../redux/reducers';
+import { useDispatch, useSelector } from 'react-redux';
+import { isAuthenticated } from '../../redux/reducers';
 import ProfileRelationship from '../../screens/profile/relationship';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { Spinner, View } from 'native-base';
 
-const Stack = createStackNavigator();
+const Stack = createNativeStackNavigator();
+// const Stack = createStackNavigator();
 
 const Layout = () => {
   const dispatch = useDispatch();
@@ -39,65 +40,58 @@ const Layout = () => {
             flex: 1,
             justifyContent: 'center',
           }}>
-          <ActivityIndicator size={'large'} color={'#000'} />
+          <Spinner size='lg' color={'#000'} />
         </View>
-      ) : !userReducer.authenticated ? (
-        <Stack.Navigator>
-          <Stack.Screen name="Welcome" component={WelcomeScreen} />
-          <Stack.Screen name="Signin" component={SigninScreen} />
-          <Stack.Screen name="Signup" component={SignupScreen} />
-        </Stack.Navigator>
-      ) : (
-        <Stack.Navigator
-          screenOptions={{
-            transitionConfig: () => ({
-              screenInterpolator: CardStyleInterpolators.forHorizontalIOS,
-            }),
+      ) :
+        !userReducer.authenticated ? (
+          <Stack.Navigator screenOptions={{
+            headerShown: false
           }}>
-          <Stack.Screen
-            name="Main"
-            component={MainScreen}
-            options={{headerShown: false}}
-          />
-          <Stack.Screen
-            options={{headerShown: false}}
-            name="Record"
-            component={RecordScreen}
-          />
-          <Stack.Screen
-            options={{
-              headerShown: false,
-            }}
-            name="DirectMessage"
-            component={DirectMessage}
-          />
+            <Stack.Screen name="Welcome" component={WelcomeScreen} />
+            <Stack.Screen name="Signin" component={SigninScreen} />
+            <Stack.Screen name="Signup" component={SignupScreen} />
+          </Stack.Navigator>
+        ) : (
+          <Stack.Navigator
+            screenOptions={{
+              transitionConfig: () => ({
+                screenInterpolator: CardStyleInterpolators.forHorizontalIOS,
+              }),
+              headerShown: false
+            }}>
+            <Stack.Screen
+              name="Main"
+              component={MainScreen}
+            />
+            <Stack.Screen
+              name="Record"
+              component={RecordScreen}
+            />
+            <Stack.Screen
+              name="DirectMessage"
+              component={DirectMessage}
+            />
 
-          <Stack.Screen
-            options={{
-              headerShown: false,
-            }}
-            name="ChatBox"
-            component={ChatBox}
-          />
-          <Stack.Screen
-            options={{headerShown: false}}
-            name="NewChat"
-            component={NewChatScreen}
-          />
-          <Stack.Screen
-            options={{headerShown: false}}
-            name="ProfileEdit"
-            component={ProfileEditScreen}
-          />
-          <Stack.Screen
-            options={{headerShown: false}}
-            name="ProfileRelationship"
-            component={ProfileRelationship}
-          />
-        </Stack.Navigator>
-      )}
+            <Stack.Screen
+              name="ChatBox"
+              component={ChatBox}
+            />
+            <Stack.Screen
+              name="NewChat"
+              component={NewChatScreen}
+            />
+            <Stack.Screen
+              name="ProfileEdit"
+              component={ProfileEditScreen}
+            />
+            <Stack.Screen
+              name="ProfileRelationship"
+              component={ProfileRelationship}
+            />
+          </Stack.Navigator>
+        )}
     </>
   );
 };
 
-export {Layout};
+export { Layout };

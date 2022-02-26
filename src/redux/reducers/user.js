@@ -1,6 +1,6 @@
-import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import EncryptedStorage from 'react-native-encrypted-storage';
-import {axiosAuth, baseURL} from '../../libs';
+import { axiosAuth, baseURL } from '../../libs';
 
 const initialState = {
   user: {},
@@ -16,15 +16,15 @@ const initialState = {
 
 export const isAuthenticated = createAsyncThunk(
   'user/isAuthenticated',
-  async ({}, {rejectWithValue}) => {
+  async ({ }, { rejectWithValue }) => {
     try {
       let session = await EncryptedStorage.getItem('user_session');
       console.log(session);
       session = JSON.parse(session);
       if (session && session.token) {
         const res = await axiosAuth.get(`/user/${session.id}`);
-        session = {...session, ...res.data.user};
-        return {session};
+        session = { ...session, ...res.data.user };
+        return { session };
       } else {
         throw 'Not authenticated';
       }
@@ -37,11 +37,11 @@ export const isAuthenticated = createAsyncThunk(
 
 export const signin = createAsyncThunk(
   'user/signin',
-  async ({data}, {rejectWithValue}) => {
+  async ({ data }, { rejectWithValue }) => {
     console.log(data);
     try {
       await EncryptedStorage.setItem('user_session', JSON.stringify(data));
-      return {data};
+      return { data };
     } catch (error) {
       console.log(error);
       return rejectWithValue(error);
@@ -51,7 +51,7 @@ export const signin = createAsyncThunk(
 
 export const logout = createAsyncThunk(
   'user/logout',
-  async ({}, {rejectWithValue}) => {
+  async ({ }, { rejectWithValue }) => {
     try {
       await EncryptedStorage.removeItem('user_session');
       return 'success';
@@ -64,7 +64,7 @@ export const logout = createAsyncThunk(
 
 export const updateProfile = createAsyncThunk(
   'user/update',
-  async ({data, avatar, userId}, {getState, rejectWithValue}) => {
+  async ({ data, avatar, userId }, { getState, rejectWithValue }) => {
     try {
       const formData = new FormData();
       if (avatar) {
@@ -93,7 +93,7 @@ export const updateProfile = createAsyncThunk(
           await EncryptedStorage.getItem('user_session'),
         );
         const data = await res.json();
-        let {user} = data;
+        let { user } = data;
         session = {
           ...session,
           ...user,
@@ -110,7 +110,7 @@ export const updateProfile = createAsyncThunk(
 
 export const getRelationship = createAsyncThunk(
   'user/relationship',
-  async ({}, {getState, rejectWithValue}) => {
+  async ({ }, { getState, rejectWithValue }) => {
     try {
       let userId = getState().user.user.id;
       let res = await axiosAuth.get(`/relationship/${userId}/followers`);
@@ -119,7 +119,7 @@ export const getRelationship = createAsyncThunk(
       let followings = res.data.followings;
       res = await axiosAuth.get(`/relationship/blocks`);
       let blocks = res.data.blocks;
-      return {followers, followings, blocks};
+      return { followers, followings, blocks };
     } catch (error) {
       console.log(error);
       return rejectWithValue(error);
@@ -129,11 +129,11 @@ export const getRelationship = createAsyncThunk(
 
 export const unfollow = createAsyncThunk(
   'user/unfollow',
-  async ({userId, relationshipId}, {rejectWithValue}) => {
+  async ({ userId, relationshipId }, { rejectWithValue }) => {
     try {
       let res = await axiosAuth.delete(`/relationship/${relationshipId}`);
       if (res.status == 200) {
-        return {userId, relationshipId};
+        return { userId, relationshipId };
       }
     } catch (error) {
       return rejectWithValue(error);
@@ -144,8 +144,8 @@ export const unfollow = createAsyncThunk(
 export const follow = createAsyncThunk(
   'user/follow',
   async (
-    {userId, first_name, last_name, user_name},
-    {getState, rejectWithValue},
+    { userId, first_name, last_name, user_name },
+    { getState, rejectWithValue },
   ) => {
     try {
       let res = await axiosAuth.post('/relationship', {
@@ -172,8 +172,8 @@ export const follow = createAsyncThunk(
 export const block = createAsyncThunk(
   'user/block',
   async (
-    {userId, first_name, last_name, user_name},
-    {getState, rejectWithValue},
+    { userId, first_name, last_name, user_name },
+    { getState, rejectWithValue },
   ) => {
     try {
       let res = await axiosAuth.post('relationship', {
@@ -182,7 +182,7 @@ export const block = createAsyncThunk(
         user_id: getState().user.user.id,
       });
       if (res.status === 200) {
-        let {relationship} = res.data;
+        let { relationship } = res.data;
         return {
           first_name,
           user_name,
@@ -202,9 +202,9 @@ export const userSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: {
-    [isAuthenticated.pending]: () => {},
+    [isAuthenticated.pending]: () => { },
     [isAuthenticated.fulfilled]: (state, action) => {
-      let {session} = action.payload;
+      let { session } = action.payload;
       state.user = session;
       state.authenticated = true;
       state.loaded = true;
@@ -214,7 +214,7 @@ export const userSlice = createSlice({
       state.authenticated = false;
     },
     [signin.fulfilled]: (state, action) => {
-      let {data} = action.payload;
+      let { data } = action.payload;
       console.log(data);
       state.user = data;
       state.authenticated = true;
@@ -243,7 +243,7 @@ export const userSlice = createSlice({
       }
     },
     [getRelationship.fulfilled]: (state, action) => {
-      let {followings, followers, blocks} = action.payload;
+      let { followings, followers, blocks } = action.payload;
       state.followings = followings;
       state.followers = followers;
       state.blocks = blocks;
@@ -254,18 +254,18 @@ export const userSlice = createSlice({
       state.relationshipLoaded = true;
     },
     [unfollow.fulfilled]: (state, action) => {
-      let {relationshipId, userId} = action.payload;
+      let { relationshipId, userId } = action.payload;
       let idx = state.followings.findIndex(
         following => following.relationshipId == relationshipId,
       );
       state.followings.splice(idx, 1);
     },
     [unfollow.rejected]: (state, action) => {
-      let {error} = action.payload;
+      let { error } = action.payload;
       console.log(error);
     },
     [follow.fulfilled]: (state, action) => {
-      let {relationshipId, first_name, last_name, user_name, id} =
+      let { relationshipId, first_name, last_name, user_name, id } =
         action.payload;
       state.followings.push({
         relationshipId,
@@ -276,11 +276,11 @@ export const userSlice = createSlice({
       });
     },
     [follow.rejected]: (state, action) => {
-      let {error} = action.payload;
+      let { error } = action.payload;
       console.log(error);
     },
     [block.fulfilled]: (state, action) => {
-      let {userId, relationshipId, user_name, first_name, last_name} =
+      let { userId, relationshipId, user_name, first_name, last_name } =
         action.payload;
       let idx = state.followers.findIndex(follower => follower.id == userId);
       if (idx >= 0) {

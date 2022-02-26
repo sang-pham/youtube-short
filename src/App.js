@@ -16,9 +16,8 @@ import { LogBox } from 'react-native';
 import { theme } from './styles'
 
 //ignore warning
-LogBox.ignoreLogs([
-  "[react-native-gesture-handler] Seems like you\'re using an old API with gesture components, check out new Gestures system!",
-]);
+
+LogBox.ignoreLogs(['NativeBase:']);
 
 
 const App = () => {

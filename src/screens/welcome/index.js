@@ -3,8 +3,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import { View, Button, VStack, Box, Heading, Center } from 'native-base';
 
 const WelcomeScreen = ({ navigation }) => {
-  const userReducer = useSelector(state => state.user);
-  const dispatch = useDispatch();
 
   return (
     <Center w='100%'>
