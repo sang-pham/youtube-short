@@ -1,23 +1,32 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef, useCallback, useMemo} from 'react';
 import Video from 'react-native-video';
-import {View, Avatar} from 'native-base';
+import {View, Avatar, Input} from 'native-base';
 import {
   Text,
   StyleSheet,
   Dimensions,
   ActivityIndicator,
   TouchableWithoutFeedback,
+  FlatList,
 } from 'react-native';
 import {useSelector} from 'react-redux';
-import {baseURL} from '../../libs';
+import {axiosAuth, baseURL} from '../../libs';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import RBSheet from 'react-native-raw-bottom-sheet';
+import Comment from '../Comment';
 import {timeDiff} from '../../libs';
+import {ScrollView} from 'react-native-gesture-handler';
 
 export default function VideoPost({post, currentShowId}) {
+  //bottom sheet
+  const refRBSheet = useRef();
+
   const [loading, setLoading] = useState(true);
   const [paused, setPaused] = useState(false);
+  const [commentLoaded, setLoadComment] = useState(false);
+  const [comments, setComments] = useState([]);
   const userReducer = useSelector(state => state.user);
 
   const togglePause = () => {
@@ -27,6 +36,20 @@ export default function VideoPost({post, currentShowId}) {
   useEffect(() => {
     setPaused(currentShowId != post.id);
   }, [currentShowId]);
+
+  const handleOpenComment = async () => {
+    refRBSheet.current.open();
+    if (!commentLoaded) {
+      try {
+        let res = await axiosAuth.get(`video-post/${post.id}/comments`);
+        let _comments = res.data.comments;
+        setComments(_comments);
+        setLoadComment(true);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
 
   return (
     <TouchableWithoutFeedback onPress={togglePause}>
@@ -67,7 +90,7 @@ export default function VideoPost({post, currentShowId}) {
           <Avatar
             style={styles.avatarStyle}
             source={{
-              uri: `${baseURL}/user/${userReducer.user.id}/avatar`,
+              uri: `${baseURL}/user/${post.user_id}/avatar`,
             }}
           />
           <AntDesign
@@ -78,14 +101,16 @@ export default function VideoPost({post, currentShowId}) {
               marginTop: 20,
             }}
           />
-          <Ionicons
-            name="ios-chatbubble-ellipses-outline"
-            size={40}
-            color="#FFF"
-            style={{
-              marginTop: 20,
-            }}
-          />
+          <TouchableWithoutFeedback onPress={handleOpenComment}>
+            <Ionicons
+              name="ios-chatbubble-ellipses-outline"
+              size={40}
+              color="#FFF"
+              style={{
+                marginTop: 20,
+              }}
+            />
+          </TouchableWithoutFeedback>
           <MaterialCommunityIcons
             name="share"
             size={40}
@@ -96,19 +121,65 @@ export default function VideoPost({post, currentShowId}) {
           />
           <Text style={{color: '#fff'}}>Share</Text>
         </View>
+        <RBSheet
+          ref={refRBSheet}
+          height={600}
+          closeOnDragDown={true}
+          closeOnPressMask={true}
+          customStyles={{
+            wrapper: {
+              backgroundColor: 'transparent',
+            },
+            draggableIcon: {
+              backgroundColor: '#000',
+            },
+            container: {
+              position: 'relative',
+            },
+          }}>
+          {comments.length > 0 && (
+            <FlatList
+              style={{
+                height: '50%',
+                marginBottom: '15%',
+                overflow: 'scroll',
+              }}
+              data={comments}
+              renderItem={({item}) => <Comment comment={item} />}
+            />
+          )}
+          <View
+            style={{
+              position: 'absolute',
+              bottom: '3%',
+              left: 0,
+              right: 0,
+              padding: '1%',
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+            }}>
+            <Avatar
+              source={{
+                uri: `${baseURL}/user/${userReducer.user.id}/avatar`,
+              }}
+            />
+            <Input
+              m={1}
+              py={1}
+              w={300}
+              placeholder="Write your comment"
+              size="sm"
+            />
+            <MaterialCommunityIcons name="file" size={20} color="#ccc" />
+            <MaterialCommunityIcons name="send" size={20} color="#198ae6" />
+          </View>
+        </RBSheet>
         {/* )} */}
       </View>
     </TouchableWithoutFeedback>
   );
 }
-
-// export default function VideoPost({post}) {
-//   return (
-//     <View>
-//       <Text>{JSON.stringify(post)}</Text>
-//     </View>
-//   );
-// }
 
 var styles = StyleSheet.create({
   backgroundVideo: {
@@ -135,5 +206,12 @@ var styles = StyleSheet.create({
   avatarStyle: {
     borderWidth: 2,
     borderColor: '#FFF',
+  },
+  contentContainer: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  bottomSheet: {
+    marginHorizontal: 24,
   },
 });
