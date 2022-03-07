@@ -3,21 +3,6 @@ import {Text, View, FlatList, Dimensions} from 'react-native';
 import VideoPost from '../../components/VideoPost';
 import {axiosAuth, baseURL} from '../../libs';
 
-const samplePosts = [
-  {
-    id: 1,
-    uri: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
-  },
-  {
-    id: 2,
-    uri: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-  },
-  {
-    id: 3,
-    uri: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
-  },
-];
-
 const HomeFollowing = () => {
   const [currentShowId, setShowId] = useState(0);
   const [videoPosts, setVideoPosts] = useState([]);

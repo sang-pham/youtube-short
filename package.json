@@ -34,6 +34,7 @@
     "react-native-lightbox-v2": "^0.8.8",
     "react-native-pager-view": "^5.4.11",
     "react-native-parsed-text": "0.0.22",
+    "react-native-raw-bottom-sheet": "^2.2.0",
     "react-native-safe-area-context": "^3.3.2",
     "react-native-screens": "^3.11.1",
     "react-native-status-bar-height": "^2.6.0",

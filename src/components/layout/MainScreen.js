@@ -34,18 +34,17 @@ const MainScreen = () => {
 
     socketClient.on("disconnect", () => {
       socketClient.connect();
-      console.log('try to auto reconnect')
+      console.log('try to auto reconnect');
     });
 
-    socketClient.on('connect_error', (error) => {
-      console.log(error, 'connect')
+    socketClient.on('connect_error', error => {
+      console.log(error, 'connect');
     });
 
-    socketClient.on('error', (error) => {
-      console.log(error, 'error')
+    socketClient.on('error', error => {
+      console.log(error, 'error');
     });
-
-  }, [])
+  }, []);
 
   useEffect(() => {
     StatusBar.setBarStyle('dark-content');
@@ -72,9 +71,9 @@ const MainScreen = () => {
         headerShown: false,
         tabBarStyle: {
           backgroundColor: home ? '#000' : '#fff',
-          position: 'absolute'
+          position: 'absolute',
         },
-        tabBarActiveTintColor: home ? '#fff' : '#000'
+        tabBarActiveTintColor: home ? '#fff' : '#000',
       }}
       initialRouteName="Home">
       <Tab.Screen
