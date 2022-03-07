@@ -9,21 +9,23 @@ import { axiosAuth, getFullName, } from '../../../libs';
 import Message from './Message';
 import { useDispatch, useSelector } from 'react-redux';
 import { setChatBox } from '../../../redux/reducers';
+import ChatBoxLoading from './ChatBoxLoading';
 
 const ChatBox = ({ navigation, route }) => {
   const personId = route.params.personId;
   const chatBoxId = route.params.chatBoxId;
   const chatBox = useSelector(state => state.inbox.chatBox);
+  const userInfo = useSelector(state => state.user.user)
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(setChatBox({ chatBoxId, personId }))
+    dispatch(setChatBox({ chatBoxId, personId, userId: userInfo.id }))
+
   }, [personId])
 
   if (!chatBox) {
-    return <Text>ERROR</Text>
+    return <ChatBoxLoading />
   }
-
 
   return (
     <Container>

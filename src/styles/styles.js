@@ -14,7 +14,7 @@ export const globalStyle = StyleSheet.create({
 
 
 export const Container = styled.View.attrs({
-  paddingTop: getStatusBarHeight(),
+  // paddingTop: getStatusBarHeight(),
 })`
   flex: 1;
   background: #fff;

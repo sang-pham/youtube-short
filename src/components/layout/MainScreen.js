@@ -10,7 +10,7 @@ import { HomeScreen, InboxScreen, ProfileScreen } from '../../screens';
 import { useNavigation } from '@react-navigation/native';
 import { RecordButton } from '../Button';
 import { socketClient } from '../../libs';
-import { receiveMessage } from '../../redux/reducers';
+import { receiveMessage, sentMessage } from '../../redux/reducers';
 
 const Tab = createBottomTabNavigator();
 
@@ -24,10 +24,13 @@ const MainScreen = () => {
     socketClient.auth = { userId: userReducer.user.id };
     socketClient.connect();
 
-    socketClient.on('receive-message', ({ senderId, receiverId, text }) => {
-      console.log(text, 'receive');
-      dispatch(receiveMessage({ senderId, receiverId, text }))
+    socketClient.on('receive-message', (data) => {
+      dispatch(receiveMessage(data))
     });
+
+    socketClient.on('sent-message', (data) => {
+      dispatch(sentMessage(data))
+    })
 
     socketClient.on("disconnect", () => {
       socketClient.connect();

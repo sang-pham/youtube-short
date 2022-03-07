@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getAllChatBox } from '../../redux/reducers';
 import { getAvatarUrl, formatMessageTime } from '../../libs';
 import { TouchableWithoutFeedback } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 
 
 const DirectMessage = ({ navigation }) => {
@@ -17,6 +18,7 @@ const DirectMessage = ({ navigation }) => {
 	useEffect(() => {
 		dispatch(getAllChatBox({}));
 	}, [])
+
 
 	return (
 		<Container>
@@ -39,7 +41,7 @@ const DirectMessage = ({ navigation }) => {
 						name="plus"
 						size={24}
 						color="black"
-						onPress={() => { navigation.navigate('NewChat') }}
+						onPress={() => { navigation.push('NewChat') }}
 					/>
 				</HStack>
 			</Box>
@@ -68,14 +70,14 @@ const DirectMessage = ({ navigation }) => {
 									<Text color="coolGray.600" _dark={{
 										color: "warmGray.200"
 									}}>
-										{'hello'}
+										{item.message?.text}
 									</Text>
 								</VStack>
 								<Spacer />
 								<Text fontSize="xs" _dark={{
 									color: "warmGray.50"
 								}} color="coolGray.800" alignSelf="flex-start">
-									{formatMessageTime(item.seen_at)}
+									{formatMessageTime(item.message?.createdAt)}
 								</Text>
 							</HStack>
 						</Box>

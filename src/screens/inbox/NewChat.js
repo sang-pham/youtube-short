@@ -27,7 +27,7 @@ const NewChatScreen = ({ navigation }) => {
           name="arrow-back"
           size={24}
           color="black"
-          onPress={navigation.goBack}
+          onPress={() => { navigation.push('DirectMessage'); }}
         />
         <Center>
           <Text _dark={{ color: "warmGray.50" }}
@@ -64,7 +64,6 @@ const NewChatScreen = ({ navigation }) => {
               <TouchableWithoutFeedback onPress={() => {
                 navigation.navigate('ChatBox', { personId: item.id, chatBoxId: null });
               }}
-
               >
                 <Box px="5" py="3">
                   <HStack space={3} justifyContent="flex-start">
