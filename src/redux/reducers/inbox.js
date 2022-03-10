@@ -147,6 +147,10 @@ export const inboxSlice = createSlice({
         chatBox.is_seen = true;
         state.numberOfUnRead--;
       }
+    },
+    addMessage: (state, action) => {
+      const {messages} = action.payload;
+      state.messages.push(...messages);
     }
 
   },

@@ -34,7 +34,6 @@ const NewChatScreen = ({ navigation }) => {
           </Text>
         </Center>
 
-
         <Input placeholder="Search" variant="filled"
           borderRadius="5" py="2" borderWidth="0" mt="5"
           onChangeText={onSearch}
