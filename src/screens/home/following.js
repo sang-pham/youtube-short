@@ -1,11 +1,11 @@
 import React, {useState, useRef, useEffect} from 'react';
-import {Text, View, FlatList, Dimensions} from 'react-native';
+import {Text, View, FlatList, Dimensions, VirtualizedList} from 'react-native';
 import VideoPost from '../../components/VideoPost';
-import {axiosAuth, baseURL} from '../../libs';
+import {axiosAuth, baseURL, socketClient} from '../../libs';
 
 const HomeFollowing = () => {
-  const [currentShowId, setShowId] = useState(0);
   const [videoPosts, setVideoPosts] = useState([]);
+  const currentShowId = useRef(null);
 
   useEffect(() => {
     (async () => {
@@ -15,7 +15,6 @@ const HomeFollowing = () => {
           let _videoPosts = res.data.videoPosts;
           if (_videoPosts && _videoPosts.length) {
             setVideoPosts(_videoPosts);
-            setShowId(_videoPosts[0].id);
           }
         }
       } catch (error) {
@@ -27,7 +26,12 @@ const HomeFollowing = () => {
   const onVideoScrollRef = useRef(({changed}) => {
     let item = changed[0].item;
     if (item) {
-      setShowId(item.id);
+      if (currentShowId.current != item.id) {
+        socketClient.emit('current-video-post', {
+          video_post_id: item.id,
+        });
+        currentShowId.current = item.id;
+      }
     }
   });
 
@@ -42,7 +46,7 @@ const HomeFollowing = () => {
         onViewableItemsChanged={onVideoScrollRef.current}
         viewabilityConfig={viewConfigRef.current}
         renderItem={({item}) => (
-          <VideoPost post={item} currentShowId={currentShowId} />
+          <VideoPost post={item} currentShowId={currentShowId.current} />
         )}
         showsVerticalScrollIndicator={false}
         snapToInterval={Dimensions.get('window').height}

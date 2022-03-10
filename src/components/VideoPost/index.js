@@ -10,7 +10,8 @@ import {
   FlatList,
 } from 'react-native';
 import {useSelector} from 'react-redux';
-import {axiosAuth, baseURL} from '../../libs';
+import {v4} from 'uuid';
+import {axiosAuth, baseURL, socketClient} from '../../libs';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -26,12 +27,44 @@ export default function VideoPost({post, currentShowId}) {
   const [loading, setLoading] = useState(true);
   const [paused, setPaused] = useState(false);
   const [commentLoaded, setLoadComment] = useState(false);
-  const [comments, setComments] = useState([]);
+  const [newCommentText, setNewCommentText] = useState('');
+  const [trigger, setTrigger] = useState(v4());
   const userReducer = useSelector(state => state.user);
+
+  const commentsRef = useRef(null);
 
   const togglePause = () => {
     setPaused(!paused);
   };
+
+  const handleNewComment = useCallback((comment, newComment) => {
+    if (comment.id == newComment.parent_id) {
+      comment.comments.unshift(newComment);
+      return;
+    } else {
+      for (const c of comment.comments) {
+        handleNewComment(c, newComment);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    socketClient.on('new-comment', comment => {
+      if (comment.video_post_id == post.id) {
+        let _comments = [...commentsRef.current];
+
+        if (comment.parent_id == null) {
+          commentsRef.current.unshift(comment);
+          return;
+        }
+
+        for (const _comment of _comments) {
+          handleNewComment(_comment, comment);
+        }
+        commentsRef.current = _comments;
+      }
+    });
+  }, []);
 
   useEffect(() => {
     setPaused(currentShowId != post.id);
@@ -40,16 +73,33 @@ export default function VideoPost({post, currentShowId}) {
   const handleOpenComment = async () => {
     refRBSheet.current.open();
     if (!commentLoaded) {
+      console.log(`load comment for video post id ${post.id}`);
       try {
         let res = await axiosAuth.get(`video-post/${post.id}/comments`);
         let _comments = res.data.comments;
-        setComments(_comments);
+        commentsRef.current = _comments;
         setLoadComment(true);
       } catch (error) {
         console.log(error);
       }
     }
   };
+
+  const handleSend = () => {
+    if (newCommentText) {
+      socketClient.emit('post-comment', {
+        text: newCommentText,
+        video_post_id: post.id,
+        parent_id: null,
+        user_id: userReducer.user.id,
+      });
+      setNewCommentText('');
+    }
+  };
+
+  const onOpenComment = () => {};
+
+  const onCloseComment = () => {};
 
   return (
     <TouchableWithoutFeedback onPress={togglePause}>
@@ -126,6 +176,8 @@ export default function VideoPost({post, currentShowId}) {
           height={600}
           closeOnDragDown={true}
           closeOnPressMask={true}
+          onOpen={onOpenComment}
+          onClose={onCloseComment}
           customStyles={{
             wrapper: {
               backgroundColor: 'transparent',
@@ -137,14 +189,14 @@ export default function VideoPost({post, currentShowId}) {
               position: 'relative',
             },
           }}>
-          {comments.length > 0 && (
+          {commentsRef.current && (
             <FlatList
               style={{
                 height: '50%',
                 marginBottom: '15%',
                 overflow: 'scroll',
               }}
-              data={comments}
+              data={commentsRef.current}
               renderItem={({item}) => <Comment comment={item} />}
             />
           )}
@@ -169,10 +221,16 @@ export default function VideoPost({post, currentShowId}) {
               py={1}
               w={300}
               placeholder="Write your comment"
+              value={newCommentText}
+              onChangeText={value => setNewCommentText(value)}
               size="sm"
             />
             <MaterialCommunityIcons name="file" size={20} color="#ccc" />
-            <MaterialCommunityIcons name="send" size={20} color="#198ae6" />
+            <TouchableWithoutFeedback
+              onPress={handleSend}
+              disabled={!newCommentText}>
+              <MaterialCommunityIcons name="send" size={20} color="#198ae6" />
+            </TouchableWithoutFeedback>
           </View>
         </RBSheet>
         {/* )} */}
