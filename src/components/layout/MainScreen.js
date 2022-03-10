@@ -8,7 +8,7 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { HomeScreen, InboxScreen, ProfileScreen } from '../../screens';
 import { useNavigation } from '@react-navigation/native';
-import { RecordButton } from '../Button';
+import { RecordButton } from '../button';
 import { socketClient } from '../../libs';
 import { receiveMessage, sentMessage } from '../../redux/reducers';
 

@@ -8,7 +8,7 @@ import {
   Text, Center, Input, Spinner
 } from 'native-base';
 import { useSelector } from 'react-redux';
-import { TouchableOpacity, Keyboard, TouchableWithoutFeedback } from 'react-native';
+import { TouchableOpacity, Keyboard, TouchableWithoutFeedback, Pressable } from 'react-native';
 
 const NewChatScreen = ({ navigation }) => {
 
@@ -22,13 +22,10 @@ const NewChatScreen = ({ navigation }) => {
     <Container>
       <Box borderBottomWidth="1"
         borderColor="coolGray.200" py={4} px={3} mb={2}>
-        <MaterialIcons
-          style={{ position: 'absolute', top: 18, left: 10 }}
-          name="arrow-back"
-          size={24}
-          color="black"
-          onPress={() => { navigation.push('DirectMessage'); }}
-        />
+        <Text onPress={navigation.goBack}
+          style={{ position: 'absolute', top: 18, left: 10 }}>
+          Close
+        </Text>
         <Center>
           <Text _dark={{ color: "warmGray.50" }}
             fontSize='xl'

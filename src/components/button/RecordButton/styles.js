@@ -15,15 +15,6 @@ export const Container = styled.View`
   border-right-color: #ec376d;
 `;
 
-// export const Container = styled.View`
-//   top: -3px;
-//   width: 45px;
-//   height: 45px;
-//   justify-content: center;
-//   border-radius: 30px;
-//   align-items: center;
-//   background: ${(props) => (props.home ? 'red' : '#000')};
-// `;
 
 export const Button = styled.TouchableOpacity.attrs({
   activeOpacity: 1,

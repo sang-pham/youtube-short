@@ -87,6 +87,7 @@ export default class Day<
       textProps,
     } = this.props
 
+
     if (currentMessage && !isSameDay(currentMessage, previousMessage!)) {
       return (
         <View style={[styles.container, containerStyle]}>

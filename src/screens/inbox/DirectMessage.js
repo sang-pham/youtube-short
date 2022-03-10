@@ -1,12 +1,12 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Feather from 'react-native-vector-icons/Feather';
 import { Container } from '../../styles';
 import {
-	Avatar, Box, FlatList, HStack, VStack, Text, Spacer
+	Avatar, Box, FlatList, HStack, VStack, Text, Spacer,
 } from 'native-base';
 import { useDispatch, useSelector } from 'react-redux';
-import { getAllChatBox } from '../../redux/reducers';
+import { getAllChatBox, readMessage } from '../../redux/reducers';
 import { getAvatarUrl, formatMessageTime } from '../../libs';
 import { TouchableWithoutFeedback } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
@@ -14,11 +14,17 @@ import { useFocusEffect } from '@react-navigation/native';
 
 const DirectMessage = ({ navigation }) => {
 	const dispatch = useDispatch();
-	const ChatBoxList = useSelector((state) => state.inbox.chatBoxList);
+	const chatBoxList = useSelector((state) => state.inbox.chatBoxList);
+
 	useEffect(() => {
 		dispatch(getAllChatBox({}));
 	}, [])
 
+	const parseRecentMessage = (personId, userId, content) => {
+		if (personId === userId) return content;
+
+		return "You: " + content;
+	}
 
 	return (
 		<Container>
@@ -43,11 +49,12 @@ const DirectMessage = ({ navigation }) => {
 						color="black"
 						onPress={() => { navigation.push('NewChat') }}
 					/>
+
 				</HStack>
 			</Box>
 
 			<Box>
-				<FlatList data={ChatBoxList} renderItem={({
+				<FlatList data={chatBoxList} renderItem={({
 					item
 				}) => (
 					<TouchableWithoutFeedback onPress={() => {
@@ -58,7 +65,7 @@ const DirectMessage = ({ navigation }) => {
 					}}>
 						<Box pl="4" pr="5" py="2" >
 							<HStack space={3} justifyContent="space-between">
-								<Avatar size="48px" source={{
+								<Avatar size="md" source={{
 									uri: getAvatarUrl(item.person_id)
 								}} />
 								<VStack>
@@ -67,10 +74,17 @@ const DirectMessage = ({ navigation }) => {
 									}} color="coolGray.800" bold>
 										{item.full_name}
 									</Text>
-									<Text color="coolGray.600" _dark={{
-										color: "warmGray.200"
-									}}>
-										{item.message?.text}
+									<Text
+										bold={!item.is_seen}
+										color={item.is_seen ? 'coolGray.600' : 'warmGray.800'}
+										_dark={{
+											color: "warmGray.200"
+										}}
+										w="200"
+										numberOfLines={1}
+									>
+										{parseRecentMessage(item.person_id, item.message.user_id, item.message?.text)}
+
 									</Text>
 								</VStack>
 								<Spacer />

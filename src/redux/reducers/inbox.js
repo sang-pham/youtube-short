@@ -3,42 +3,60 @@ import { axiosAuth, socketClient, swapItemArray } from '../../libs';
 import { getAvatarUrl } from '../../libs';
 import { v4 } from 'uuid';
 
-export const getAllChatBox = createAsyncThunk('inbox/getAllChatBox', async ({ }, { rejectWithValue }) => {
-  try {
-    const res = await axiosAuth.get('/conversation');
-    return res.data;
-  } catch (error) {
-    rejectWithValue(error);
+export const getAllChatBox = createAsyncThunk('inbox/getAllChatBox',
+  async ({ }, { rejectWithValue }) => {
+    try {
+      const res = await axiosAuth.get('/conversation');
+      return res.data;
+    } catch (error) {
+      rejectWithValue(error);
+    }
+
+  })
+
+export const getMessages = createAsyncThunk('inbox/getMessages',
+  async ({ chatBoxId }, { rejectWithValue }) => {
+    try {
+      const res = await axiosAuth.get('/conversation/' + chatBoxId + '/messages');
+      return res.data;
+    } catch (error) {
+      rejectWithValue(error);
+    }
+  })
+
+export const setChatBox = createAsyncThunk('inbox/setChatBox',
+  async ({ chatBoxId, personId, userId }, { rejectWithValue }) => {
+    try {
+
+
+      const res = await axiosAuth.get('/conversation/info', {
+        params: {
+          userId,
+          personId,
+          conversationId: chatBoxId
+        }
+      });
+
+
+
+      return res.data;
+    } catch (error) {
+      rejectWithValue(error);
+    }
   }
+)
 
-})
+export const getNumberOfUnRead = createAsyncThunk('inbox/getNumberOfUnRead',
+  async ({ }, { rejectWithValue }) => {
+    try {
+      const res = await axiosAuth.get('/conversation/unread');
 
-export const getMessages = createAsyncThunk('inbox/getMessages', async ({ chatBoxId }, { rejectWithValue }) => {
-  try {
-    const res = await axiosAuth.get('/conversation/' + chatBoxId + '/messages');
-    return res.data;
-  } catch (error) {
-    rejectWithValue(error);
+      return res.data;
+    } catch (error) {
+      rejectWithValue(error);
+    }
   }
-})
-
-export const setChatBox = createAsyncThunk('inbox/setChatBox', async ({ chatBoxId, personId, userId }, { rejectWithValue }) => {
-  try {
-
-
-    const res = await axiosAuth.get('/conversation/info', {
-      params: {
-        userId,
-        personId,
-        conversationId: chatBoxId
-      }
-    });
-
-    return res.data;
-  } catch (error) {
-    rejectWithValue(error);
-  }
-})
+)
 
 
 const initialState = {
@@ -46,6 +64,7 @@ const initialState = {
   chatBoxList: [],
   chatBox: null,
   msgLoading: false,
+  numberOfUnRead: 0
 };
 
 export const inboxSlice = createSlice({
@@ -56,7 +75,7 @@ export const inboxSlice = createSlice({
       const { senderId, receiverId, text, conversationId } = action.payload;
       const v4Id = v4();
 
-      state.messages.push({
+      state.messages.unshift({
         _id: v4Id,
         text,
         createdAt: (new Date()).toISOString(),
@@ -79,6 +98,7 @@ export const inboxSlice = createSlice({
       const chatBoxList = state.chatBoxList;
       const idx = chatBoxList.findIndex(item => item.id === conversation.id);
 
+
       if (idx >= 0) {
         chatBoxList[idx].message = message;
         swapItemArray(chatBoxList, idx, 0);
@@ -86,8 +106,12 @@ export const inboxSlice = createSlice({
         chatBoxList.unshift({ ...conversation, ...person, message });
       }
 
+      chatBoxList[0].is_seen = false;
+      state.numberOfUnRead++;
+
       if (!state.messages.length) return;
-      state.messages.push({
+
+      state.messages.unshift({
         _id: message.id,
         text: message.text,
         createdAt: message.createdAt,
@@ -113,6 +137,16 @@ export const inboxSlice = createSlice({
         chatBoxList.unshift({ ...conversation, ...person, message });
       }
 
+      chatBoxList[0].is_seen = true;
+
+    },
+    readMessage: (state, action) => {
+      const { chatBoxId } = action.payload;
+      const chatBox = state.chatBoxList.find(item => item.id === chatBoxId);
+      if (chatBox && !chatBox.is_seen) {
+        chatBox.is_seen = true;
+        state.numberOfUnRead--;
+      }
     }
 
   },
@@ -128,12 +162,18 @@ export const inboxSlice = createSlice({
     },
     [setChatBox.rejected]: (state, action) => {
       console.log(action.payload);
+
+    },
+    [getNumberOfUnRead.fulfilled]: (state, action) => {
+      state.numberOfUnRead = action.payload;
+    },
+    [getNumberOfUnRead.rejected]: (state, action) => {
+      console.log(action.payload);
     },
     [getMessages.pending]: (state, action) => {
       state.msgLoading = true;
     },
     [getMessages.fulfilled]: (state, action) => {
-      const chatBox = state.chatBox;
       state.messages = action.payload.map(msg => ({
         _id: msg.id,
         text: msg.text,
@@ -152,5 +192,7 @@ export const inboxSlice = createSlice({
   },
 });
 
-export const { sendMessage, receiveMessage, sentMessage } = inboxSlice.actions;
+export const {
+  sendMessage, receiveMessage,
+  sentMessage, readMessage } = inboxSlice.actions;
 export default inboxSlice.reducer;
