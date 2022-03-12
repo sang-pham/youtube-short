@@ -27,11 +27,15 @@ export default function VideoPost({post, currentShowId}) {
   const [loading, setLoading] = useState(true);
   const [paused, setPaused] = useState(false);
   const [commentLoaded, setLoadComment] = useState(false);
+  const [reactionLoaded, setLoadReaction] = useState(false);
+  const [liked, setLiked] = useState(false);
+  const [reload, setReload] = useState(v4());
   const [newCommentText, setNewCommentText] = useState('');
   const [trigger, setTrigger] = useState(v4());
   const userReducer = useSelector(state => state.user);
 
   const commentsRef = useRef(null);
+  const reactionsRef = useRef(null);
 
   const togglePause = () => {
     setPaused(!paused);
@@ -62,8 +66,44 @@ export default function VideoPost({post, currentShowId}) {
           handleNewComment(_comment, comment);
         }
         commentsRef.current = _comments;
+        setReload(v4());
       }
     });
+
+    socketClient.on('new-unreaction-post', ({user_id, video_post_id}) => {
+      if (video_post_id == post.id) {
+        let idx = reactionsRef.current.findIndex(
+          reaction => reaction.user.id == user_id,
+        );
+        if (idx >= 0) {
+          reactionsRef.current.splice(idx, 1);
+        }
+      }
+    });
+
+    socketClient.on('new-reaction-post', reaction => {
+      if (reaction.video_post_id == post.id) {
+        reactionsRef.current.push(reaction);
+        setReload(v4());
+      }
+    });
+
+    (async () => {
+      try {
+        let res = await axiosAuth.get(`video-post/${post.id}/reactions`);
+        if (res.status == 200) {
+          reactionsRef.current = res.data.reactions;
+          setLiked(
+            !!res.data.reactions.find(
+              reaction => reaction.user.id == userReducer.user.id,
+            ),
+          );
+        }
+        setLoadReaction(true);
+      } catch (error) {
+        console.log(error);
+      }
+    })();
   }, []);
 
   useEffect(() => {
@@ -73,7 +113,6 @@ export default function VideoPost({post, currentShowId}) {
   const handleOpenComment = async () => {
     refRBSheet.current.open();
     if (!commentLoaded) {
-      console.log(`load comment for video post id ${post.id}`);
       try {
         let res = await axiosAuth.get(`video-post/${post.id}/comments`);
         let _comments = res.data.comments;
@@ -94,6 +133,29 @@ export default function VideoPost({post, currentShowId}) {
         user_id: userReducer.user.id,
       });
       setNewCommentText('');
+    }
+  };
+
+  const toggleReaction = () => {
+    if (liked) {
+      let idx = reactionsRef.current.findIndex(
+        reaction => reaction.user.id == userReducer.user.id,
+      );
+      if (idx >= 0) {
+        reactionsRef.current.splice(idx, 1);
+      }
+      socketClient.emit('unreaction-video-post', {
+        user_id: userReducer.user.id,
+        video_post_id: post.id,
+      });
+      setLiked(false);
+    } else {
+      socketClient.emit('reaction-video-post', {
+        user_id: userReducer.user.id,
+        type: 'like',
+        video_post_id: post.id,
+      });
+      setLiked(true);
     }
   };
 
@@ -143,14 +205,37 @@ export default function VideoPost({post, currentShowId}) {
               uri: `${baseURL}/user/${post.user_id}/avatar`,
             }}
           />
-          <AntDesign
-            name="heart"
-            size={40}
-            color="red"
-            style={{
-              marginTop: 20,
-            }}
-          />
+          {reactionLoaded && (
+            <>
+              <TouchableWithoutFeedback onPress={toggleReaction}>
+                {liked ? (
+                  <AntDesign
+                    name="heart"
+                    size={40}
+                    color="red"
+                    style={{
+                      marginTop: 20,
+                    }}
+                  />
+                ) : (
+                  <AntDesign
+                    name="hearto"
+                    size={40}
+                    color="white"
+                    style={{
+                      marginTop: 20,
+                    }}
+                  />
+                )}
+              </TouchableWithoutFeedback>
+              <Text
+                style={{
+                  color: '#fff',
+                }}>
+                {reactionsRef.current.length}
+              </Text>
+            </>
+          )}
           <TouchableWithoutFeedback onPress={handleOpenComment}>
             <Ionicons
               name="ios-chatbubble-ellipses-outline"

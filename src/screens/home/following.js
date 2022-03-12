@@ -1,16 +1,29 @@
-import React, {useState, useRef, useEffect} from 'react';
+import React, {useState, useRef, useEffect, useMemo, useCallback} from 'react';
 import {Text, View, FlatList, Dimensions, VirtualizedList} from 'react-native';
 import VideoPost from '../../components/VideoPost';
+import Loading from '../../components/Loading';
 import {axiosAuth, baseURL, socketClient} from '../../libs';
 
 const HomeFollowing = () => {
   const [videoPosts, setVideoPosts] = useState([]);
   const currentShowId = useRef(null);
+  const PER_PAGE = useMemo(() => {
+    return 10;
+  }, []);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [isLoading, setLoading] = useState(false);
+
+  const renderItem = useCallback(
+    ({item}) => <VideoPost post={item} currentShowId={currentShowId.current} />,
+    [],
+  );
 
   useEffect(() => {
     (async () => {
       try {
-        let res = await axiosAuth.get('video-post/following');
+        let res = await axiosAuth.get(
+          `video-post/following?per_page=${PER_PAGE}&page=${currentPage}`,
+        );
         if (res.status === 200) {
           let _videoPosts = res.data.videoPosts;
           if (_videoPosts && _videoPosts.length) {
@@ -39,19 +52,36 @@ const HomeFollowing = () => {
     viewAreaCoveragePercentThreshold: 100,
   });
 
+  const loadMore = async ({distanceFromEnd}) => {
+    setLoading(true);
+    let res = await axiosAuth.get(
+      `video-post/following?per_page=${PER_PAGE}&page=${currentPage + 1}`,
+    );
+    if (res.status == 200) {
+      setVideoPosts([...videoPosts, ...res.data.videoPosts]);
+      setCurrentPage(currentPage + 1);
+    }
+    setLoading(false);
+  };
+
   return (
     <View>
       <FlatList
         data={videoPosts}
         onViewableItemsChanged={onVideoScrollRef.current}
         viewabilityConfig={viewConfigRef.current}
-        renderItem={({item}) => (
-          <VideoPost post={item} currentShowId={currentShowId.current} />
-        )}
+        renderItem={renderItem}
+        keyExtractor={item => item.id}
         showsVerticalScrollIndicator={false}
         snapToInterval={Dimensions.get('window').height}
         snapToAlignment="start"
         decelerationRate={'fast'}
+        onEndReachedThreshold={0.5}
+        onEndReached={loadMore}
+        maxToRenderPerBatch={3}
+        windowSize={5}
+        removeClippedSubviews={true}
+        ListFooterComponent={() => isLoading && <Loading />}
       />
     </View>
   );
