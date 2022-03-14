@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { axiosAuth, socketClient, swapItemArray } from '../../libs';
+import { axiosAuth, NUMBER_OF_ROW, socketClient, swapItemArray } from '../../libs';
 import { getAvatarUrl } from '../../libs';
 import { v4 } from 'uuid';
 
@@ -27,8 +27,6 @@ export const getMessages = createAsyncThunk('inbox/getMessages',
 export const setChatBox = createAsyncThunk('inbox/setChatBox',
   async ({ chatBoxId, personId, userId }, { rejectWithValue }) => {
     try {
-
-
       const res = await axiosAuth.get('/conversation/info', {
         params: {
           userId,
@@ -36,8 +34,6 @@ export const setChatBox = createAsyncThunk('inbox/setChatBox',
           conversationId: chatBoxId
         }
       });
-
-
 
       return res.data;
     } catch (error) {
@@ -58,6 +54,17 @@ export const getNumberOfUnRead = createAsyncThunk('inbox/getNumberOfUnRead',
   }
 )
 
+const parseMessages = (messages) => {
+  return messages.map(msg => ({
+    _id: msg.id,
+    text: msg.text,
+    createdAt: msg.createdAt,
+    user: {
+      _id: msg.user_id,
+      avatar: getAvatarUrl(msg.user_id),
+    },
+  }));
+}
 
 const initialState = {
   messages: [],
@@ -74,15 +81,14 @@ export const inboxSlice = createSlice({
     sendMessage: (state, action) => {
       const { senderId, receiverId, text, conversationId } = action.payload;
       const v4Id = v4();
-
-      state.messages.unshift({
-        _id: v4Id,
+      const message = {
+        id: v4Id,
         text,
         createdAt: (new Date()).toISOString(),
-        user: {
-          _id: senderId,
-        }
-      })
+        user_id: senderId
+      }
+
+      state.messages.unshift(...parseMessages([message]));
 
       socketClient.emit('send-message', {
         text,
@@ -111,15 +117,7 @@ export const inboxSlice = createSlice({
 
       if (!state.messages.length) return;
 
-      state.messages.unshift({
-        _id: message.id,
-        text: message.text,
-        createdAt: message.createdAt,
-        user: {
-          _id: person.person_id,
-          avatar: getAvatarUrl(person.person_id),
-        }
-      })
+      state.messages.unshift(...parseMessages([message]));
     },
     sentMessage: (state, action) => {
       const { message, person, conversation, v4Id } = action.payload;
@@ -148,9 +146,18 @@ export const inboxSlice = createSlice({
         state.numberOfUnRead--;
       }
     },
-    addMessage: (state, action) => {
-      const {messages} = action.payload;
-      state.messages.push(...messages);
+    addMessages: (state, action) => {
+      const { messages } = action.payload;
+      const last_cur_id = state.messages[state.messages.length - 1]?._id || 0;
+      const last_fetch_id = messages[messages.length - 1]?.id;
+
+      if (last_cur_id === last_fetch_id) return;
+
+      state.messages.push(...parseMessages(messages));
+    },
+    clearChatBox: (state, action) => {
+      state.chatBox = null;
+      state.messages = [];
     }
 
   },
@@ -160,6 +167,10 @@ export const inboxSlice = createSlice({
     },
     [getAllChatBox.rejected]: (state, action) => {
       console.log(action.payload);
+    },
+    [setChatBox.pending]: (state, action) => {
+      state.messages = [];
+      state.chatBox = null;
     },
     [setChatBox.fulfilled]: (state, action) => {
       state.chatBox = action.payload;
@@ -178,15 +189,8 @@ export const inboxSlice = createSlice({
       state.msgLoading = true;
     },
     [getMessages.fulfilled]: (state, action) => {
-      state.messages = action.payload.map(msg => ({
-        _id: msg.id,
-        text: msg.text,
-        createdAt: msg.createdAt,
-        user: {
-          _id: msg.user_id,
-          avatar: getAvatarUrl(msg.user_id),
-        },
-      }));
+      state.messages = parseMessages(action.payload);
+
       state.msgLoading = false;
     },
     [getMessages.rejected]: (state, action) => {
@@ -197,6 +201,6 @@ export const inboxSlice = createSlice({
 });
 
 export const {
-  sendMessage, receiveMessage,
-  sentMessage, readMessage } = inboxSlice.actions;
+  sendMessage, receiveMessage, clearChatBox,
+  sentMessage, readMessage, addMessages } = inboxSlice.actions;
 export default inboxSlice.reducer;

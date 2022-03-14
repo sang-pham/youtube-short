@@ -3,33 +3,31 @@ import { Actions, GiftedChat, InputToolbar, LoadEarlier } from '../../../compone
 import {
   Avatar, Box, VStack, Spacer, HStack, Text,
   Input, Icon, Divider, Flex, ScrollView, KeyboardAvoidingView,
-  Center, Heading, Button, View
+  Center, Heading, Button, View, Spinner
 } from 'native-base';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { useDispatch, useSelector } from 'react-redux';
-import { sendMessage, getMessages } from '../../../redux/reducers';
+import { sendMessage, getMessages, addMessages, clearMessages } from '../../../redux/reducers';
 import ChatBoxLoading from './ChatBoxLoading';
 import { useVirtualListApi } from '../../../libs';
+import { useFocusEffect } from '@react-navigation/native';
 
 const OPTIONS_MESSAGE = ['Copy', 'Reply', 'Cancel', 'Delete']
 
-export default function GiftedChatCustom({chatBox}) {
+export default function GiftedChatCustom({ chatBox }) {
   const dispatch = useDispatch();
-  
+
   const userInfo = useSelector(state => state.user.user);
   const messages = useSelector(state => state.inbox.messages);
   const msgLoading = useSelector(state => state.inbox.msgLoading);
-  
+
   const [textInput, setTextInput] = useState('');
-  const {data, fetchData, loading} = useVirtualListApi(`/conversation/${chatBox.id}/message`);
-
-  useEffect(() => {
-    // dispatch(getMessages({ chatBoxId: chatBox.id }));
-
-    dispatch(addMessages({messages: data}))
-  }, [chatBox])
-
+  const { pageData, fetchData, loading, max } = useVirtualListApi(`/conversation/${chatBox.id}/messages`,
+    (data) => {
+      dispatch(addMessages({ messages: data }));
+    }
+  );
 
   const handleSendMessage = () => {
     if (!textInput) {
@@ -49,15 +47,9 @@ export default function GiftedChatCustom({chatBox}) {
   }
 
   const loadEarlier = async () => {
-    console.log('loading');
     await fetchData();
-    dispatch(addMessages({messages: data}))
   }
 
-
-  if (msgLoading) {
-    return <ChatBoxLoading />
-  }
 
   return (
     <>
@@ -81,57 +73,30 @@ export default function GiftedChatCustom({chatBox}) {
           )
         }}
         onPressActionButton={() => { console.log('asfasf') }}
-        renderActions={(props) => <Actions {...props} />}
-        renderComposer={(props) => <Composer onChangeText={onChangeText}/>}
-        renderSend={() => <SendButton handleSendMessage={handleSendMessage} />}
-        infiniteScroll={true}
-        loadEarlier={true}
+        // renderActions={(props) => <ActionButton {...props} />}
+        renderComposer={(props) => <ComposerInput onChangeText={onChangeText} textInput={textInput} />}
+        renderSend={() => <SendButton handleSendMessage={handleSendMessage} textInput={textInput} />}
+        infiniteScroll={!max}
+        loadEarlier={!max}
         onLoadEarlier={loadEarlier}
-        renderLoadEarlier={(props) => <LoadEarlier label='Show more' {...props} />}
-      // renderInputToolbar={() => null}
+        renderLoadEarlier={(props) => {
+          if (loading) {
+            return <Spinner size='sm' color={'#000'} />
+          }
+
+          return <LoadEarlier label='Show more' {...props} />
+        }}
       />
-
-      {/* <InputChat textInput={textInput}
-        onChangeText={onChangeText}
-        handleSendMessage={handleSendMessage} /> */}
-
     </>
   )
 }
 
-// function InputChat({ textInput, onChangeText, handleSendMessage }) {
-//   return (
-//     <Box borderTopWidth="1" borderColor="coolGray.200" mt={-5} p={3} zIndex={-1}>
-//       <HStack alignItems='center' justifyContent={'center'}>
-//         <Input placeholder="Send a message..." variant="filled"
-//           multiline={true}
-//           borderRadius={5} p={2} fontSize={16} borderWidth={0} mt={2} w='85%'
-//           value={textInput} onChangeText={onChangeText}
-//           InputRightElement={<Icon as={
-//             <MaterialIcons
-//               style={{ padding: 5 }}
-//               name="insert-emoticon"
-//               size={24}
-//               color="#000"
-//             />} />} />
 
-//         <FontAwesome
-//           style={{ marginLeft: 15, marginTop: 10 }}
-//           name="send"
-//           size={24}
-//           onPress={handleSendMessage}
-//           color={textInput ? 'red' : "grey"}
-//         />
-//       </HStack>
-//     </Box>
-//   )
-// }
-
-const SendButton = ({handleSendMessage}) => {
+const SendButton = ({ handleSendMessage, textInput }) => {
 
   return (
     <FontAwesome
-      style={{ marginLeft: 15 }}
+      style={{ margin: 13 }}
       name="send"
       size={24}
       onPress={handleSendMessage}
@@ -140,19 +105,30 @@ const SendButton = ({handleSendMessage}) => {
   )
 }
 
-const Composer = ({onChangeText}) => {
+const ComposerInput = ({ onChangeText, textInput }) => {
   return (
-  <Input placeholder="Send a message..." variant="filled"
-    multiline={true}
-    borderRadius={5} p={2} fontSize={16} borderWidth={0} mt={2} w='75%'
-    value={textInput} onChangeText={onChangeText}
-    InputRightElement={<Icon as={
-      <MaterialIcons
-        style={{ padding: 5 }}
-        name="insert-emoticon"
-        size={24}
-        color="#000"
-      />} />} />
+    <Input placeholder="Send a message..." variant="filled"
+      multiline={true}
+      borderRadius={5} p={2} fontSize={16} borderWidth={0} mb={1} w='75%'
+      value={textInput}
+      onChangeText={onChangeText}
+      InputRightElement={<Icon as={
+        <MaterialIcons
+          style={{ padding: 5 }}
+          name="insert-emoticon"
+          size={24}
+          color="#000"
+        />} />} />
+  )
+}
+
+const ActionButton = (props) => {
+  return (
+    <FontAwesome
+      style={{ margin: 13 }}
+      name="camera"
+      size={24}
+    />
   )
 }
 

@@ -44,6 +44,7 @@ const MainScreen = () => {
     socketClient.on('error', error => {
       console.log(error, 'error');
     });
+
   }, []);
 
   useEffect(() => {

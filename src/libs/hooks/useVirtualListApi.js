@@ -1,38 +1,59 @@
-import React, {useEffect, useState, useRef} from 'react'
+import React, { useEffect, useState, useRef, useCallback } from 'react'
 import { axiosAuth } from '../utils'
+import { useFocusEffect } from '@react-navigation/native';
+import { NUMBER_OF_ROW } from '../utils';
 
-const NUMBER_ROW = 20;
-
-export function useVirtualListApi(route) {
-  const [pagedata, setPageData] = useState([]);
+export function useVirtualListApi(route, fetchCallback) {
+  const [pageData, setPageData] = useState([]);
   const [currentRow, setCurrentRow] = useState(0);
-  const pendding = useRef(false);
-
-  const fetchData = useCallback(async () => {
-    try {
-      pendding.current = true;
-      const res = await axiosAuth.get(route, {
-        params: {
-          current: currentRow,
-          per_page: NUMBER_ROW
-        }
-      });
-  
-      pendding.current = false;
-      setCurrentPage(res.data.current)
-      setPageData(res.data.data);
-
-    } catch (error) {
-      pendding.current = false;
-      console.log(error);
-    }
-
-  }, [currentRow]) 
+  const [loading, setLoading] = useState(false);
+  const [max, setMax] = useState(false);
 
   useEffect(() => {
-    fetchData();
+    if (!max && !currentRow) {
+      fetchData();
+      console.log('fetch data');
+    }
   }, [])
 
+  const fetchData = useCallback(async () => {
+    const fetch = async () => {
+      try {
+        if (max) return;
 
-  return {pagedata, fetchData, loading: pendding.current}
+        console.log(currentRow)
+
+        const res = await axiosAuth.get(route, {
+          params: {
+            current: currentRow,
+            per_page: NUMBER_OF_ROW
+          }
+        });
+
+        if (res.data.current === res.data.total) {
+          setMax(true);
+        }
+
+        setCurrentRow(res.data.current);
+        setPageData(res.data.messages);
+        fetchCallback && fetchCallback(res.data.messages);
+
+      } catch (error) {
+        console.log(error)
+      } finally {
+        setLoading(false);
+      }
+
+    }
+
+    setLoading(true);
+
+    await fetch();
+
+  }, [currentRow, route])
+
+
+
+
+  return { pageData, fetchData, loading, max }
 }

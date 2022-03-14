@@ -2,7 +2,7 @@ import * as React from 'react';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from '@react-navigation/native';
 
-function BackButton() {
+export function BackButton() {
   const navigation = useNavigation();
 
   return (
