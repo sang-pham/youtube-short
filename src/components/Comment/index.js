@@ -3,7 +3,7 @@ import {useSelector} from 'react-redux';
 import {StyleSheet} from 'react-native';
 import {Text, Avatar, View, Input} from 'native-base';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {baseURL, shortTimeDiff} from '../../libs';
+import {baseURL, shortTimeDiff, socketClient} from '../../libs';
 
 export default function Comment({comment}) {
   const userReducer = useSelector(state => state.user);
@@ -23,6 +23,21 @@ export default function Comment({comment}) {
 
   const toggleCollapsed = () => {
     setCollapsed(!collapsed);
+  };
+
+  const handleSend = () => {
+    if (text) {
+      console.log('call');
+      socketClient.emit('post-comment', {
+        text,
+        video_post_id: comment.video_post_id,
+        parent_id: comment.id,
+        user_id: userReducer.user.id,
+      });
+      setText('');
+      setCollapsed(true);
+      setOpenReply(false);
+    }
   };
 
   return (
@@ -95,7 +110,12 @@ export default function Comment({comment}) {
                 onChangeText={value => setText(value)}
               />
               <MaterialCommunityIcons name="file" size={20} color="#ccc" />
-              <MaterialCommunityIcons name="send" size={20} color="#198ae6" />
+              <MaterialCommunityIcons
+                name="send"
+                size={20}
+                color="#198ae6"
+                onPress={handleSend}
+              />
             </View>
           )}
           {comment.comments != null && comment.comments.length > 0 && (
