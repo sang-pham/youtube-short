@@ -19,10 +19,12 @@ import RBSheet from 'react-native-raw-bottom-sheet';
 import Comment from '../Comment';
 import {timeDiff} from '../../libs';
 import {ScrollView} from 'react-native-gesture-handler';
+import UserFeed from '../UserFeed';
 
 export default function VideoPost({post, currentShowId}) {
   //bottom sheet
   const refRBSheet = useRef();
+  const reactionListSheet = useRef();
 
   const [loading, setLoading] = useState(true);
   const [paused, setPaused] = useState(false);
@@ -124,6 +126,10 @@ export default function VideoPost({post, currentShowId}) {
     }
   };
 
+  const handleOpenReactions = () => {
+    reactionListSheet.current.open();
+  };
+
   const handleSend = () => {
     if (newCommentText) {
       socketClient.emit('post-comment', {
@@ -159,9 +165,10 @@ export default function VideoPost({post, currentShowId}) {
     }
   };
 
-  const onOpenComment = () => {};
-
-  const onCloseComment = () => {};
+  const onRenderReaction = useCallback(
+    ({item}) => <UserFeed user={item} />,
+    [],
+  );
 
   return (
     <TouchableWithoutFeedback onPress={togglePause}>
@@ -231,7 +238,8 @@ export default function VideoPost({post, currentShowId}) {
               <Text
                 style={{
                   color: '#fff',
-                }}>
+                }}
+                onPress={handleOpenReactions}>
                 {reactionsRef.current.length}
               </Text>
             </>
@@ -261,8 +269,6 @@ export default function VideoPost({post, currentShowId}) {
           height={600}
           closeOnDragDown={true}
           closeOnPressMask={true}
-          onOpen={onOpenComment}
-          onClose={onCloseComment}
           customStyles={{
             wrapper: {
               backgroundColor: 'transparent',
@@ -317,6 +323,34 @@ export default function VideoPost({post, currentShowId}) {
               <MaterialCommunityIcons name="send" size={20} color="#198ae6" />
             </TouchableWithoutFeedback>
           </View>
+        </RBSheet>
+        {/* <ReactionList
+          ref={reactionListSheet}
+          reactionList={reactionsRef.current}
+        /> */}
+        <RBSheet
+          ref={reactionListSheet}
+          height={600}
+          closeOnDragDown={true}
+          closeOnPressMask={true}
+          customStyles={{
+            wrapper: {
+              backgroundColor: 'transparent',
+            },
+            draggableIcon: {
+              backgroundColor: '#000',
+            },
+            container: {
+              position: 'relative',
+            },
+          }}>
+          {reactionsRef.current && (
+            <FlatList
+              data={reactionsRef.current.map(reaction => reaction.user)}
+              renderItem={onRenderReaction}
+              keyExtractor={item => item.id}
+            />
+          )}
         </RBSheet>
         {/* )} */}
       </View>
