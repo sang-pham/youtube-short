@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { Container } from '../../../styles';
 import {
   Box, HStack, Text,
 } from 'native-base';
@@ -10,7 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { clearChatBox, readMessage, setChatBox } from '../../../redux/reducers';
 import ChatBoxLoading from './ChatBoxLoading';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { BackButton, HeaderCustom } from '../../../components'
+import { BackButton, HeaderCustom, Container } from '../../../components'
 
 const ChatBox = ({ route }) => {
   const personId = route.params.personId;
@@ -32,13 +31,13 @@ const ChatBox = ({ route }) => {
   })
 
   if (!chatBox) {
-    // return <ChatBoxLoading />
     return null;
   }
 
   return (
     <Container>
-      <HeaderCustom title={chatBox.full_name} />
+      <HeaderCustom title={chatBox.full_name}
+        leftElement={<BackButton />} />
       <GiftedChatCustom chatBox={chatBox} />
     </Container>
   )

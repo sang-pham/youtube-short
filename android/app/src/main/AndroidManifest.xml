@@ -1,9 +1,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
   package="com.youtubeshort">
 
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
     <uses-permission android:name="android.permission.INTERNET" />
 
     <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
+
 
     <application
       android:name=".MainApplication"
@@ -14,6 +19,7 @@
       android:theme="@style/AppTheme">
       <activity
         android:name=".MainActivity"
+        android:exported="true"
         android:label="@string/app_name"
         android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"
         android:launchMode="singleTask"

@@ -1,46 +1,24 @@
 import React from 'react'
 import { Center, Box, Text } from 'native-base'
 import { BackButton } from '../button'
+import { StyleSheet } from 'react-native'
 
 export function HeaderCustom({ title, leftElement = null, rightElement = null, bottomElement = null }) {
-  const RenderRightElement = () => {
-    if (rightElement) {
-      return <RightElement rightElement={rightElement} />
-    }
-
-    return <RightElement />;
-  }
-
-  const RenderLeftElement = () => {
-    if (leftElement) {
-
-      return <LeftElement leftElement={leftElement} />;
-    }
-
-    return <LeftElement />;
-  }
-
-  const RenderTitle = () => {
-    return <TitleElement title={title} />
-  }
-
-  const RenderBottomElement = () => {
-    return bottomElement;
-  }
 
   return (
     <Box borderBottomWidth="1"
       borderColor="coolGray.200" py={4} px={3} mb={2}>
       <Box>
 
-        <RenderLeftElement />
+        <LeftElement leftElement={leftElement} />
 
-        <RenderTitle />
+        <TitleElement title={title} />
 
-        <RenderRightElement />
+        <RightElement rightElement={rightElement} />
 
       </Box>
-      <RenderBottomElement />
+
+      {bottomElement}
     </Box>
   )
 }
@@ -56,10 +34,7 @@ const TitleElement = ({ title }) => (
 )
 
 const RightElement = ({ rightElement }) => (
-  <Box style={{
-    position: 'absolute',
-    top: 18, right: 10
-  }}>
+  <Box style={[styles.posElement, { right: 10 }]}>
     {rightElement}
   </Box>
 )
@@ -67,8 +42,14 @@ const RightElement = ({ rightElement }) => (
 
 const LeftElement = ({ leftElement }) => (
   <Box
-    style={{ position: 'absolute', top: 18, left: 10 }}>
+    style={[styles.posElement, { left: 10 }]}>
     {leftElement}
-    {!leftElement && <BackButton />}
   </Box>
 )
+
+const styles = StyleSheet.create({
+  posElement: {
+    position: 'absolute',
+    top: 5,
+  }
+})

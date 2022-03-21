@@ -11,12 +11,14 @@ import { useNavigation } from '@react-navigation/native';
 import { RecordButton } from '../button';
 import { socketClient } from '../../libs';
 import { receiveMessage, sentMessage } from '../../redux/reducers';
+import { Badge } from '../Atoms';
 
 const Tab = createBottomTabNavigator();
 
 const MainScreen = () => {
   const [home, setHome] = useState(true);
   const userReducer = useSelector(state => state.user);
+  const numberOfUnRead = useSelector(state => state.inbox.numberOfUnRead);
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
@@ -121,11 +123,13 @@ const MainScreen = () => {
         options={{
           tabBarLabel: 'Inbox',
           tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons
-              name="message-text-outline"
-              size={24}
-              color={color}
-            />
+            <Badge title={numberOfUnRead} >
+              <MaterialCommunityIcons
+                name="message-text-outline"
+                size={24}
+                color={color}
+              />
+            </Badge>
           ),
         }}
       />

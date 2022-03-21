@@ -4,7 +4,7 @@ import { StyleSheet, View, Text } from 'react-native';
 
 
 export function Badge({
-  size = 20,
+  size = 16,
   color = 'red',
   direction = 'top-right',
   title,
@@ -44,7 +44,7 @@ export function Badge({
           positionStyle(),
           style,
         ]}>
-        <Text style={[styles.text]}>{title}</Text>
+        <Text style={[styles.text, { fontSize: size / 1.2 }]}>{title}</Text>
       </View>
     )
 

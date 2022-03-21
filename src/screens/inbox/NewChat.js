@@ -1,5 +1,4 @@
 import React, { useCallback, useState } from 'react';
-import { Container } from '../../styles';
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { axiosAuth, getAvatarUrl, useSearch } from '../../libs';
@@ -9,6 +8,7 @@ import {
 } from 'native-base';
 import { useSelector } from 'react-redux';
 import { TouchableOpacity, Keyboard, TouchableWithoutFeedback, Pressable } from 'react-native';
+import { HeaderCustom, Container } from '../../components';
 
 const NewChatScreen = ({ navigation }) => {
 
@@ -20,21 +20,12 @@ const NewChatScreen = ({ navigation }) => {
 
   return (
     <Container>
-      <Box borderBottomWidth="1"
-        borderColor="coolGray.200" py={4} px={3} mb={2}>
-        <Text onPress={navigation.goBack}
-          style={{ position: 'absolute', top: 18, left: 10 }}>
-          Close
-        </Text>
-        <Center>
-          <Text _dark={{ color: "warmGray.50" }}
-            fontSize='xl'
-            color="coolGray.800" bold>
-            New Chat
-          </Text>
-        </Center>
 
-        <Input placeholder="Search" variant="filled"
+      <HeaderCustom title='New Chat'
+        leftElement={<Text onPress={navigation.goBack} >
+          Close
+        </Text>}
+        bottomElement={<Input placeholder="Search" variant="filled"
           borderRadius="5" py="2" borderWidth="0" mt="5"
           onChangeText={onSearch}
           InputLeftElement={
@@ -49,9 +40,8 @@ const NewChatScreen = ({ navigation }) => {
               <Spinner size="sm" color='#000' mr="2" />
             )
           }
-        />
-
-      </Box>
+        />}
+      />
 
       <Box>
         <FlatList data={searchData}

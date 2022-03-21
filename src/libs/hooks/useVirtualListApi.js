@@ -7,10 +7,10 @@ export function useVirtualListApi(route, fetchCallback) {
   const [pageData, setPageData] = useState([]);
   const [currentRow, setCurrentRow] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [max, setMax] = useState(false);
+  const [isMax, setIsMax] = useState(false);
 
   useEffect(() => {
-    if (!max && !currentRow) {
+    if (!isMax && !currentRow) {
       fetchData();
       console.log('fetch data');
     }
@@ -19,9 +19,7 @@ export function useVirtualListApi(route, fetchCallback) {
   const fetchData = useCallback(async () => {
     const fetch = async () => {
       try {
-        if (max) return;
-
-        console.log(currentRow)
+        if (isMax) return;
 
         const res = await axiosAuth.get(route, {
           params: {
@@ -31,7 +29,7 @@ export function useVirtualListApi(route, fetchCallback) {
         });
 
         if (res.data.current === res.data.total) {
-          setMax(true);
+          setIsMax(true);
         }
 
         setCurrentRow(res.data.current);
@@ -55,5 +53,5 @@ export function useVirtualListApi(route, fetchCallback) {
 
 
 
-  return { pageData, fetchData, loading, max }
+  return { pageData, fetchData, loading, isMax }
 }

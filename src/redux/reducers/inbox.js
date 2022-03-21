@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { axiosAuth, NUMBER_OF_ROW, socketClient, swapItemArray } from '../../libs';
+import { axiosAuth, NUMBER_OF_ROW, parseImageToBlob, socketClient, swapItemArray } from '../../libs';
 import { getAvatarUrl } from '../../libs';
 import { v4 } from 'uuid';
 
@@ -54,6 +54,54 @@ export const getNumberOfUnRead = createAsyncThunk('inbox/getNumberOfUnRead',
   }
 )
 
+export const sendMessage = createAsyncThunk('inbox/sendMessage',
+  async ({ senderId, receiverId, text, conversationId, image }) => {
+    const v4Id = v4();
+    let img = null;
+
+    if (image) {
+      img = {
+        size: image.size,
+        mime: image.mime,
+        path: image.path,
+        data: await parseImageToBlob(image.path),
+      }
+    }
+
+    socketClient.emit('send-message', {
+      text,
+      image: img,
+      conversationId,
+      senderId,
+      receiverId,
+      v4Id
+    });
+
+    return {
+      id: v4Id,
+      text,
+      createdAt: (new Date()).toISOString(),
+      user_id: senderId,
+      media: img ? [{
+        id: v4Id,
+        url: img.path
+      }] : undefined
+    }
+  }
+)
+
+export const deleteMessage = createAsyncThunk('inbox/deleteMessage',
+  async ({ messageId }) => {
+    try {
+      const res = await axiosAuth.delete('/conversation/message/' + messageId);
+
+      return res.data;
+    } catch (error) {
+      rejectWithValue(error);
+    }
+  }
+)
+
 const parseMessages = (messages) => {
   return messages.map(msg => ({
     _id: msg.id,
@@ -63,6 +111,7 @@ const parseMessages = (messages) => {
       _id: msg.user_id,
       avatar: getAvatarUrl(msg.user_id),
     },
+    image: msg.media && msg.media[0]?.url
   }));
 }
 
@@ -78,27 +127,7 @@ export const inboxSlice = createSlice({
   name: 'Inbox',
   initialState,
   reducers: {
-    sendMessage: (state, action) => {
-      const { senderId, receiverId, text, conversationId } = action.payload;
-      const v4Id = v4();
-      const message = {
-        id: v4Id,
-        text,
-        createdAt: (new Date()).toISOString(),
-        user_id: senderId
-      }
 
-      state.messages.unshift(...parseMessages([message]));
-
-      socketClient.emit('send-message', {
-        text,
-        conversationId,
-        senderId,
-        receiverId,
-        v4Id
-      });
-
-    },
     receiveMessage: (state, action) => {
       const { conversation, message, person } = action.payload;
       const chatBoxList = state.chatBoxList;
@@ -121,7 +150,7 @@ export const inboxSlice = createSlice({
     },
     sentMessage: (state, action) => {
       const { message, person, conversation, v4Id } = action.payload;
-      const msg = state.messages.find(msg => msg.createdAt === v4Id);
+      const msg = state.messages.find(msg => msg._id === v4Id);
 
       if (msg) msg._id = message.id;
 
@@ -196,11 +225,23 @@ export const inboxSlice = createSlice({
     [getMessages.rejected]: (state, action) => {
       console.log(action.payload);
       state.msgLoading = false;
-    }
+    },
+    [sendMessage.fulfilled]: (state, action) => {
+      const message = action.payload;
+      console.log(message);
+      state.messages.unshift(...parseMessages([message]));
+    },
+    [deleteMessage.fulfilled]: (state, action) => {
+      const { messageId } = action.payload;
+    },
+    [deleteMessage.rejected]: (state, action) => {
+      console.log(action)
+    },
+
   },
 });
 
 export const {
-  sendMessage, receiveMessage, clearChatBox,
+  receiveMessage, clearChatBox,
   sentMessage, readMessage, addMessages } = inboxSlice.actions;
 export default inboxSlice.reducer;
