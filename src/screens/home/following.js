@@ -59,6 +59,7 @@ const HomeFollowing = () => {
   });
 
   const loadMore = async ({distanceFromEnd}) => {
+    console.log(distanceFromEnd);
     setLoading(true);
     let res = await axiosAuth.get(
       `video-post/following?per_page=${PER_PAGE}&page=${currentPage + 1}`,
@@ -90,7 +91,7 @@ const HomeFollowing = () => {
             renderItem={renderItem}
             keyExtractor={item => item.id}
             showsVerticalScrollIndicator={false}
-            snapToInterval={Dimensions.get('window').height}
+            snapToInterval={Dimensions.get('window').height - 30}
             snapToAlignment="start"
             decelerationRate={'fast'}
             onEndReachedThreshold={0.5}

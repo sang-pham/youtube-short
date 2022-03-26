@@ -33,7 +33,6 @@ export default function VideoPost({post, currentShowId}) {
   const [liked, setLiked] = useState(false);
   const [reload, setReload] = useState(v4());
   const [newCommentText, setNewCommentText] = useState('');
-  const [trigger, setTrigger] = useState(v4());
   const userReducer = useSelector(state => state.user);
 
   const commentsRef = useRef(null);
@@ -102,6 +101,10 @@ export default function VideoPost({post, currentShowId}) {
           );
         }
         setLoadReaction(true);
+        res = await axiosAuth.get(`video-post/${post.id}/comments`);
+        let _comments = res.data.comments;
+        commentsRef.current = _comments;
+        setLoadComment(true);
       } catch (error) {
         console.log(error);
       }
@@ -114,16 +117,6 @@ export default function VideoPost({post, currentShowId}) {
 
   const handleOpenComment = async () => {
     refRBSheet.current.open();
-    if (!commentLoaded) {
-      try {
-        let res = await axiosAuth.get(`video-post/${post.id}/comments`);
-        let _comments = res.data.comments;
-        commentsRef.current = _comments;
-        setLoadComment(true);
-      } catch (error) {
-        console.log(error);
-      }
-    }
   };
 
   const handleOpenReactions = () => {
@@ -175,7 +168,7 @@ export default function VideoPost({post, currentShowId}) {
       <View
         style={{
           width: '100%',
-          height: Dimensions.get('window').height,
+          height: Dimensions.get('window').height - 30,
           justifyContent: 'center',
         }}>
         {/* {loading ? (
@@ -244,16 +237,26 @@ export default function VideoPost({post, currentShowId}) {
               </Text>
             </>
           )}
-          <TouchableWithoutFeedback onPress={handleOpenComment}>
-            <Ionicons
-              name="ios-chatbubble-ellipses-outline"
-              size={40}
-              color="#FFF"
-              style={{
-                marginTop: 20,
-              }}
-            />
-          </TouchableWithoutFeedback>
+          {commentLoaded && (
+            <>
+              <TouchableWithoutFeedback onPress={handleOpenComment}>
+                <Ionicons
+                  name="ios-chatbubble-ellipses-outline"
+                  size={40}
+                  color="#FFF"
+                  style={{
+                    marginTop: 20,
+                  }}
+                />
+              </TouchableWithoutFeedback>
+              <Text
+                style={{
+                  color: '#fff',
+                }}>
+                {commentsRef.current.length}
+              </Text>
+            </>
+          )}
           <MaterialCommunityIcons
             name="share"
             size={40}
@@ -310,17 +313,17 @@ export default function VideoPost({post, currentShowId}) {
             <Input
               m={1}
               py={1}
-              w={300}
+              w={Dimensions.get('window').width - 120}
               placeholder="Write your comment"
               value={newCommentText}
               onChangeText={value => setNewCommentText(value)}
               size="sm"
             />
-            <MaterialCommunityIcons name="file" size={20} color="#ccc" />
+            <MaterialCommunityIcons name="file" size={24} color="#ccc" />
             <TouchableWithoutFeedback
               onPress={handleSend}
               disabled={!newCommentText}>
-              <MaterialCommunityIcons name="send" size={20} color="#198ae6" />
+              <MaterialCommunityIcons name="send" size={24} color="#198ae6" />
             </TouchableWithoutFeedback>
           </View>
         </RBSheet>
