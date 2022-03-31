@@ -8,10 +8,18 @@ import {
 } from 'react-native';
 import {Text, Avatar, View, Input} from 'native-base';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import RBSheet from 'react-native-raw-bottom-sheet';
-import {axiosAuth, baseURL, shortTimeDiff, socketClient} from '../../libs';
+import {
+  axiosAuth,
+  baseURL,
+  shortTimeDiff,
+  socketClient,
+  parseImageToBlob,
+} from '../../libs';
 import ReactionList from '../ReactionList';
+import ImagePicker from 'react-native-image-crop-picker';
 
 export default function Comment({comment, dispatchReply}) {
   const userReducer = useSelector(state => state.user);
@@ -21,6 +29,7 @@ export default function Comment({comment, dispatchReply}) {
   const [collapsed, setCollapsed] = useState(true);
   const [text, setText] = useState('');
   const [reactions, setReactions] = useState([]);
+  const [image, setImage] = useState(null);
 
   useEffect(() => {
     socketClient.on('comment-reaction-change', ({comment_id, reactions}) => {
@@ -40,6 +49,22 @@ export default function Comment({comment, dispatchReply}) {
       }
     })();
   }, []);
+
+  const selectFile = async () => {
+    try {
+      ImagePicker.openPicker({
+        width: 300,
+        height: 400,
+        cropping: true,
+      }).then(image => {
+        console.log(image);
+        setImage(image);
+      });
+    } catch (err) {
+      console.log(err);
+      setImage(null);
+    }
+  };
 
   const isLiked = useMemo(() => {
     if (reactions.length) {
@@ -78,16 +103,26 @@ export default function Comment({comment, dispatchReply}) {
     // setCollapsed(true);
   };
 
-  const handleSend = () => {
-    if (text) {
-      console.log('call');
+  const handleSend = async () => {
+    if (text || image) {
+      let img = null;
+      if (image && image.path) {
+        img = {
+          size: image.size,
+          mime: image.mime,
+          path: image.path,
+          data: await parseImageToBlob(image.path),
+        };
+      }
       socketClient.emit('post-comment', {
         text,
         video_post_id: comment.video_post_id,
         parent_id: comment.id,
         user_id: userReducer.user.id,
+        image: img,
       });
       setText('');
+      setImage(null);
       setCollapsed(true);
       setOpenReply(false);
     }
@@ -171,36 +206,75 @@ export default function Comment({comment, dispatchReply}) {
             )}
           </View>
           {openReply && (
-            <View
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'center',
-                width: '80%',
-              }}>
-              <Avatar
-                size="sm"
-                source={{
-                  uri: `${baseURL}/user/${userReducer.user.id}/avatar`,
-                }}
-              />
-              <Input
-                m={1}
-                py={1}
-                w={Dimensions.get('window').width - 150}
-                placeholder="Write your comment"
-                size="sm"
-                value={text}
-                onChangeText={value => setText(value)}
-              />
-              <MaterialCommunityIcons name="file" size={20} color="#ccc" />
-              <MaterialCommunityIcons
-                name="send"
-                size={20}
-                color="#198ae6"
-                onPress={handleSend}
-              />
-            </View>
+            <>
+              <View
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  width: '80%',
+                }}>
+                <Avatar
+                  size="sm"
+                  source={{
+                    uri: `${baseURL}/user/${userReducer.user.id}/avatar`,
+                  }}
+                />
+                <Input
+                  m={1}
+                  py={1}
+                  w={Dimensions.get('window').width - 150}
+                  placeholder="Write your comment"
+                  size="sm"
+                  value={text}
+                  onChangeText={value => setText(value)}
+                />
+                <TouchableWithoutFeedback onPress={selectFile}>
+                  <MaterialCommunityIcons name="file" size={20} color="#ccc" />
+                </TouchableWithoutFeedback>
+                <TouchableWithoutFeedback onPress={handleSend}>
+                  <MaterialCommunityIcons
+                    name="send"
+                    size={20}
+                    color="#198ae6"
+                  />
+                </TouchableWithoutFeedback>
+              </View>
+              {image != '' && image != null && (
+                <View
+                  style={{
+                    paddingTop: 10,
+                    marginLeft: 20,
+                    marginBottom: 10,
+                    position: 'relative',
+                  }}>
+                  <Image
+                    style={{
+                      width: 200,
+                      height: 200,
+                      borderRadius: 10,
+                    }}
+                    source={{
+                      uri: image.path,
+                    }}
+                  />
+                  <TouchableWithoutFeedback
+                    onPress={() => {
+                      setImage(null);
+                    }}>
+                    <FontAwesomeIcon
+                      name="times-circle"
+                      size={24}
+                      style={{
+                        color: '#438bf0',
+                        position: 'absolute',
+                        right: 0,
+                      }}
+                    />
+                  </TouchableWithoutFeedback>
+                </View>
+              )}
+            </>
           )}
           {comment.comments != null && comment.comments.length > 0 && (
             <Text

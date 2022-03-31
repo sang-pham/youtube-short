@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { ScrollView, View, Text, Image } from 'react-native';
-import { Button, Box, Center, Avatar, Pressable, Menu } from 'native-base';
-import { baseURL } from '../../libs/config';
+import React, {useEffect, useState} from 'react';
+import {useSelector, useDispatch} from 'react-redux';
+import {ScrollView, View, Text, Image} from 'react-native';
+import {Button, Box, Center, Avatar, Pressable, Menu} from 'native-base';
+import {baseURL} from '../../libs/config';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import { logout } from '../../redux/reducers/user';
-import { axiosAuth } from '../../libs';
+import {logout} from '../../redux/reducers/user';
+import {axiosAuth} from '../../libs';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import 'react-native-get-random-values';
-import { v4 } from 'uuid';
+import {v4} from 'uuid';
 
-const ProfileScreen = ({ navigation, route }) => {
+const ProfileScreen = ({navigation, route}) => {
   const userReducer = useSelector(state => state.user);
   const [followings, setFollowings] = useState([]);
   const [followers, setFollowers] = useState([]);
@@ -45,6 +45,7 @@ const ProfileScreen = ({ navigation, route }) => {
   }, [route.params.userId]);
 
   const handleEdit = () => {
+    console.log('fdfadfs');
     navigation.navigate('ProfileEdit');
   };
 
@@ -117,7 +118,10 @@ const ProfileScreen = ({ navigation, route }) => {
         </Text>
         {userReducer.user.id == route.params.userId && (
           <Button
-            onPress={handleEdit}
+            onPress={() => {
+              console.log('fdasfasdfa');
+              handleEdit();
+            }}
             leftIcon={
               <FontAwesomeIcon
                 name="edit"
@@ -136,7 +140,7 @@ const ProfileScreen = ({ navigation, route }) => {
             width: '95%',
             marginTop: '3%',
           }}>
-          <View style={{ flex: 1 }}>
+          <View style={{flex: 1}}>
             <Text
               onPress={navigateToFollowing}
               style={{
@@ -148,7 +152,7 @@ const ProfileScreen = ({ navigation, route }) => {
               {followings.length >= 2 ? 'followings' : 'following'}
             </Text>
           </View>
-          <View style={{ flex: 1 }}>
+          <View style={{flex: 1}}>
             <Text
               onPress={navigateToFollower}
               style={{
@@ -166,4 +170,4 @@ const ProfileScreen = ({ navigation, route }) => {
   );
 };
 
-export { ProfileScreen };
+export {ProfileScreen};
