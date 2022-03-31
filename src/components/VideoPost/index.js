@@ -8,10 +8,12 @@ import {
   ActivityIndicator,
   TouchableWithoutFeedback,
   FlatList,
+  Image
 } from 'react-native';
 import {useSelector} from 'react-redux';
 import {v4} from 'uuid';
-import {axiosAuth, baseURL, socketClient} from '../../libs';
+import {axiosAuth, baseURL, socketClient, parseImageToBlob} from '../../libs';
+import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -20,6 +22,7 @@ import Comment from '../Comment';
 import {timeDiff} from '../../libs';
 import {ScrollView} from 'react-native-gesture-handler';
 import UserFeed from '../UserFeed';
+import ImagePicker from 'react-native-image-crop-picker';
 
 export default function VideoPost({post, currentShowId}) {
   //bottom sheet
@@ -32,6 +35,7 @@ export default function VideoPost({post, currentShowId}) {
   const [reactionLoaded, setLoadReaction] = useState(false);
   const [liked, setLiked] = useState(false);
   const [reload, setReload] = useState(v4());
+  const [image, setImage] = useState(null);
   const [newCommentText, setNewCommentText] = useState('');
   const userReducer = useSelector(state => state.user);
 
@@ -123,15 +127,42 @@ export default function VideoPost({post, currentShowId}) {
     reactionListSheet.current.open();
   };
 
-  const handleSend = () => {
-    if (newCommentText) {
+  const selectFile = async () => {
+    try {
+      ImagePicker.openPicker({
+        width: 300,
+        height: 400,
+        cropping: true,
+      }).then(image => {
+        console.log(image);
+        setImage(image);
+      });
+    } catch (err) {
+      console.log(err);
+      setImage(null);
+    }
+  };
+
+  const handleSend = async () => {
+    if (newCommentText || image) {
+      let img = null;
+      if (image && image.path) {
+        img = {
+          size: image.size,
+          mime: image.mime,
+          path: image.path,
+          data: await parseImageToBlob(image.path),
+        };
+      }
       socketClient.emit('post-comment', {
         text: newCommentText,
         video_post_id: post.id,
         parent_id: null,
         user_id: userReducer.user.id,
+        image: img,
       });
       setNewCommentText('');
+      setImage(null);
     }
   };
 
@@ -301,6 +332,42 @@ export default function VideoPost({post, currentShowId}) {
               left: 0,
               right: 0,
               padding: '1%',
+            }}>
+              {image != '' && image != null && (
+                <View
+                  style={{
+                    paddingTop: 10,
+                    marginLeft: 20,
+                    marginBottom: 10,
+                    position: 'relative',
+                  }}>
+                  <Image
+                    style={{
+                      width: 200,
+                      height: 200,
+                      borderRadius: 10,
+                    }}
+                    source={{
+                      uri: image.path,
+                    }}
+                  />
+                  <TouchableWithoutFeedback
+                    onPress={() => {
+                      setImage(null);
+                    }}>
+                    <FontAwesomeIcon
+                      name="times-circle"
+                      size={24}
+                      style={{
+                        color: '#438bf0',
+                        position: 'absolute',
+                        left: 190,
+                      }}
+                    />
+                  </TouchableWithoutFeedback>
+                </View>
+              )}
+            <View style={{
               display: 'flex',
               flexDirection: 'row',
               alignItems: 'center',
@@ -319,12 +386,15 @@ export default function VideoPost({post, currentShowId}) {
               onChangeText={value => setNewCommentText(value)}
               size="sm"
             />
-            <MaterialCommunityIcons name="file" size={24} color="#ccc" />
+            <TouchableWithoutFeedback onPress={selectFile}>
+              <MaterialCommunityIcons name="file" size={20} color="#ccc" />
+            </TouchableWithoutFeedback>
             <TouchableWithoutFeedback
               onPress={handleSend}
               disabled={!newCommentText}>
               <MaterialCommunityIcons name="send" size={24} color="#198ae6" />
             </TouchableWithoutFeedback>
+            </View>
           </View>
         </RBSheet>
         {/* <ReactionList

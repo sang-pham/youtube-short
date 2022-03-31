@@ -294,6 +294,19 @@ export default function Comment({comment, dispatchReply}) {
               />
             ))}
         </View>
+        {
+          comment.media && comment.media.length > 0 && comment.media.map(media => (<Image
+              style={{
+                width: 100,
+                height: 100,
+                borderRadius: 10,
+              }}
+              source={{
+                uri: media.url
+              }}
+             />
+          ))
+        }
         <RBSheet
           ref={refRBSheet}
           height={400}
@@ -322,9 +335,9 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'flex-start',
-    marginBottom: '3%',
+    marginBottom: '1%',
     marginLeft: '2%',
-    marginTop: '2%',
+    marginTop: '1%',
   },
   userName: {
     fontWeight: '500',
