@@ -44,9 +44,9 @@ const ChatBox = ({route, navigation}) => {
       chatBoxId,
       isCaller: true,
     });
-    dispatch(
-      startCall({senderId: userInfo.id, receiverId: personId, chatBoxId}),
-    );
+    // dispatch(
+    //   startCall({senderId: userInfo.id, receiverId: personId, chatBoxId}),
+    // );
   };
 
   return (

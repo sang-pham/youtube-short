@@ -15,7 +15,7 @@ import {Container, ButtonInCall} from '../../../components';
 import GettingCall from './GettingCall';
 import {socketClient} from '../../../libs';
 import {useDispatch, useSelector} from 'react-redux';
-import {stopCall} from '../../../redux/reducers';
+import {startCall, stopCall} from '../../../redux/reducers';
 
 const configuration = {iceServers: [{url: 'stun:stun.l.google.com:19302'}]};
 
@@ -57,11 +57,11 @@ export function WebRTCCall({route, navigation}) {
   const receiverId = route.params.receiverId;
   const chatBoxId = route.params.chatBoxId;
   const isCaller = route.params.isCaller;
+  const sdp = route.params.sdp;
   const [localStream, setLocalStream] = useState(null);
   const [remoteStream, setRemoteStream] = useState(null);
   const [gettingCall, setGettingCall] = useState(!isCaller);
   const pc = useRef();
-  const sdp = useRef();
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -74,15 +74,22 @@ export function WebRTCCall({route, navigation}) {
       navigation.replace('DirectMessage');
     });
 
-    socketClient.on('video-call-offer', ({senderId, receiverId, sdp}) => {
-      console.log('receive sdp', sdp);
-      sdp.current = sdp;
-    });
-
-    socketClient.on('video-call-answer', ({senderId, receiverId, sdp}) => {
-      console.log('receivesdp', sdp);
-      sdp.current = sdp;
-    });
+    socketClient.on(
+      'video-call-answer',
+      async ({senderId, receiverId, answer}) => {
+        try {
+          console.log('receivesdp', answer);
+          if (pc.current && answer && !pc.current.remoteDescription) {
+            const test = await pc.current.setRemoteDescription(
+              new RTCSessionDescription(answer),
+            );
+            console.log('test1', test);
+          }
+        } catch (error) {
+          console.log('remote error', error);
+        }
+      },
+    );
 
     socketClient.on('candidate', ({senderId, receiverId, candidate}) => {
       if (pc.current) {
@@ -124,12 +131,16 @@ export function WebRTCCall({route, navigation}) {
   const collectIceCandidates = () => {
     if (pc.current) {
       pc.current.onicecandidate = event => {
+        console.log('aaaaaaaaaaaa');
         if (event.candidate) {
           console.log('candidate', event.candidate);
           sendToPeer('video-call-candidate', event.candidate);
           // send event.candidate to peer
           //......
         }
+      };
+      pc.current.onicecandidateerror = error => {
+        console.log('candidate error:', error);
       };
     }
   };
@@ -143,26 +154,29 @@ export function WebRTCCall({route, navigation}) {
       const offer = await pc.current.createOffer();
       console.log('offer', offer);
       pc.current.setLocalDescription(offer);
-      sendToPeer('video-call-offer', offer);
+
+      dispatch(startCall({senderId, receiverId, chatBoxId, offer}));
     }
   };
 
   const join = async () => {
     console.log('Joining the call');
     setGettingCall(false);
-    const offer = sdp.current;
+    const offer = sdp;
     console.log('receive', offer);
     if (offer) {
       await setupWebrtc();
 
       collectIceCandidates();
 
-      if (pc.current) {
-        pc.current.setRemoteDescription(new RTCSessionDescription(offer));
-
+      if (pc.current && !pc.current.localDescription && offer) {
+        const test = pc.current.setRemoteDescription(
+          new RTCSessionDescription(offer),
+        );
+        console.log('test2', test);
         const answer = await pc.current.createAnswer();
         pc.current.setLocalDescription(answer);
-
+        console.log(JSON.stringify(answer));
         sendToPeer('video-call-answer', answer);
       }
     }

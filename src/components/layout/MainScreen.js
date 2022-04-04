@@ -54,16 +54,20 @@ const MainScreen = () => {
       console.log(error, 'error');
     });
 
-    socketClient.on('video-call-start', ({senderId, receiverId, chatBoxId}) => {
-      dispatch(calling({senderId, receiverId, chatBoxId}));
+    socketClient.on(
+      'video-call-start',
+      ({senderId, receiverId, chatBoxId, offer}) => {
+        dispatch(calling({senderId, receiverId, chatBoxId}));
 
-      navigation.replace('WebRTCCall', {
-        senderId: receiverId,
-        receiverId: senderId,
-        chatBoxId,
-        isCaller: false,
-      });
-    });
+        navigation.replace('WebRTCCall', {
+          senderId: receiverId,
+          receiverId: senderId,
+          chatBoxId,
+          isCaller: false,
+          sdp: offer,
+        });
+      },
+    );
 
     return () => {
       socketClient.disconnect();

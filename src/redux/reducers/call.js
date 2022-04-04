@@ -29,13 +29,18 @@ export const callSlice = createSlice({
       state.isRinging = true;
     },
     startCall: (state, action) => {
-      const {receiverId, senderId, chatBoxId} = action.payload;
+      const {receiverId, senderId, chatBoxId, offer} = action.payload;
       state.senderId = senderId;
       state.receiverId = receiverId;
       state.chatBoxId = chatBoxId;
       state.isCalling = true;
 
-      socketClient.emit('video-call-start', {senderId, receiverId, chatBoxId});
+      socketClient.emit('video-call-start', {
+        senderId,
+        receiverId,
+        chatBoxId,
+        offer,
+      });
     },
     stopCall: (state, action) => {
       const {senderId, receiverId, chatBoxId} = action.payload;
