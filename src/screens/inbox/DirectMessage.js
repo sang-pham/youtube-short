@@ -2,14 +2,15 @@ import React, { useEffect, useMemo, useState } from 'react';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Feather from 'react-native-vector-icons/Feather';
 import {
-	Avatar, Box, FlatList, HStack, VStack, Text, Spacer,
+	Avatar, Box, FlatList, HStack, VStack, Spacer, Text
 } from 'native-base';
+import {StyleSheet, View} from 'react-native'
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllChatBox, readMessage } from '../../redux/reducers';
 import { getAvatarUrl, formatMessageTime } from '../../libs';
 import { TouchableWithoutFeedback } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
-import { BackButton, HeaderCustom, Container } from '../../components';
+import { BackButton, HeaderCustom, Container, Badge } from '../../components';
 
 
 const DirectMessage = ({ navigation }) => {
@@ -24,7 +25,7 @@ const DirectMessage = ({ navigation }) => {
 		let str = '';
 		if (personId !== userId) str = 'You: ';
 		if (!content) {
-			str += 'Image';
+			str += 'This is a image';
 			return str;
 		}
 
@@ -55,7 +56,7 @@ const DirectMessage = ({ navigation }) => {
 						})
 					}}>
 						<Box pl="4" pr="5" py="2" >
-							<HStack space={3} justifyContent="space-between">
+							<HStack space={3} justifyContent="space-between" alignItems={"center"}>
 								<Avatar size="md" source={{
 									uri: getAvatarUrl(item.person_id)
 								}} />
@@ -79,6 +80,9 @@ const DirectMessage = ({ navigation }) => {
 									</Text>
 								</VStack>
 								<Spacer />
+								{
+									!item.is_seen && <View style={styles.hightlight}></View>
+								}
 								<Text fontSize="xs" _dark={{
 									color: "warmGray.50"
 								}} color="coolGray.800" alignSelf="flex-start">
@@ -91,5 +95,15 @@ const DirectMessage = ({ navigation }) => {
 		</Container>
 	);
 }
+
+const styles = StyleSheet.create({
+  hightlight: {
+    backgroundColor: '#0095f6',
+    width: 8,
+		height: 8,
+		borderRadius: 5
+  }
+})
+
 
 export { DirectMessage }

@@ -9,12 +9,11 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { useDispatch, useSelector } from 'react-redux';
 import { sendMessage, getMessages, addMessages, clearMessages } from '../../../redux/reducers';
-import ChatBoxLoading from './ChatBoxLoading';
 import { parseImageToBlob, socketClient, useVirtualListApi } from '../../../libs';
 import { useFocusEffect } from '@react-navigation/native';
 import ImagePicker, { openCamera } from 'react-native-image-crop-picker';
 
-const OPTIONS_MESSAGE = ['Like', 'Copy', 'Reply', 'Cancel', 'Delete']
+const OPTIONS_MESSAGE = ['Like', 'Copy', 'Reply', 'Delete']
 
 export default function GiftedChatCustom({ chatBox }) {
   const dispatch = useDispatch();
@@ -71,7 +70,7 @@ export default function GiftedChatCustom({ chatBox }) {
         context.actionSheet().showActionSheetWithOptions(
           {
             options: options,
-            cancelButtonIndex: options.findIndex(item => item === 'Cancel'),
+            cancelButtonIndex: -1,
             destructiveButtonIndex: options.findIndex(item => item === 'Delete'),
             withIcon: true
           },
@@ -110,7 +109,7 @@ const ComposerInput = ({ setTextInput, textInput }) => {
   return (
     <Input placeholder="Send a message..." variant="filled"
       multiline={true}
-      borderRadius={15} p={2} fontSize={14} borderWidth={0} my={1} w='62%'
+      borderRadius={25} p={2} fontSize={14} borderWidth={0} my={1} w='62%'
       value={textInput}
       onChangeText={(text) => {
         setTextInput(text)

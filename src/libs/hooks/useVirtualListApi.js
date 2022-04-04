@@ -10,10 +10,8 @@ export function useVirtualListApi(route, fetchCallback) {
   const [isMax, setIsMax] = useState(false);
 
   useEffect(() => {
-    if (!isMax && !currentRow) {
-      fetchData();
-      console.log('fetch data');
-    }
+    !isMax && !currentRow && fetchData();   
+    
   }, [])
 
   const fetchData = useCallback(async () => {

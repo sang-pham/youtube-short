@@ -1,40 +1,47 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { StatusBar, Platform } from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
+import {StatusBar, Platform} from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { HomeScreen, InboxScreen, ProfileScreen } from '../../screens';
-import { useNavigation } from '@react-navigation/native';
-import { RecordButton } from '../button';
-import { socketClient } from '../../libs';
-import { receiveMessage, sentMessage } from '../../redux/reducers';
-import { Badge } from '../Atoms';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {HomeScreen, InboxScreen, ProfileScreen} from '../../screens';
+import {useNavigation} from '@react-navigation/native';
+import {RecordButton} from '../button';
+import {socketClient} from '../../libs';
+import {
+  calling,
+  receiveMessage,
+  sentMessage,
+  startCall,
+  stopCall,
+} from '../../redux/reducers';
+import {Badge} from '../Atoms';
 
 const Tab = createBottomTabNavigator();
 
 const MainScreen = () => {
   const [home, setHome] = useState(true);
   const userReducer = useSelector(state => state.user);
-  const numberOfUnRead = useSelector(state => state.inbox.numberOfUnRead);
+  const callReducer = useSelector(state => state.call);
+  const inboxReducer = useSelector(state => state.inbox);
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
   useEffect(() => {
-    socketClient.auth = { userId: userReducer.user.id };
+    socketClient.auth = {userId: userReducer.user.id};
     socketClient.connect();
 
-    socketClient.on('receive-message', (data) => {
-      dispatch(receiveMessage(data))
+    socketClient.on('receive-message', data => {
+      dispatch(receiveMessage(data));
     });
 
-    socketClient.on('sent-message', (data) => {
-      dispatch(sentMessage(data))
-    })
+    socketClient.on('sent-message', data => {
+      dispatch(sentMessage(data));
+    });
 
-    socketClient.on("disconnect", () => {
+    socketClient.on('disconnect', () => {
       socketClient.connect();
       console.log('try to auto reconnect');
     });
@@ -47,6 +54,20 @@ const MainScreen = () => {
       console.log(error, 'error');
     });
 
+    socketClient.on('video-call-start', ({senderId, receiverId, chatBoxId}) => {
+      dispatch(calling({senderId, receiverId, chatBoxId}));
+
+      navigation.replace('WebRTCCall', {
+        senderId: receiverId,
+        receiverId: senderId,
+        chatBoxId,
+        isCaller: false,
+      });
+    });
+
+    return () => {
+      socketClient.disconnect();
+    };
   }, []);
 
   useEffect(() => {
@@ -88,7 +109,7 @@ const MainScreen = () => {
         }}
         options={{
           tabBarLabel: 'Home',
-          tabBarIcon: ({ color }) => (
+          tabBarIcon: ({color}) => (
             <FontAwesome name="home" size={24} color={color} />
           ),
         }}
@@ -98,7 +119,7 @@ const MainScreen = () => {
         component={HomeScreen}
         options={{
           tabBarLabel: 'Discover',
-          tabBarIcon: ({ color }) => (
+          tabBarIcon: ({color}) => (
             <FontAwesome5 name="compass" size={24} color={color} />
           ),
         }}
@@ -106,7 +127,7 @@ const MainScreen = () => {
       <Tab.Screen
         name="Live"
         component={HomeScreen}
-        listeners={({ navigation }) => ({
+        listeners={({navigation}) => ({
           tabPress: e => {
             e.preventDefault();
             navigation.navigate('Record');
@@ -122,8 +143,8 @@ const MainScreen = () => {
         component={InboxScreen}
         options={{
           tabBarLabel: 'Inbox',
-          tabBarIcon: ({ color }) => (
-            <Badge title={numberOfUnRead} >
+          tabBarIcon: ({color}) => (
+            <Badge title={inboxReducer.numberOfUnRead}>
               <MaterialCommunityIcons
                 name="message-text-outline"
                 size={24}
@@ -138,7 +159,7 @@ const MainScreen = () => {
         component={ProfileScreen}
         options={{
           tabBarLabel: 'Profile',
-          tabBarIcon: ({ color }) => (
+          tabBarIcon: ({color}) => (
             <AntDesign
               name="user"
               size={24}
@@ -147,10 +168,10 @@ const MainScreen = () => {
             />
           ),
         }}
-        initialParams={{ userId: userReducer.user.id }}
+        initialParams={{userId: userReducer.user.id}}
       />
     </Tab.Navigator>
   );
 };
 
-export { MainScreen };
+export {MainScreen};

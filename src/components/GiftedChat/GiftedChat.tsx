@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types'
-import React, { RefObject } from 'react'
+import React, { Fragment, RefObject } from 'react'
 import {
   Animated,
   Platform,
@@ -16,7 +16,7 @@ import {
   ActionSheetProvider,
   ActionSheetOptions,
 } from '@expo/react-native-action-sheet'
-import {v4} from 'uuid'
+import { v4 } from 'uuid'
 import { getBottomSpace } from 'react-native-iphone-x-helper'
 import dayjs from 'dayjs'
 import localizedFormat from 'dayjs/plugin/localizedFormat'
@@ -154,7 +154,9 @@ export interface GiftedChatProps<TMessage extends IMessage = IMessage> {
   /*Callback when loading earlier messages*/
   onLoadEarlier?(): void
   /*  Render a loading view when initializing */
-  renderLoading?(): React.ReactNode
+  renderLoading?(): React.ReactNode,
+  /* header */
+  renderHeader?(): React.ReactNode
   /* Custom "Load earlier messages" button */
   renderLoadEarlier?(props: LoadEarlier['props']): React.ReactNode
   /* Custom message avatar; set to null to not render any avatar for the message */
@@ -243,14 +245,15 @@ class GiftedChat<TMessage extends IMessage = IMessage> extends React.Component<
     disableComposer: false,
     messageIdGenerator: () => v4(),
     user: {},
-    onSend: () => {},
+    onSend: () => { },
     locale: null,
     timeFormat: TIME_FORMAT,
     dateFormat: DATE_FORMAT,
     loadEarlier: false,
-    onLoadEarlier: () => {},
+    onLoadEarlier: () => { },
     isLoadingEarlier: false,
     renderLoading: null,
+    renderHeader: null,
     renderLoadEarlier: null,
     renderAvatar: undefined,
     showUserAvatar: false,
@@ -879,6 +882,13 @@ class GiftedChat<TMessage extends IMessage = IMessage> extends React.Component<
     return null
   }
 
+  renderHeader() {
+    if (this.props.renderHeader) {
+      return this.props.renderHeader()
+    }
+    return null
+  }
+
   render() {
     if (this.state.isInitialized === true) {
       const { wrapInSafeArea } = this.props
@@ -889,10 +899,13 @@ class GiftedChat<TMessage extends IMessage = IMessage> extends React.Component<
           <ActionSheetProvider
             ref={(component: any) => (this._actionSheetRef = component)}
           >
-            <View style={styles.container} onLayout={this.onMainViewLayout}>
-              {this.renderMessages()}
-              {this.renderInputToolbar()}
-            </View>
+            <Fragment>
+              {this.renderHeader()}
+              <View style={styles.container} onLayout={this.onMainViewLayout}>
+                {this.renderMessages()}
+                {this.renderInputToolbar()}
+              </View>
+            </Fragment>
           </ActionSheetProvider>
         </Wrapper>
       )

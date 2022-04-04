@@ -18,6 +18,7 @@ import { isAuthenticated } from '../../redux/reducers';
 import ProfileRelationship from '../../screens/profile/relationship';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Spinner, View } from 'native-base';
+import {WebRTCCall} from '../../screens/inbox';
 
 const Stack = createNativeStackNavigator();
 // const Stack = createStackNavigator();
@@ -71,7 +72,6 @@ const Layout = () => {
               name="DirectMessage"
               component={DirectMessage}
             />
-
             <Stack.Screen
               name="ChatBox"
               component={ChatBox}
@@ -79,6 +79,10 @@ const Layout = () => {
             <Stack.Screen
               name="NewChat"
               component={NewChatScreen}
+            />
+             <Stack.Screen
+              name="WebRTCCall"
+              component={WebRTCCall}
             />
             <Stack.Screen
               name="ProfileEdit"

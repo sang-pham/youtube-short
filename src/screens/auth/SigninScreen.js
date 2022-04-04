@@ -91,6 +91,7 @@ const SigninScreen = ({ navigation }) => {
                   value={value}
                   placeholder="Email"
                   type="email"
+                  
                 />
               )}
               name="email"
@@ -120,6 +121,7 @@ const SigninScreen = ({ navigation }) => {
                   value={value}
                   placeholder="Password"
                   type="password"
+
                 />
               )}
               name="password"

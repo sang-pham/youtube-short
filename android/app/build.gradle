@@ -134,6 +134,12 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
+    //webrtc added
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
     defaultConfig {
         applicationId "com.youtubeshort"
         minSdkVersion rootProject.ext.minSdkVersion
