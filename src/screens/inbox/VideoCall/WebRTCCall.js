@@ -80,7 +80,7 @@ export function WebRTCCall({route, navigation}) {
         try {
           console.log('receivesdp', answer);
           if (pc.current && answer && !pc.current.remoteDescription) {
-            const test = await pc.current.setRemoteDescription(
+            const test = pc.current.setRemoteDescription(
               new RTCSessionDescription(answer),
             );
             console.log('test1', test);
@@ -146,16 +146,20 @@ export function WebRTCCall({route, navigation}) {
   };
 
   const create = async () => {
-    await setupWebrtc();
+    try {
+      await setupWebrtc();
 
-    collectIceCandidates();
+      collectIceCandidates();
 
-    if (pc.current) {
-      const offer = await pc.current.createOffer();
-      console.log('offer', offer);
-      pc.current.setLocalDescription(offer);
+      if (pc.current) {
+        const offer = await pc.current.createOffer();
+        console.log('offer', offer);
+        await pc.current.setLocalDescription(offer);
 
-      dispatch(startCall({senderId, receiverId, chatBoxId, offer}));
+        dispatch(startCall({senderId, receiverId, chatBoxId, offer}));
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -165,19 +169,23 @@ export function WebRTCCall({route, navigation}) {
     const offer = sdp;
     console.log('receive', offer);
     if (offer) {
-      await setupWebrtc();
+      try {
+        await setupWebrtc();
 
-      collectIceCandidates();
+        collectIceCandidates();
 
-      if (pc.current && !pc.current.localDescription && offer) {
-        const test = pc.current.setRemoteDescription(
-          new RTCSessionDescription(offer),
-        );
-        console.log('test2', test);
-        const answer = await pc.current.createAnswer();
-        pc.current.setLocalDescription(answer);
-        console.log(JSON.stringify(answer));
-        sendToPeer('video-call-answer', answer);
+        if (pc.current && !pc.current.localDescription && offer) {
+          const test = pc.current.setRemoteDescription(
+            new RTCSessionDescription(offer),
+          );
+          console.log('test2', test);
+          const answer = await pc.current.createAnswer();
+          await pc.current.setLocalDescription(answer);
+          console.log('answer', answer);
+          sendToPeer('video-call-answer', answer);
+        }
+      } catch (error) {
+        console.log(error);
       }
     }
   };
