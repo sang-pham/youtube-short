@@ -20,6 +20,7 @@ import {
 } from '../../libs';
 import ReactionList from '../ReactionList';
 import ImagePicker from 'react-native-image-crop-picker';
+import ImageFullScreen from '../ImageFullScreen';
 
 export default function Comment({comment, dispatchReply}) {
   const userReducer = useSelector(state => state.user);
@@ -151,8 +152,18 @@ export default function Comment({comment, dispatchReply}) {
               borderRadius: 10,
             }}>
             <Text style={styles.userName}>{comment.user.user_name}</Text>
-            <Text>{comment.text}</Text>
+            {comment.text != '' && <Text>{comment.text}</Text>}
           </View>
+          {comment.media && comment.media.length != 0 && (
+            <View
+              style={{
+                marginTop: '2%',
+              }}>
+              {comment.media.map(media => (
+                <ImageFullScreen key={media.id} imageUrl={media.url} />
+              ))}
+            </View>
+          )}
           <View
             style={{
               width: '80%',
@@ -294,19 +305,6 @@ export default function Comment({comment, dispatchReply}) {
               />
             ))}
         </View>
-        {
-          comment.media && comment.media.length > 0 && comment.media.map(media => (<Image
-              style={{
-                width: 100,
-                height: 100,
-                borderRadius: 10,
-              }}
-              source={{
-                uri: media.url
-              }}
-             />
-          ))
-        }
         <RBSheet
           ref={refRBSheet}
           height={400}

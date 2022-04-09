@@ -8,7 +8,7 @@ import {
   ActivityIndicator,
   TouchableWithoutFeedback,
   FlatList,
-  Image
+  Image,
 } from 'react-native';
 import {useSelector} from 'react-redux';
 import {v4} from 'uuid';
@@ -207,7 +207,7 @@ export default function VideoPost({post, currentShowId}) {
       ) : ( */}
         <Video
           source={{
-            uri: `${baseURL}/video-post/${post.id}/video`,
+            uri: post.video_path,
           }}
           paused={paused}
           controls={false}
@@ -321,6 +321,7 @@ export default function VideoPost({post, currentShowId}) {
                 marginBottom: '15%',
                 overflow: 'scroll',
               }}
+              keyExtractor={item => item.id}
               data={commentsRef.current}
               renderItem={({item}) => <Comment comment={item} />}
             />
@@ -333,67 +334,68 @@ export default function VideoPost({post, currentShowId}) {
               right: 0,
               padding: '1%',
             }}>
-              {image != '' && image != null && (
-                <View
+            {image != '' && image != null && (
+              <View
+                style={{
+                  paddingTop: 10,
+                  marginLeft: 20,
+                  marginBottom: 10,
+                  position: 'relative',
+                }}>
+                <Image
                   style={{
-                    paddingTop: 10,
-                    marginLeft: 20,
-                    marginBottom: 10,
-                    position: 'relative',
+                    width: 200,
+                    height: 200,
+                    borderRadius: 10,
+                  }}
+                  source={{
+                    uri: image.path,
+                  }}
+                />
+                <TouchableWithoutFeedback
+                  onPress={() => {
+                    setImage(null);
                   }}>
-                  <Image
+                  <FontAwesomeIcon
+                    name="times-circle"
+                    size={24}
                     style={{
-                      width: 200,
-                      height: 200,
-                      borderRadius: 10,
-                    }}
-                    source={{
-                      uri: image.path,
+                      color: '#438bf0',
+                      position: 'absolute',
+                      left: 190,
                     }}
                   />
-                  <TouchableWithoutFeedback
-                    onPress={() => {
-                      setImage(null);
-                    }}>
-                    <FontAwesomeIcon
-                      name="times-circle"
-                      size={24}
-                      style={{
-                        color: '#438bf0',
-                        position: 'absolute',
-                        left: 190,
-                      }}
-                    />
-                  </TouchableWithoutFeedback>
-                </View>
-              )}
-            <View style={{
-              display: 'flex',
-              flexDirection: 'row',
-              alignItems: 'center',
-            }}>
-            <Avatar
-              source={{
-                uri: `${baseURL}/user/${userReducer.user.id}/avatar`,
-              }}
-            />
-            <Input
-              m={1}
-              py={1}
-              w={Dimensions.get('window').width - 120}
-              placeholder="Write your comment"
-              value={newCommentText}
-              onChangeText={value => setNewCommentText(value)}
-              size="sm"
-            />
-            <TouchableWithoutFeedback onPress={selectFile}>
-              <MaterialCommunityIcons name="file" size={20} color="#ccc" />
-            </TouchableWithoutFeedback>
-            <TouchableWithoutFeedback
-              onPress={handleSend}
-              disabled={!newCommentText}>
-              <MaterialCommunityIcons name="send" size={24} color="#198ae6" />
-            </TouchableWithoutFeedback>
+                </TouchableWithoutFeedback>
+              </View>
+            )}
+            <View
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+              }}>
+              <Avatar
+                source={{
+                  uri: `${baseURL}/user/${userReducer.user.id}/avatar`,
+                }}
+              />
+              <Input
+                m={1}
+                py={1}
+                w={Dimensions.get('window').width - 120}
+                placeholder="Write your comment"
+                value={newCommentText}
+                onChangeText={value => setNewCommentText(value)}
+                size="sm"
+              />
+              <TouchableWithoutFeedback onPress={selectFile}>
+                <MaterialCommunityIcons name="file" size={20} color="#ccc" />
+              </TouchableWithoutFeedback>
+              <TouchableWithoutFeedback
+                onPress={handleSend}
+                disabled={!newCommentText}>
+                <MaterialCommunityIcons name="send" size={24} color="#198ae6" />
+              </TouchableWithoutFeedback>
             </View>
           </View>
         </RBSheet>
