@@ -1,0 +1,126 @@
+import React, {useEffect, useState} from 'react';
+import {
+  StyleSheet,
+  ImageBackground,
+  TouchableWithoutFeedback,
+  ScrollView,
+} from 'react-native';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import {View, Text} from 'native-base';
+import Video from 'react-native-video';
+import {axiosAuth} from '../../libs';
+
+const DiscoveryScreen = ({navigation}) => {
+  const [tags, setTags] = useState([]);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        let res = await axiosAuth.get('/video-post/get-by-tag');
+        if (res.status == 200) {
+          setTags(
+            res.data.tags.sort((tag1, tag2) => {
+              if (tag1.videoPosts.length > tag2.videoPosts.length) {
+                return -1;
+              } else if (tag1.videoPosts.length == tag2.videoPosts.length) {
+                return 0;
+              }
+              return 1;
+            }),
+          );
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    })();
+  }, []);
+
+  return (
+    <ScrollView style={styles.container}>
+      <ImageBackground
+        resizeMode="cover"
+        style={styles.mainImage}
+        source={require('../../public/images/discovery.png')}>
+        <Text style={styles.mainText}>Explore to find more interstings</Text>
+      </ImageBackground>
+      <View
+        style={{
+          marginTop: 10,
+        }}>
+        <Text style={styles.header}>Top 10 Popular Tags for Video</Text>
+        <Text>Press each tag for watching video in correspond tag</Text>
+        {tags.slice(0, 10).map(tag => (
+          <View
+            key={tag.id}
+            style={{
+              marginTop: '2%',
+            }}>
+            <TouchableWithoutFeedback>
+              <Text style={styles.tagHeader}>
+                {tag.name}
+                <AntDesign
+                  name="right"
+                  size={20}
+                  style={{
+                    marginLeft: '3%',
+                  }}
+                />
+              </Text>
+            </TouchableWithoutFeedback>
+            {tag.videoPosts.slice(0, 3).map(videoPost => (
+              <Video
+                key={videoPost.id}
+                source={{
+                  uri: videoPost.video_path,
+                }}
+                paused={true}
+                controls={false}
+                muted={true}
+                repeat={true}
+                resizeMode="cover"
+                style={styles.videoThump}
+              />
+            ))}
+          </View>
+        ))}
+      </View>
+    </ScrollView>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    paddingTop: '3%',
+    paddingLeft: '5%',
+    paddingRight: '5%',
+  },
+  mainImage: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    height: 400,
+  },
+  mainText: {
+    paddingLeft: '5%',
+    color: 'white',
+    // marginTop: 300,
+    fontSize: 30,
+    lineHeight: 40,
+    fontWeight: 'bold',
+  },
+  header: {
+    lineHeight: 30,
+    fontSize: 25,
+    fontWeight: '500',
+  },
+  tagHeader: {
+    textTransform: 'capitalize',
+    fontSize: 26,
+    lineHeight: 30,
+  },
+  videoThump: {
+    width: '30%',
+    height: 50,
+  },
+});
+
+export {DiscoveryScreen};

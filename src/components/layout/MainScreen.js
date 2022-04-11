@@ -6,7 +6,12 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {HomeScreen, InboxScreen, ProfileScreen} from '../../screens';
+import {
+  HomeScreen,
+  InboxScreen,
+  ProfileScreen,
+  DiscoveryScreen,
+} from '../../screens';
 import {useNavigation} from '@react-navigation/native';
 import {RecordButton} from '../button';
 import {socketClient} from '../../libs';
@@ -120,7 +125,7 @@ const MainScreen = () => {
       />
       <Tab.Screen
         name="Discover"
-        component={HomeScreen}
+        component={DiscoveryScreen}
         options={{
           tabBarLabel: 'Discover',
           tabBarIcon: ({color}) => (
