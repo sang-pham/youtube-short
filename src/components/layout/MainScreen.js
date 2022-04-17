@@ -6,12 +6,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {
-  HomeScreen,
-  InboxScreen,
-  ProfileScreen,
-  DiscoveryScreen,
-} from '../../screens';
+import {HomeScreen, InboxScreen, ProfileScreen, RecordScreen, DiscoveryScreen} from '../../screens';
 import {useNavigation} from '@react-navigation/native';
 import {RecordButton} from '../button';
 import {socketClient} from '../../libs';
@@ -135,7 +130,7 @@ const MainScreen = () => {
       />
       <Tab.Screen
         name="Live"
-        component={HomeScreen}
+        component={RecordScreen}
         listeners={({navigation}) => ({
           tabPress: e => {
             e.preventDefault();

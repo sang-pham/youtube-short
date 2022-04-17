@@ -12,6 +12,8 @@ import {
   SignupScreen,
   ProfileEditScreen,
   WelcomeScreen,
+  CreatePost,
+  HomeScreen
 } from '../../screens';
 import { useDispatch, useSelector } from 'react-redux';
 import { isAuthenticated } from '../../redux/reducers';
@@ -67,6 +69,10 @@ const Layout = () => {
             <Stack.Screen
               name="Record"
               component={RecordScreen}
+            />
+            <Stack.Screen
+              name="CreatePost"
+              component={CreatePost}
             />
             <Stack.Screen
               name="DirectMessage"
