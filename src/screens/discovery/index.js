@@ -8,7 +8,7 @@ import {
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {View, Text} from 'native-base';
 import Video from 'react-native-video';
-import {axiosAuth} from '../../libs';
+import {axiosAuth, baseURL} from '../../libs';
 
 const DiscoveryScreen = ({navigation}) => {
   const [tags, setTags] = useState([]);
@@ -67,20 +67,26 @@ const DiscoveryScreen = ({navigation}) => {
                 />
               </Text>
             </TouchableWithoutFeedback>
-            {tag.videoPosts.slice(0, 3).map(videoPost => (
-              <Video
-                key={videoPost.id}
-                source={{
-                  uri: videoPost.video_path,
-                }}
-                paused={true}
-                controls={false}
-                muted={true}
-                repeat={true}
-                resizeMode="cover"
-                style={styles.videoThump}
-              />
-            ))}
+            <View
+              style={{
+                width: '100%',
+                flexDirection: 'row',
+              }}>
+              {tag.videoPosts.slice(0, 3).map(videoPost => (
+                <Video
+                  key={videoPost.id}
+                  source={{
+                    uri: `${baseURL}/video-post/${videoPost.id}/video`,
+                  }}
+                  paused={false}
+                  controls={false}
+                  muted={true}
+                  repeat={true}
+                  resizeMode="cover"
+                  style={styles.videoThump}
+                />
+              ))}
+            </View>
           </View>
         ))}
       </View>
@@ -119,7 +125,8 @@ const styles = StyleSheet.create({
   },
   videoThump: {
     width: '30%',
-    height: 50,
+    height: 150,
+    marginRight: '3%',
   },
 });
 

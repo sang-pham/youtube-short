@@ -207,7 +207,7 @@ export default function VideoPost({post, currentShowId}) {
       ) : ( */}
         <Video
           source={{
-            uri: post.video_path,
+            uri: `${baseURL}/video-post/${post.id}/video`,
           }}
           paused={paused}
           controls={false}
