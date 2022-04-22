@@ -1,11 +1,12 @@
 import React, {useEffect, useState} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
-import {Text, View, TouchableWithoutFeedback} from 'react-native';
+import {Text, View, TouchableWithoutFeedback, StyleSheet} from 'react-native';
 import {Avatar, Menu, Pressable} from 'native-base';
 import {baseURL} from '../../libs';
 import {useNavigation} from '@react-navigation/native';
 import {unfollow, follow, block} from '../../redux/reducers';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
+import Popover from 'react-native-popover-view';
 
 export default function UserFeed({
   user,
@@ -111,39 +112,45 @@ export default function UserFeed({
           </Text>
         </View>
         {userReducer.followings.find(following => following.id === user.id) ? (
-          <Menu
-            w="190"
-            trigger={triggerProps => {
-              return (
-                <Pressable
-                  accessibilityLabel="More options menu"
-                  {...triggerProps}>
-                  <AntDesignIcon name="ellipsis1" size={20} />
-                </Pressable>
-              );
-            }}>
-            <Menu.Item onPress={handleUnfollow}>Unfollow</Menu.Item>
-            <Menu.Item onPress={handleBlock}>Block</Menu.Item>
-          </Menu>
+          <Popover
+            from={
+              <TouchableWithoutFeedback>
+                <AntDesignIcon name="ellipsis1" size={20} />
+              </TouchableWithoutFeedback>
+            }>
+            <Text style={styles.text} onPress={handleUnfollow}>
+              Unfollow
+            </Text>
+            <Text style={styles.text} onPress={handleBlock}>
+              Block
+            </Text>
+          </Popover>
         ) : (
           user.id !== userReducer.user.id && (
-            <Menu
-              w="190"
-              trigger={triggerProps => {
-                return (
-                  <Pressable
-                    accessibilityLabel="More options menu"
-                    {...triggerProps}>
-                    <AntDesignIcon name="ellipsis1" size={20} />
-                  </Pressable>
-                );
-              }}>
-              <Menu.Item onPress={handleFollow}>Follow</Menu.Item>
-              <Menu.Item onPress={handleBlock}>Block</Menu.Item>
-            </Menu>
+            <Popover
+              from={
+                <TouchableWithoutFeedback>
+                  <AntDesignIcon name="ellipsis1" size={20} />
+                </TouchableWithoutFeedback>
+              }>
+              <Text style={styles.text} onPress={handleFollow}>
+                Follow
+              </Text>
+              <Text style={styles.text} onPress={handleBlock}>
+                Block
+              </Text>
+            </Popover>
           )
         )}
       </View>
     </TouchableWithoutFeedback>
   );
 }
+
+const styles = StyleSheet.create({
+  text: {
+    minWidth: 100,
+    padding: 10,
+    textAlign: 'center',
+  },
+});

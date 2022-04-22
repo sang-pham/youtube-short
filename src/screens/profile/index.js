@@ -1,6 +1,12 @@
 import React, {useEffect, useState} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
-import {ScrollView, View, Text, Image} from 'react-native';
+import {
+  ScrollView,
+  View,
+  Text,
+  Image,
+  TouchableWithoutFeedback,
+} from 'react-native';
 import {Button, Box, Center, Avatar, Pressable, Menu} from 'native-base';
 import {baseURL} from '../../libs/config';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -88,18 +94,9 @@ const ProfileScreen = ({navigation, route}) => {
             onPress={() => navigation.goBack()}
           />
           {userReducer.user.id === route.params.userId && (
-            <Menu
-              trigger={triggerProps => {
-                return (
-                  <Pressable
-                    accessibilityLabel="More options menu"
-                    {...triggerProps}>
-                    <AntDesign name="ellipsis1" size={24} />
-                  </Pressable>
-                );
-              }}>
-              <Menu.Item onPress={handleLogout}>Logout</Menu.Item>
-            </Menu>
+            <TouchableWithoutFeedback onPress={handleLogout}>
+              <Text>Logout</Text>
+            </TouchableWithoutFeedback>
           )}
         </Box>
         <Avatar
