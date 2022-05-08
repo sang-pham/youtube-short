@@ -59,14 +59,15 @@ const HomeFollowing = () => {
   });
 
   const loadMore = async ({distanceFromEnd}) => {
-    console.log(distanceFromEnd);
     setLoading(true);
     let res = await axiosAuth.get(
       `video-post/following?per_page=${PER_PAGE}&page=${currentPage + 1}`,
     );
     if (res.status == 200) {
-      setVideoPosts([...videoPosts, ...res.data.videoPosts]);
-      setCurrentPage(currentPage + 1);
+      if (res.data.videoPosts.length) {
+        setVideoPosts([...videoPosts, ...res.data.videoPosts]);
+        setCurrentPage(currentPage + 1);
+      }
     }
     setLoading(false);
   };
