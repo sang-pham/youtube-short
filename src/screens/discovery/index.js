@@ -4,8 +4,10 @@ import {
   ImageBackground,
   TouchableWithoutFeedback,
   ScrollView,
+  Pressable,
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import Feather from 'react-native-vector-icons/Feather';
 import {View, Text} from 'native-base';
 import Video from 'react-native-video';
 import {axiosAuth, baseURL} from '../../libs';
@@ -37,6 +39,24 @@ const DiscoveryScreen = ({navigation}) => {
 
   return (
     <ScrollView style={styles.container}>
+      <View
+        style={{
+          width: '100%',
+          marginTop: '2%',
+          marginBottom: '2%',
+          display: 'flex',
+          justifyContent: 'flex-end',
+          flexDirection: 'row',
+        }}>
+        <Feather
+          name="send"
+          size={24}
+          color="black"
+          onPress={() => {
+            navigation.push('DiscoverySearchUser');
+          }}
+        />
+      </View>
       <ImageBackground
         resizeMode="cover"
         style={styles.mainImage}
