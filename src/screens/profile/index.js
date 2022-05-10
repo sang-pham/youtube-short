@@ -21,6 +21,20 @@ import 'react-native-get-random-values';
 import Video from 'react-native-video';
 import {v4} from 'uuid';
 
+const VideoWrapper = ({source, style}) => {
+  return (
+    <Video
+      source={source}
+      paused={false}
+      controls={false}
+      muted={true}
+      repeat={true}
+      resizeMode="cover"
+      style={style}
+    />
+  );
+};
+
 const ProfileScreen = ({navigation, route}) => {
   const userReducer = useSelector(state => state.user);
   const [followings, setFollowings] = useState([]);
@@ -204,16 +218,11 @@ const ProfileScreen = ({navigation, route}) => {
             borderTopWidth: 1,
           }}>
           {videoPosts.slice(0, 3).map(videoPost => (
-            <Video
+            <VideoWrapper
               key={videoPost.id}
               source={{
                 uri: `${baseURL}/video-post/${videoPost.id}/video`,
               }}
-              paused={false}
-              controls={false}
-              muted={true}
-              repeat={true}
-              resizeMode="cover"
               style={styles.videoThump}
             />
           ))}
