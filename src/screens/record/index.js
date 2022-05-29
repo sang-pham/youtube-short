@@ -2,10 +2,11 @@ import React, {useEffect, useRef, useState} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 // import {RNCamera} from 'react-native-camera';
 import { useCameraDevices, Camera } from "react-native-vision-camera"
-
+import ImagePicker from "react-native-image-crop-picker";
 import styles from './styles';
 import awaitAsyncGenerator from '@babel/runtime/helpers/esm/awaitAsyncGenerator';
 import {useNavigation} from '@react-navigation/native';
+import { Button } from 'native-base';
 
 const RecordScreen = ({navigation}) => {
   const {isFocused} = navigation
@@ -43,6 +44,14 @@ const RecordScreen = ({navigation}) => {
       });
   };
 
+  const openPicker = async () => {
+    ImagePicker.openPicker({
+      mediaType: "video",
+    }).then((video) => {
+      const blob = fetch(video.path)
+      navigation.navigate('CreatePost', { video });
+    });
+  }
 
   if (device == null) return <Text>Hello</Text>
   checkPermission()
@@ -62,6 +71,7 @@ const RecordScreen = ({navigation}) => {
         isRecording ? styles.buttonStop : styles.buttonRecord
       }
       />
+      <Button onPress={openPicker}></Button>
       </View>
    
   );
