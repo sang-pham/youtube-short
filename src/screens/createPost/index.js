@@ -44,33 +44,29 @@ const CreatePost = () => {
         uri: route.params.video.path,
         type: 'video/mp4',
       });
-      // const config = {
-      //   headers: {
-      //     Accept: 'application/json',
-      //     'Content-Type': `multipart/form-data; charset=utf-8; boundary="another cool boundary";`,
-      //   },
-      // };
-      // let token = JSON.parse(
-      //   await EncryptedStorage.getItem('user_session'),
-      // ).token;
-      // let res = await axiosAuth.post(`/upload-media`, data, config);
-      fetch(`${baseURL}/upload-media`, {
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'multipart/form-data',
-          Authorization: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywibmFtZSI6IktpZXUgVmluaCIsInVzZXJfbmFtZSI6IktpZXUgVGhlIFZpbmgiLCJjb21wYW55IjoiU1BJQ1lfQ09ERSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNjUyOTU3NDE5fQ.Vk-Ksb2e5dvmWLcphZ-1aVa0kAR6svymbXaayH9iXZw`,
-        },
-        method: 'POST',
-        body: data,
-      })
-        .then(response => response.json())
-        .then(data => {
-          Alert.alert('Message', 'Video uploaded successfully', [
-            {text: 'OK'},
-          ]);
-          navigation.navigate('Main')
+      
+      let authToken = JSON.parse(
+        await EncryptedStorage.getItem('user_session'),
+      ).token;
+      if(authToken) {
+        fetch(`${baseURL}/upload-media`, {
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'multipart/form-data',
+            Authorization: authToken,
+          },
+          method: 'POST',
+          body: data,
         })
-        .catch(error => {});
+          .then(response => response.json())
+          .then(data => {
+            Alert.alert('Message', 'Video uploaded successfully', [
+              {text: 'OK'},
+            ]);
+            navigation.navigate('Main')
+          })
+          .catch(error => console.log(error));
+      }
     } catch (e) {
       console.error(e);
     }

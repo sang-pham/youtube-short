@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
 // import {RNCamera} from 'react-native-camera';
 import { useCameraDevices, Camera } from "react-native-vision-camera"
 import ImagePicker from "react-native-image-crop-picker";
@@ -71,7 +71,9 @@ const RecordScreen = ({navigation}) => {
         isRecording ? styles.buttonStop : styles.buttonRecord
       }
       />
-      <Button onPress={openPicker}></Button>
+      <TouchableOpacity style={styles.pickButton} onPress={openPicker}>
+        <Image source={require('../../public/images/discovery.png')} style={styles.imageButton}/>
+      </TouchableOpacity>
       </View>
    
   );
