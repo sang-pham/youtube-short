@@ -8,13 +8,14 @@ import {
   TouchableWithoutFeedback,
   Modal,
   Pressable,
+  Alert,
 } from 'react-native';
 import {v4 as uuidv4} from 'uuid';
 import Video from 'react-native-video';
 import {axiosAuth, baseURL, socketClient, parseImageToBlob} from '../../libs';
 // import {Storage, API, graphqlOperation, Auth} from 'aws-amplify';
 import {useRoute, useNavigation} from '@react-navigation/native';
-
+import EncryptedStorage from 'react-native-encrypted-storage';
 import styles from './styles';
 
 const CreatePost = () => {
@@ -23,6 +24,7 @@ const CreatePost = () => {
   const [videoKey, setVideoKey] = useState(null);
   const [text, onChangeText] = useState('');
   const [paused, setPaused] = useState(false);
+  const [auth, setAuth] = useState(null);
   const route = useRoute();
   const navigation = useNavigation();
   const togglePause = () => {
@@ -34,23 +36,49 @@ const CreatePost = () => {
 
   const uploadToStorage = async () => {
     try {
-          console.log(route.params.video);
-          let data = new FormData();
-          data.append('caption', description)
-          data.append("media", {
-            name: route.params.video,
-            uri: route.params.video.path,
-            type: 'video/mp4'
-        });
-          let res = await axiosAuth.put(`upload-media`, data);
-          if (res.status == 200) {
-          }
+      // console.log(route.params.video);
+      let data = new FormData();
+      data.append('caption', description);
+      data.append('media', {
+        name: `${Date.now()}.mp4`,
+        uri: route.params.video.path,
+        type: 'video/mp4',
+      });
+      // const config = {
+      //   headers: {
+      //     Accept: 'application/json',
+      //     'Content-Type': `multipart/form-data; charset=utf-8; boundary="another cool boundary";`,
+      //   },
+      // };
+      // let token = JSON.parse(
+      //   await EncryptedStorage.getItem('user_session'),
+      // ).token;
+      // let res = await axiosAuth.post(`/upload-media`, data, config);
+      fetch(`${baseURL}/upload-media`, {
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'multipart/form-data',
+          Authorization: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywibmFtZSI6IktpZXUgVmluaCIsInVzZXJfbmFtZSI6IktpZXUgVGhlIFZpbmgiLCJjb21wYW55IjoiU1BJQ1lfQ09ERSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNjUyOTU3NDE5fQ.Vk-Ksb2e5dvmWLcphZ-1aVa0kAR6svymbXaayH9iXZw`,
+        },
+        method: 'POST',
+        body: data,
+      })
+        .then(response => response.json())
+        .then(data => {
+          Alert.alert('Message', 'Video uploaded successfully', [
+            {text: 'OK'},
+          ]);
+          navigation.navigate('Main')
+        })
+        .catch(error => {});
     } catch (e) {
       console.error(e);
     }
   };
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    // retrieveUserSession();
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -95,19 +123,18 @@ const CreatePost = () => {
               <Text style={styles.modalText}>Description</Text>
               <TextInput
                 style={styles.input}
-                onChangeText={onChangeText}
-                value={text}
+                onChangeText={setDescription}
+                value={description}
                 multiline={true}
                 textAlignVertical={'top'}
                 placeholder="Say something about you video"
               />
 
-
-                <Pressable
-                  style={[styles.button, styles.buttonClose]}
-                  onPress={uploadToStorage}>
-                  <Text style={styles.textStyle}>Post my video now</Text>
-                </Pressable>
+              <Pressable
+                style={[styles.button, styles.buttonClose]}
+                onPress={uploadToStorage}>
+                <Text style={styles.textStyle}>Post my video now</Text>
+              </Pressable>
             </View>
           </View>
         </TouchableOpacity>

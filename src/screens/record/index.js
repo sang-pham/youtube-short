@@ -48,7 +48,7 @@ const RecordScreen = ({navigation}) => {
     ImagePicker.openPicker({
       mediaType: "video",
     }).then((video) => {
-      const blob = fetch(video.path)
+      // const blob = fetch(video.path)
       navigation.navigate('CreatePost', { video });
     });
   }
