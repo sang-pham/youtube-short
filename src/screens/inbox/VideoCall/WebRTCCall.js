@@ -15,7 +15,6 @@ import {Container, ButtonInCall} from '../../../components';
 import GettingCall from './GettingCall';
 import {axiosAuth, getAvatarUrl, socketClient} from '../../../libs';
 import {useDispatch, useSelector} from 'react-redux';
-import {startCall, stopCall} from '../../../redux/reducers';
 import {Avatar, Spinner} from 'native-base';
 
 const configuration = {
@@ -187,9 +186,6 @@ export function WebRTCCall({route, navigation}) {
         console.log('offer', offer);
         await pc.current.setLocalDescription(offer);
 
-        // dispatch(
-        //   startCall({senderId, receiverId, chatBoxId, offer, isVideoCall}),
-        // );
         socketClient.emit('video-call-start', {
           senderId,
           receiverId,
@@ -233,7 +229,6 @@ export function WebRTCCall({route, navigation}) {
 
   const hangup = () => {
     cleanUp();
-    // dispatch(stopCall({senderId, receiverId, chatBoxId}));
     socketClient.emit('video-call-stop', {senderId, receiverId, chatBoxId});
     navigation.replace('DirectMessage');
   };
