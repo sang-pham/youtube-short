@@ -1,21 +1,30 @@
-import React from 'react';
+import {Avatar} from 'native-base';
+import React, {useEffect, useState} from 'react';
 import {View, StyleSheet, Text} from 'react-native';
 import {ButtonInCall} from '../../../components';
+import {axiosAuth, getAvatarUrl} from '../../../libs';
 
-export default function GettingCall(props) {
+export default function GettingCall({join, hangup, remoteInfo}) {
   return (
     <View style={styles.container}>
-      <View style={styles.background}>
-        <Text style={{color: '#fff'}}>Calling...</Text>
-      </View>
+      {remoteInfo && (
+        <View style={styles.background}>
+          <Avatar
+            size="80px"
+            source={{
+              uri: getAvatarUrl(remoteInfo.id),
+            }}
+            style={{marginBottom: 20}}
+          />
+          <Text style={{color: '#000'}}>
+            {remoteInfo.full_name} is calling...
+          </Text>
+        </View>
+      )}
       <View style={styles.btnContainer}>
+        <ButtonInCall onPress={join} iconName="call" backgroundColor="green" />
         <ButtonInCall
-          onPress={props.join}
-          iconName="call"
-          backgroundColor="green"
-        />
-        <ButtonInCall
-          onPress={props.hangup}
+          onPress={hangup}
           iconName="call-end"
           backgroundColor="red"
           style={{marginLeft: 30}}

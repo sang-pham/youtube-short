@@ -1,8 +1,8 @@
 import * as React from 'react';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 
-export function BackButton() {
+export function BackButton({pathScreen = null}) {
   const navigation = useNavigation();
 
   return (
@@ -10,7 +10,7 @@ export function BackButton() {
       name="arrow-back"
       size={24}
       color="black"
-      onPress={navigation.goBack}
+      onPress={pathScreen || navigation.goBack}
     />
   );
 }

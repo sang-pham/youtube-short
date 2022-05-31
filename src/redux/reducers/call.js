@@ -1,12 +1,5 @@
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
-import {
-  axiosAuth,
-  NUMBER_OF_ROW,
-  parseImageToBlob,
-  socketClient,
-  swapItemArray,
-} from '../../libs';
-import {getAvatarUrl} from '../../libs';
+import {socketClient} from '../../libs';
 import {v4} from 'uuid';
 
 const initialState = {
@@ -29,7 +22,8 @@ export const callSlice = createSlice({
       state.isRinging = true;
     },
     startCall: (state, action) => {
-      const {receiverId, senderId, chatBoxId, offer} = action.payload;
+      const {receiverId, senderId, chatBoxId, offer, isVideoCall} =
+        action.payload;
       state.senderId = senderId;
       state.receiverId = receiverId;
       state.chatBoxId = chatBoxId;
@@ -40,6 +34,7 @@ export const callSlice = createSlice({
         receiverId,
         chatBoxId,
         offer,
+        isVideoCall,
       });
     },
     stopCall: (state, action) => {
@@ -53,17 +48,9 @@ export const callSlice = createSlice({
       }
       socketClient.emit('video-call-stop', {senderId, receiverId, chatBoxId});
     },
-    acceptCall: (state, action) => {
-      const {chatBoxId} = action.payload;
-      if (chatBoxId === state.chatBoxId) {
-        state.isRinging = false;
-        state.isCalling = true;
-      }
-    },
-    rejectCall: (state, action) => {},
   },
   extraReducers: {},
 });
 
-export const {startCall, acceptCall, stopCall, calling} = callSlice.actions;
+export const {startCall, stopCall, calling} = callSlice.actions;
 export default callSlice.reducer;
