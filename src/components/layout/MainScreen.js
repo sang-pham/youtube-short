@@ -16,13 +16,7 @@ import {
 import {useNavigation} from '@react-navigation/native';
 import {RecordButton} from '../button';
 import {socketClient} from '../../libs';
-import {
-  calling,
-  receiveMessage,
-  sentMessage,
-  startCall,
-  stopCall,
-} from '../../redux/reducers';
+import {receiveMessage, sentMessage} from '../../redux/reducers';
 import {Badge} from '../Atoms';
 
 const Tab = createBottomTabNavigator();
@@ -63,8 +57,6 @@ const MainScreen = () => {
     socketClient.on(
       'video-call-start',
       ({senderId, receiverId, chatBoxId, offer, isVideoCall}) => {
-        dispatch(calling({senderId, receiverId, chatBoxId}));
-
         navigation.push('WebRTCCall', {
           senderId: receiverId,
           receiverId: senderId,
