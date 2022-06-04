@@ -78,7 +78,7 @@ const HomeSuggest = () => {
         renderItem={renderItem}
         keyExtractor={item => item.id}
         showsVerticalScrollIndicator={false}
-        snapToInterval={Dimensions.get('window').height}
+        snapToInterval={Dimensions.get('window').height - 30}
         snapToAlignment="start"
         decelerationRate={'fast'}
         onEndReachedThreshold={0.5}

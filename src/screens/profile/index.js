@@ -79,9 +79,10 @@ const ProfileScreen = ({navigation, route}) => {
             setVideoPosts(_videoPosts);
           }
         }
-        setInitLoad(true);
       } catch (error) {
         console.log(error);
+      } finally {
+        setInitLoad(true);
       }
     })();
   }, [route.params.userId]);
@@ -226,6 +227,16 @@ const ProfileScreen = ({navigation, route}) => {
               style={styles.videoThump}
             />
           ))}
+          {initLoad && videoPosts.length == 0 && 
+          <Text style={{
+            marginTop: '5%',
+            textAlign: 'center',
+            width: '100%',
+            fontSize: 18,
+            fontWeight: '600',
+          }}>
+            No post yet
+          </Text>}
         </View>
       </ScrollView>
     </>

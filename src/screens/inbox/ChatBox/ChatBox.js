@@ -1,15 +1,10 @@
 import React, {useEffect, useState} from 'react';
-import {Box, Button, HStack, Text} from 'native-base';
+import {Box, Button, HStack, Text, View} from 'native-base';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
 import GiftedChatCustom from './GiftedChatCustom';
 import {useDispatch, useSelector} from 'react-redux';
-import {
-  clearChatBox,
-  readMessage,
-  setChatBox,
-  startCall,
-} from '../../../redux/reducers';
+import {clearChatBox, readMessage, setChatBox} from '../../../redux/reducers';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {BackButton, HeaderCustom, Container} from '../../../components';
 
@@ -42,11 +37,17 @@ const ChatBox = ({route, navigation}) => {
       senderId: userInfo.id,
       receiverId: personId,
       chatBoxId,
-      isCaller: true,
+      isVideoCall: true,
     });
-    // dispatch(
-    //   startCall({senderId: userInfo.id, receiverId: personId, chatBoxId}),
-    // );
+  };
+
+  const startVoiceCall = () => {
+    navigation.push('WebRTCCall', {
+      senderId: userInfo.id,
+      receiverId: personId,
+      chatBoxId,
+      isVideoCall: false,
+    });
   };
 
   return (
@@ -56,12 +57,21 @@ const ChatBox = ({route, navigation}) => {
         leftElement={<BackButton />}
         rightElement={
           chatBoxId && (
-            <AntDesign
-              name="videocamera"
-              size={24}
-              color="black"
-              onPress={startVideoCall}
-            />
+            <View style={{flexDirection: 'row'}}>
+              <AntDesign
+                name="phone"
+                size={24}
+                color="black"
+                onPress={startVoiceCall}
+                style={{marginRight: 15}}
+              />
+              <AntDesign
+                name="videocamera"
+                size={24}
+                color="black"
+                onPress={startVideoCall}
+              />
+            </View>
           )
         }
       />
