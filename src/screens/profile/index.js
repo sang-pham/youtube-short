@@ -21,17 +21,21 @@ import 'react-native-get-random-values';
 import Video from 'react-native-video';
 import {v4} from 'uuid';
 
-const VideoWrapper = ({source, style}) => {
+const VideoWrapper = ({source, style, handleNavigate}) => {
   return (
-    <Video
-      source={source}
-      paused={false}
-      controls={false}
-      muted={true}
-      repeat={true}
-      resizeMode="cover"
-      style={style}
-    />
+    <TouchableWithoutFeedback 
+      onPress={() => handleNavigate()}
+    >
+      <Video
+        source={source}
+        paused={false}
+        controls={false}
+        muted={true}
+        repeat={true}
+        resizeMode="cover"
+        style={style}
+      />
+    </TouchableWithoutFeedback>
   );
 };
 
@@ -71,11 +75,11 @@ const ProfileScreen = ({navigation, route}) => {
         res = await axiosAuth.get(`/user/${route.params.userId}`);
         setUserName(res.data.user.user_name);
         res = await axiosAuth.get(
-          `video-post/user/${route.params.userId}?per_page=${PER_PAGE}&page=${currentPage}`,
+          `/video-post/user/${route.params.userId}?per_page=${PER_PAGE}&page=${currentPage}`,
         );
         if (res.status === 200) {
-          let _videoPosts = res.data.videoPosts;
-          if (_videoPosts && _videoPosts.length) {
+          let _videoPosts = res.data;
+          if (_videoPosts) {
             setVideoPosts(_videoPosts);
           }
         }
@@ -110,6 +114,15 @@ const ProfileScreen = ({navigation, route}) => {
       defaultTab: 'ProfileFollower',
     });
   };
+
+
+  const navigateUserVideoPosts = ({userId, videoPostId}) => {
+    console.log(userId, videoPostId)
+    navigation.navigate('ProfileVideoPost', {
+      userId,
+      videoPostId,
+    });
+  }
 
   return (
     <>
@@ -225,6 +238,10 @@ const ProfileScreen = ({navigation, route}) => {
                 uri: `${baseURL}/video-post/${videoPost.id}/video`,
               }}
               style={styles.videoThump}
+              handleNavigate={() => navigateUserVideoPosts({
+                userId: videoPost.user_id,
+                videoPostId: videoPost.id
+              })}
             />
           ))}
           {initLoad && videoPosts.length == 0 && 
