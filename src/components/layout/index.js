@@ -16,6 +16,7 @@ import {
   CreatePost,
   HomeScreen,
   DiscoverySearchUser,
+  ProfileVideoPostScreen
 } from '../../screens';
 import {useDispatch, useSelector} from 'react-redux';
 import {isAuthenticated} from '../../redux/reducers';
@@ -79,6 +80,10 @@ const Layout = () => {
           <Stack.Screen
             name="DiscoverySearchUser"
             component={DiscoverySearchUser}
+          />
+          <Stack.Screen 
+            name="ProfileVideoPost"
+            component={ProfileVideoPostScreen}
           />
         </Stack.Navigator>
       )}

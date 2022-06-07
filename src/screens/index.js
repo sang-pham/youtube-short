@@ -8,6 +8,7 @@ export * from './record';
 export * from './profile/edit';
 export * from './profile/following';
 export * from './profile/follower';
+export * from './profile/videoPosts';
 export * from './welcome';
 export * from './camera';
 export * from './createPost';

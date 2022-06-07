@@ -24,7 +24,7 @@ import {ScrollView} from 'react-native-gesture-handler';
 import UserFeed from '../UserFeed';
 import ImagePicker from 'react-native-image-crop-picker';
 
-export default function VideoPost({post, currentShowId}) {
+export default function VideoPost({post, currentShowId, back, fullHeight}) {
   //bottom sheet
   const refRBSheet = useRef();
   const reactionListSheet = useRef();
@@ -199,12 +199,9 @@ export default function VideoPost({post, currentShowId}) {
       <View
         style={{
           width: '100%',
-          height: Dimensions.get('window').height - 30,
+          height: Dimensions.get('window').height - (fullHeight ? 0 : 30),
           justifyContent: 'center',
         }}>
-        {/* {loading ? (
-        <ActivityIndicator size="large" />
-      ) : ( */}
         <Video
           source={{
             uri: `${baseURL}/video-post/${post.id}/video`,
@@ -218,6 +215,18 @@ export default function VideoPost({post, currentShowId}) {
           resizeMode="cover"
           style={styles.backgroundVideo}
         />
+        {back && <View style={styles.topLeftContainer}>
+          <TouchableWithoutFeedback onPress={() => back()}>
+            <AntDesign
+              name="arrowleft"
+              size={30}
+              color='white'
+              style={{
+                marginTop: 20,
+              }}
+            />
+          </TouchableWithoutFeedback>
+        </View> }
         <View style={styles.textContainer}>
           <Text style={{color: '#fff'}}>
             @{post.user.user_name} . {timeDiff(post.createdAt)}
@@ -451,6 +460,14 @@ var styles = StyleSheet.create({
     position: 'absolute',
     right: 0,
     bottom: '2%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '15%'
+  },
+  topLeftContainer: {
+    position: 'absolute',
+    left: '2%',
+    top: '2%',
     alignItems: 'center',
     justifyContent: 'center',
     width: '15%',
