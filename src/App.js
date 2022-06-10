@@ -5,28 +5,24 @@
  * @format
  * @flow strict-local
  */
-import React from 'react';
+import React, {useEffect} from 'react';
 import 'react-native-gesture-handler';
-import { NavigationContainer } from '@react-navigation/native';
-import { NativeBaseProvider } from 'native-base';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { Provider } from 'react-redux';
+import {NavigationContainer} from '@react-navigation/native';
+import {NativeBaseProvider} from 'native-base';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
+import {Provider, useDispatch} from 'react-redux';
 import store from './redux';
-import { Layout } from './components';
-import { LogBox } from 'react-native';
-import { theme } from './styles'
-
+import {Layout} from './components';
+import {LogBox} from 'react-native';
+import {theme} from './styles';
 
 //ignore warning
-
 LogBox.ignoreLogs(['NativeBase:']);
 
-
 const App = () => {
-
   return (
     <Provider store={store}>
-      <NativeBaseProvider >
+      <NativeBaseProvider>
         <SafeAreaProvider>
           <NavigationContainer>
             <Layout />
@@ -36,7 +32,5 @@ const App = () => {
     </Provider>
   );
 };
-
-
 
 export default App;

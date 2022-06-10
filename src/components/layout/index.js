@@ -16,21 +16,26 @@ import {
   CreatePost,
   HomeScreen,
   DiscoverySearchUser,
-  ProfileVideoPostScreen
+  ProfileVideoPostScreen,
 } from '../../screens';
 import {useDispatch, useSelector} from 'react-redux';
-import {isAuthenticated} from '../../redux/reducers';
+import {initNotify, isAuthenticated} from '../../redux/reducers';
 import ProfileRelationship from '../../screens/profile/relationship';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {Spinner, View} from 'native-base';
 import {WebRTCCall} from '../../screens/inbox';
+import NotifyService from '../../firebase/NotifyService';
 
-const Stack = createNativeStackNavigator();
-// const Stack = createStackNavigator();
+const Stack = createStackNavigator();
 
 const Layout = () => {
   const dispatch = useDispatch();
   const userReducer = useSelector(state => state.user);
+
+  useEffect(() => {
+    let notify = new NotifyService();
+    notify = new NotifyService();
+    notify.localNotify();
+  }, []);
 
   useEffect(() => {
     if (!userReducer.loaded) {
@@ -81,7 +86,7 @@ const Layout = () => {
             name="DiscoverySearchUser"
             component={DiscoverySearchUser}
           />
-          <Stack.Screen 
+          <Stack.Screen
             name="ProfileVideoPost"
             component={ProfileVideoPostScreen}
           />

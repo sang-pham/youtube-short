@@ -30,6 +30,13 @@ const DirectMessage = ({navigation}) => {
     return str;
   };
 
+  const randStatusColor = id => {
+    const colors = ['green', 'orange', '#b5b5b5', 'transparent'];
+    let idx = Math.floor(Math.random() * colors.length);
+    console.log(id, idx);
+    return colors[idx];
+  };
+
   return (
     <Container>
       <HeaderCustom
@@ -63,12 +70,19 @@ const DirectMessage = ({navigation}) => {
                   space={3}
                   justifyContent="space-between"
                   alignItems={'center'}>
-                  <Avatar
-                    size="md"
-                    source={{
-                      uri: getAvatarUrl(item.person_id),
-                    }}
-                  />
+                  <Badge
+                    title={' '}
+                    direction="bottom-right"
+                    color={`${randStatusColor(item.id)}`}
+                    size={10}
+                    style={{right: 0, bottom: 0}}>
+                    <Avatar
+                      size="md"
+                      source={{
+                        uri: getAvatarUrl(item.person_id),
+                      }}
+                    />
+                  </Badge>
                   <VStack>
                     <Text
                       _dark={{
