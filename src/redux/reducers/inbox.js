@@ -152,6 +152,10 @@ export const inboxSlice = createSlice({
       const chatBoxList = state.chatBoxList;
       const idx = chatBoxList.findIndex(item => item.id === conversation.id);
 
+      // const notify = NotifyService.getInstance();
+      const notify = new NotifyService();
+      notify.messageNotify({senderName: person.full_name, message});
+
       if (idx >= 0) {
         chatBoxList[idx].message = message;
         swapItemArray(chatBoxList, idx, 0);
@@ -160,22 +164,21 @@ export const inboxSlice = createSlice({
       }
 
       chatBoxList[0].is_seen = false;
-      // state.numberOfUnRead++;
 
       if (!state.messages.length) return;
 
       state.messages.unshift(...parseMessages([message]));
-
-      console.log(person, message);
-
-      const notify = new NotifyService();
-      notify.messageNotify({senderName: person.full_name, message});
     },
     sentMessage: (state, action) => {
       const {message, person, conversation, v4Id} = action.payload;
       const msg = state.messages.find(msg => msg._id === v4Id);
 
       if (msg) msg._id = message.id;
+
+      // use for test
+      // const notify = NotifyService.getInstance();
+      // const notify = new NotifyService();
+      // notify.messageNotify({senderName: person.full_name, message});
 
       const chatBoxList = state.chatBoxList;
       const idx = chatBoxList.findIndex(

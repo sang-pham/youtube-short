@@ -19,12 +19,13 @@ const Layout = () => {
   const loading = useSelector(state => state.user.loading);
 
   useEffect(() => {
+    // const notify = NotifyService.getInstance();
     const notify = new NotifyService();
     notify.testNotify({
       title: 'Notification',
       subTitle: 'new',
-      content: 'Welcome to video short!',
-      message: 'You have a message',
+      content: 'You have new videos today',
+      message: ' Welcome to video short!',
     });
   }, []);
 

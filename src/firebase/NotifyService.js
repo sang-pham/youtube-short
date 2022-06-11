@@ -121,8 +121,6 @@ export default class NotifyService {
       content = message.text;
     }
 
-    console.log('sadasd', senderName, content, timeDiff(message.createdAt));
-
     PushNotification.localNotification({
       /* Android Only Properties */
       channelId: soundName ? 'sound-channel-id' : 'default-channel-id',
