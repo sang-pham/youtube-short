@@ -1,4 +1,4 @@
-
+import {StyleSheet} from 'react-native';
 
 export const globalStyle = StyleSheet.create({
   baseBlueColor: {
@@ -9,5 +9,3 @@ export const globalStyle = StyleSheet.create({
     textAlign: 'left',
   },
 });
-
-

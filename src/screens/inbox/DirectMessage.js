@@ -33,7 +33,6 @@ const DirectMessage = ({navigation}) => {
   const randStatusColor = id => {
     const colors = ['green', 'orange', '#b5b5b5', 'transparent'];
     let idx = Math.floor(Math.random() * colors.length);
-    console.log(id, idx);
     return colors[idx];
   };
 
@@ -41,7 +40,7 @@ const DirectMessage = ({navigation}) => {
     <Container>
       <HeaderCustom
         title="Direct messages"
-        leftElement={<BackButton pathRoute={'Inbox'} />}
+        // leftElement={<BackButton pathRoute={'Inbox'} />}
         rightElement={
           <Feather
             name="plus"

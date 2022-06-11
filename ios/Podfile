@@ -3,7 +3,7 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
 
 platform :ios, '11.0'
 
-target 'YoutubeShort' do
+target 'VideoShort' do
   config = use_native_modules!
 
   use_react_native!(
@@ -16,7 +16,9 @@ target 'YoutubeShort' do
 
   pod 'react-native-camera', :path => '../node_modules/react-native-camera'
 
-  target 'YoutubeShortTests' do
+  pod 'RNBootSplash', :path => '../node_modules/react-native-bootsplash'
+
+  target 'VideoShortTests' do
     inherit! :complete
     # Pods for testing
   end

@@ -23,9 +23,7 @@ import {v4} from 'uuid';
 
 const VideoWrapper = ({source, style, handleNavigate}) => {
   return (
-    <TouchableWithoutFeedback 
-      onPress={() => handleNavigate()}
-    >
+    <TouchableWithoutFeedback onPress={() => handleNavigate()}>
       <Video
         source={source}
         paused={false}
@@ -54,12 +52,6 @@ const ProfileScreen = ({navigation, route}) => {
   }, []);
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setLoading] = useState(false);
-
-  useEffect(() => {
-    if (!userReducer.authenticated) {
-      navigation.navigate('Home');
-    }
-  }, [userReducer.authenticated]);
 
   useEffect(() => {
     (async () => {
@@ -115,14 +107,13 @@ const ProfileScreen = ({navigation, route}) => {
     });
   };
 
-
   const navigateUserVideoPosts = ({userId, videoPostId}) => {
-    console.log(userId, videoPostId)
+    console.log(userId, videoPostId);
     navigation.navigate('ProfileVideoPost', {
       userId,
       videoPostId,
     });
-  }
+  };
 
   return (
     <>
@@ -238,22 +229,26 @@ const ProfileScreen = ({navigation, route}) => {
                 uri: `${baseURL}/video-post/${videoPost.id}/video`,
               }}
               style={styles.videoThump}
-              handleNavigate={() => navigateUserVideoPosts({
-                userId: videoPost.user_id,
-                videoPostId: videoPost.id
-              })}
+              handleNavigate={() =>
+                navigateUserVideoPosts({
+                  userId: videoPost.user_id,
+                  videoPostId: videoPost.id,
+                })
+              }
             />
           ))}
-          {initLoad && videoPosts.length == 0 && 
-          <Text style={{
-            marginTop: '5%',
-            textAlign: 'center',
-            width: '100%',
-            fontSize: 18,
-            fontWeight: '600',
-          }}>
-            No post yet
-          </Text>}
+          {initLoad && videoPosts.length == 0 && (
+            <Text
+              style={{
+                marginTop: '5%',
+                textAlign: 'center',
+                width: '100%',
+                fontSize: 18,
+                fontWeight: '600',
+              }}>
+              No post yet
+            </Text>
+          )}
         </View>
       </ScrollView>
     </>
