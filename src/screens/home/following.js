@@ -100,7 +100,8 @@ const HomeFollowing = () => {
             maxToRenderPerBatch={3}
             windowSize={5}
             removeClippedSubviews={true}
-            ListFooterComponent={() => isLoading && <Loading />}
+            // ListFooterComponent={() => isLoading && <Loading />}
+            contentContainerStyle={{paddingBottom: 45}}
           />
         ) : (
           <>

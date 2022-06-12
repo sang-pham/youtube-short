@@ -122,7 +122,6 @@ export function WebRTCCall({route, navigation}) {
       ({senderId, receiverId, candidate}) => {
         if (pc.current) {
           pc.current.addIceCandidate(new RTCIceCandidate(candidate));
-          console.log('back candidate', candidate);
         }
       },
     );

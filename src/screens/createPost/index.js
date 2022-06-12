@@ -38,6 +38,7 @@ const CreatePost = () => {
   const [auth, setAuth] = useState(null);
   const route = useRoute();
   const navigation = useNavigation();
+  const user = useSelector(state => state.user.user);
 
   useEffect(() => {
     console.log(tags);
@@ -68,9 +69,7 @@ const CreatePost = () => {
         data.append('tags', tagsString);
       }
 
-      let authToken = JSON.parse(
-        await EncryptedStorage.getItem('user_session'),
-      ).token;
+      const authToken = user.token;
       if (authToken) {
         fetch(`${baseURL}/upload-media`, {
           headers: {
@@ -94,10 +93,6 @@ const CreatePost = () => {
       console.error(e);
     }
   };
-
-  useEffect(() => {
-    // retrieveUserSession();
-  }, []);
 
   return (
     <View style={styles.container}>

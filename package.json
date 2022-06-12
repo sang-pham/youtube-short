@@ -50,6 +50,7 @@
     "react-native-typing-animation": "^0.1.7",
     "react-native-vector-icons": "^9.1.0",
     "react-native-video": "^5.2.0",
+    "react-native-video-cache": "^2.7.3",
     "react-native-vision-camera": "^2.12.2",
     "react-native-webrtc": "^1.98.0",
     "react-redux": "^7.2.6",
