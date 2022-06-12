@@ -207,10 +207,10 @@ export default function VideoPost({post, currentShowId, back, fullHeight}) {
           alignItems: 'center',
           backgroundColor: '#000',
         }}>
-        {/* 
+        {/*
           // Configure cache to 50MB & purge in 1 hour
           cache: { size: 50, expiresIn: 3600 }}
-          // Use smart defaults (30MB cache size & purge in 10 minute ) 
+          // Use smart defaults (30MB cache size & purge in 10 minute )
         */}
         <Video
           source={{

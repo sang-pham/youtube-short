@@ -136,7 +136,7 @@ const ProfileVideoPostScreen = ({route}) => {
               Start following others for watching more videos
             </Text>
             <Button
-              onPress={() => navigation.navigate('Discover')}
+              onPress={() => navigation.navigate('Tab_Discover')}
               size="md"
               style={{
                 marginTop: '5%',
