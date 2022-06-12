@@ -10,7 +10,15 @@ import RNBootSplash from 'react-native-bootsplash';
 import Toast from 'react-native-toast-message';
 import MainStack from './MainStack';
 import AuthStack from '../../screens/auth/AuthStack';
-import {CreatePost, RecordScreen} from '../../screens';
+import {
+  CreatePost,
+  DiscoverySearchUser,
+  ProfileEditScreen,
+  ProfileVideoPostScreen,
+  RecordScreen,
+} from '../../screens';
+import ProfileStack from '../../screens/profile/ProfileStack';
+import ProfileRelationship from '../../screens/profile/relationship';
 
 const Stack = createStackNavigator();
 
@@ -61,6 +69,19 @@ const Layout = () => {
           <Stack.Screen name="CreatePost" component={CreatePost} />
           <Stack.Screen name="WebRTCCall" component={WebRTCCall} />
           <Stack.Screen name="ChatBox" component={ChatBox} />
+          <Stack.Screen name="ProfileEdit" component={ProfileEditScreen} />
+          <Stack.Screen
+            name="ProfileRelationship"
+            component={ProfileRelationship}
+          />
+          <Stack.Screen
+            name="DiscoverySearchUser"
+            component={DiscoverySearchUser}
+          />
+          <Stack.Screen
+            name="ProfileVideoPost"
+            component={ProfileVideoPostScreen}
+          />
         </Stack.Navigator>
       )}
     </>

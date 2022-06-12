@@ -95,7 +95,7 @@ const MainStack = () => {
   }, [home]);
 
   const backToProfile = () => {
-    navigation.navigate('Profile', {
+    navigation.navigate('Tab_Profile', {
       userId: userReducer.user.id,
     });
   };
@@ -167,7 +167,7 @@ const MainStack = () => {
       />
       <Tab.Screen
         name="Tab_Profile"
-        component={ProfileStack}
+        component={ProfileScreen}
         options={{
           tabBarLabel: 'Profile',
           tabBarIcon: ({color}) => (

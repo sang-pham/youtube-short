@@ -17,8 +17,10 @@ import {axiosAuth, baseURL, socketClient, parseImageToBlob} from '../../libs';
 import {useRoute, useNavigation} from '@react-navigation/native';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import styles from './styles';
+import {useDispatch, useSelector} from 'react-redux';
 
 const CreatePost = () => {
+  const userReducer = useSelector(state => state.user);
   const [modalVisible, setModalVisible] = useState(false);
   const [description, setDescription] = useState('');
   const [videoKey, setVideoKey] = useState(null);
@@ -27,6 +29,8 @@ const CreatePost = () => {
   const [auth, setAuth] = useState(null);
   const route = useRoute();
   const navigation = useNavigation();
+  // const dispatch = useDispatch();
+
   const togglePause = () => {
     setPaused(!paused);
   };
@@ -44,29 +48,27 @@ const CreatePost = () => {
         uri: route.params.video.path,
         type: 'video/mp4',
       });
-      
-      let authToken = JSON.parse(
-        await EncryptedStorage.getItem('user_session'),
-      ).token;
-      if(authToken) {
-        fetch(`${baseURL}/upload-media`, {
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'multipart/form-data',
-            Authorization: authToken,
-          },
-          method: 'POST',
-          body: data,
+
+      // let authToken = JSON.parse(
+      //   await EncryptedStorage.getItem('user_session'),
+      // ).token;
+
+      fetch(`${baseURL}/upload-media`, {
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'multipart/form-data',
+          Authorization: userReducer.user.token,
+        },
+        method: 'POST',
+        body: data,
+      })
+        .then(response => response.json())
+        .then(data => {
+          Alert.alert('Message', 'Video uploaded successfully', [{text: 'OK'}]);
+          // dispatch()
+          navigation.navigate('Tab_Profile');
         })
-          .then(response => response.json())
-          .then(data => {
-            Alert.alert('Message', 'Video uploaded successfully', [
-              {text: 'OK'},
-            ]);
-            navigation.navigate('Main')
-          })
-          .catch(error => console.log(error));
-      }
+        .catch(error => console.log(error));
     } catch (e) {
       console.error(e);
     }
@@ -86,7 +88,7 @@ const CreatePost = () => {
           controls={false}
           muted={false}
           repeat={true}
-          resizeMode="cover"
+          resizeMode="contain"
         />
       </TouchableWithoutFeedback>
       <View style={styles.buttonContainer}>

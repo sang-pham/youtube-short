@@ -205,6 +205,7 @@ export default function VideoPost({post, currentShowId, back, fullHeight}) {
         <Video
           source={{
             uri: `${baseURL}/video-post/${post.id}/video`,
+            cache: true,
           }}
           paused={paused}
           controls={false}
@@ -215,18 +216,20 @@ export default function VideoPost({post, currentShowId, back, fullHeight}) {
           resizeMode="cover"
           style={styles.backgroundVideo}
         />
-        {back && <View style={styles.topLeftContainer}>
-          <TouchableWithoutFeedback onPress={() => back()}>
-            <AntDesign
-              name="arrowleft"
-              size={30}
-              color='white'
-              style={{
-                marginTop: 20,
-              }}
-            />
-          </TouchableWithoutFeedback>
-        </View> }
+        {back && (
+          <View style={styles.topLeftContainer}>
+            <TouchableWithoutFeedback onPress={() => back()}>
+              <AntDesign
+                name="arrowleft"
+                size={30}
+                color="white"
+                style={{
+                  marginTop: 20,
+                }}
+              />
+            </TouchableWithoutFeedback>
+          </View>
+        )}
         <View style={styles.textContainer}>
           <Text style={{color: '#fff'}}>
             @{post.user.user_name} . {timeDiff(post.createdAt)}
@@ -462,7 +465,7 @@ var styles = StyleSheet.create({
     bottom: '2%',
     alignItems: 'center',
     justifyContent: 'center',
-    width: '15%'
+    width: '15%',
   },
   topLeftContainer: {
     position: 'absolute',

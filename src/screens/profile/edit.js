@@ -88,7 +88,7 @@ const ProfileEditScreen = ({navigation}) => {
   }, [userReducer.authenticated]);
 
   const backToProfile = () => {
-    navigation.navigate('Profile');
+    navigation.navigate('Tab_Profile');
   };
 
   return (

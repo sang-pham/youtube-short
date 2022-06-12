@@ -1,13 +1,12 @@
 import React, {useState, useRef, useEffect, useMemo, useCallback} from 'react';
 import {Text, View, FlatList, Dimensions, StyleSheet} from 'react-native';
 import {Button} from 'native-base';
-import VideoPost from '../../components/VideoPost'
+import VideoPost from '../../components/VideoPost';
 import Loading from '../../components/Loading';
 import {useNavigation} from '@react-navigation/native';
 import {axiosAuth, baseURL, socketClient} from '../../libs';
 
-const ProfileVideoPostScreen = ({ route }) => {
-
+const ProfileVideoPostScreen = ({route}) => {
   const [videoPosts, setVideoPosts] = useState([]);
   const [initLoad, setInitLoad] = useState(false);
   const currentShowId = useRef(null);
@@ -18,17 +17,20 @@ const ProfileVideoPostScreen = ({ route }) => {
   const [isLoading, setLoading] = useState(false);
 
   const navigation = useNavigation();
-  const {  userId, videoPostId } = route.params;
+  const {userId, videoPostId} = route.params;
 
   const renderItem = useCallback(
     ({item}) => (
-      <VideoPost 
+      <VideoPost
         post={item}
         currentShowId={currentShowId.current}
-        back={() => navigation.navigate('Profile', {
-          userId,
-        })}
-        fullHeight={true} />
+        back={() =>
+          navigation.navigate('Tab_Profile', {
+            userId,
+          })
+        }
+        fullHeight={true}
+      />
     ),
     [],
   );
@@ -72,7 +74,9 @@ const ProfileVideoPostScreen = ({ route }) => {
     try {
       setLoading(true);
       let res = await axiosAuth.get(
-        `video-post/user/${userId}?per_page=${PER_PAGE}&page=${currentPage + 1}`,
+        `video-post/user/${userId}?per_page=${PER_PAGE}&page=${
+          currentPage + 1
+        }`,
       );
       if (res.status == 200) {
         if (res.data.length) {
@@ -81,12 +85,11 @@ const ProfileVideoPostScreen = ({ route }) => {
         }
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   };
-
 
   return (
     <View
@@ -98,9 +101,9 @@ const ProfileVideoPostScreen = ({ route }) => {
               height: '100%',
             }
           : {
-            height: '100%',
-            backgroundColor: '#fff'
-          }
+              height: '100%',
+              backgroundColor: '#fff',
+            }
       }>
       {initLoad &&
         (videoPosts.length ? (
@@ -143,8 +146,8 @@ const ProfileVideoPostScreen = ({ route }) => {
           </>
         ))}
     </View>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   backgroundVideo: {
@@ -155,8 +158,8 @@ const styles = StyleSheet.create({
     right: 0,
     width: '100%',
     height: 400,
-    backgroundColor: 'red'
+    backgroundColor: 'red',
   },
-})
+});
 
-export { ProfileVideoPostScreen }
+export {ProfileVideoPostScreen};

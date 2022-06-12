@@ -76,7 +76,7 @@ export default function UserFeed({
   }, [userReducer.followings.length]);
 
   const navigateProfile = userId => event => {
-    navigation.navigate('Profile', {
+    navigation.navigate('Tab_Profile', {
       userId,
     });
   };
