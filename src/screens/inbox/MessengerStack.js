@@ -15,7 +15,7 @@ export default function MessengerStack() {
       {/* <messStack.Screen name="Inbox" component={InboxScreen} /> */}
       <messStack.Screen name="DirectMessage" component={DirectMessage} />
       {/* <messStack.Screen name="ChatBox" component={ChatBox} /> */}
-      <messStack.Screen name="NewChat" component={NewChatScreen} />
+      {/* <messStack.Screen name="NewChat" component={NewChatScreen} /> */}
     </messStack.Navigator>
   );
 }

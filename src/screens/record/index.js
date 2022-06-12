@@ -1,12 +1,20 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  Alert,
+} from 'react-native';
 import {useCameraDevices, Camera} from 'react-native-vision-camera';
 import ImagePicker from 'react-native-image-crop-picker';
 import styles from './styles';
 import awaitAsyncGenerator from '@babel/runtime/helpers/esm/awaitAsyncGenerator';
 import {useNavigation} from '@react-navigation/native';
-import {Button} from 'native-base';
+import {AlertDialog, Button} from 'native-base';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import Toast from 'react-native-toast-message';
 
 const RecordScreen = ({navigation}) => {
   const {isFocused} = navigation;
@@ -37,7 +45,14 @@ const RecordScreen = ({navigation}) => {
     if (camera.current) {
       camera.current.startRecording({
         onRecordingFinished: async video => {
-          const blob = await fetch(video.path);
+          console.log(video);
+          // 15 MB
+          if (video.size > 15 * 1024 * 1024) {
+            Alert.alert('Warning', 'Video upload is not larger than 15MB', [
+              {text: 'OK'},
+            ]);
+            return;
+          }
           navigation.navigate('CreatePost', {video, path});
         },
         onRecordingError: error => console.error(error),
@@ -48,10 +63,23 @@ const RecordScreen = ({navigation}) => {
   const openPicker = async () => {
     ImagePicker.openPicker({
       mediaType: 'video',
-    }).then(video => {
-      // const blob = fetch(video.path)
-      navigation.navigate('CreatePost', {video});
-    });
+    })
+      .then(video => {
+        console.log(video);
+        // 15 MB
+        if (video.size > 15 * 1024 * 1024) {
+          throw 'Video upload is not larger than 15MB';
+        }
+        navigation.navigate('CreatePost', {video});
+      })
+      .catch(error => {
+        // Toast.show({
+        //   type: 'error',
+        //   text1: 'File upload',
+        //   text2: error,
+        // });
+        Alert.alert('Warning', error, [{text: 'OK'}]);
+      });
   };
 
   if (device == null) {
