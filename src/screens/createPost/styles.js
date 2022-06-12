@@ -81,10 +81,27 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 100,
-    width: 250,
+    width: 350,
     margin: 12,
     borderWidth: 1,
     padding: 10,
+  },
+  textInput: {
+    height: 40,
+    width: 350,
+    borderColor: 'black',
+    borderWidth: 1,
+    borderRadius: 5,
+    padding: 3,
+    alignSelf: 'center',
+  },
+  tag: {
+    backgroundColor: '#fff',
+    alignSelf: 'center',
+    marginBottom: 25,
+  },
+  tagText: {
+    color: '#3ca897',
   },
 });
 
