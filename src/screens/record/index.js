@@ -6,6 +6,7 @@ import styles from './styles';
 import awaitAsyncGenerator from '@babel/runtime/helpers/esm/awaitAsyncGenerator';
 import {useNavigation} from '@react-navigation/native';
 import {Button} from 'native-base';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 
 const RecordScreen = ({navigation}) => {
   const {isFocused} = navigation;
@@ -20,7 +21,9 @@ const RecordScreen = ({navigation}) => {
   };
   const onRecord = async () => {
     const stopRecording = async () => {
-      if (camera.current) await camera.current.stopRecording();
+      if (camera.current) {
+        await camera.current.stopRecording();
+      }
       setIsRecording(false);
       return;
     };
@@ -31,7 +34,7 @@ const RecordScreen = ({navigation}) => {
 
     setIsRecording(true);
 
-    if (camera.current)
+    if (camera.current) {
       camera.current.startRecording({
         onRecordingFinished: async video => {
           const blob = await fetch(video.path);
@@ -39,6 +42,7 @@ const RecordScreen = ({navigation}) => {
         },
         onRecordingError: error => console.error(error),
       });
+    }
   };
 
   const openPicker = async () => {
@@ -50,7 +54,9 @@ const RecordScreen = ({navigation}) => {
     });
   };
 
-  if (device == null) return <Text>Hello</Text>;
+  if (device == null) {
+    return <Text>Hello</Text>;
+  }
   checkPermission();
   return (
     <View style={styles.container}>
@@ -67,10 +73,7 @@ const RecordScreen = ({navigation}) => {
         style={isRecording ? styles.buttonStop : styles.buttonRecord}
       />
       <TouchableOpacity style={styles.pickButton} onPress={openPicker}>
-        <Image
-          source={require('../../public/images/discovery.png')}
-          style={styles.imageButton}
-        />
+        <AntDesign name="upload" size={24} color={'white'} />
       </TouchableOpacity>
     </View>
   );

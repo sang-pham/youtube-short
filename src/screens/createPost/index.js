@@ -85,7 +85,17 @@ const CreatePost = () => {
             Alert.alert('Message', 'Video uploaded successfully', [
               {text: 'OK'},
             ]);
-            navigation.navigate('Main');
+            let {id} = data;
+            if (id) {
+              navigation.navigate('ProfileVideoPost', {
+                userId: user.id,
+                videoPostId: id,
+              });
+            } else {
+              navigation.navigate('Tab_Profile', {
+                userId: user.id,
+              });
+            }
           })
           .catch(error => console.log(error));
       }

@@ -11,7 +11,6 @@ import {
 } from 'react-native';
 import {Button, Box, Center, Avatar, Pressable, Menu} from 'native-base';
 import {baseURL} from '../../libs/config';
-import AntDesign from 'react-native-vector-icons/AntDesign';
 import {logout} from '../../redux/reducers/user';
 import {axiosAuth} from '../../libs';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
