@@ -70,7 +70,7 @@ const HomeSuggest = () => {
   };
 
   return (
-    <View>
+    <View style={{flex: 1}}>
       <FlatList
         data={videoPosts}
         onViewableItemsChanged={onVideoScrollRef.current}
@@ -78,7 +78,7 @@ const HomeSuggest = () => {
         renderItem={renderItem}
         keyExtractor={item => item.id}
         showsVerticalScrollIndicator={false}
-        snapToInterval={Dimensions.get('window').height - 30}
+        snapToInterval={Dimensions.get('window').height}
         snapToAlignment="start"
         decelerationRate={'fast'}
         onEndReachedThreshold={0.5}
@@ -86,7 +86,8 @@ const HomeSuggest = () => {
         maxToRenderPerBatch={3}
         windowSize={5}
         removeClippedSubviews={true}
-        ListFooterComponent={() => isLoading && <Loading />}
+        // ListFooterComponent={() => isLoading && <Loading />}
+        contentContainerStyle={{paddingBottom: 45}}
       />
     </View>
   );

@@ -23,6 +23,7 @@ import {timeDiff} from '../../libs';
 import {ScrollView} from 'react-native-gesture-handler';
 import UserFeed from '../UserFeed';
 import ImagePicker from 'react-native-image-crop-picker';
+import convertToProxyURL from 'react-native-video-cache';
 
 export default function VideoPost({post, currentShowId, back, fullHeight}) {
   //bottom sheet
@@ -198,13 +199,23 @@ export default function VideoPost({post, currentShowId, back, fullHeight}) {
     <TouchableWithoutFeedback onPress={togglePause}>
       <View
         style={{
-          width: '100%',
-          height: Dimensions.get('window').height - (fullHeight ? 0 : 30),
+          // width: '100%',
+          // height: Dimensions.get('window').height - (fullHeight ? 0 : 30),
+          height: Dimensions.get('window').height,
+          // height: 600,
           justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: '#000',
         }}>
+        {/*
+          // Configure cache to 50MB & purge in 1 hour
+          cache: { size: 50, expiresIn: 3600 }}
+          // Use smart defaults (30MB cache size & purge in 10 minute )
+        */}
         <Video
           source={{
-            uri: `${baseURL}/video-post/${post.id}/video`,
+            uri: convertToProxyURL(`${baseURL}/video-post/${post.id}/video`),
+            cache: true,
           }}
           paused={paused}
           controls={false}
@@ -212,21 +223,30 @@ export default function VideoPost({post, currentShowId, back, fullHeight}) {
           fullscreen={true}
           repeat={true}
           onReadyForDisplay={() => setLoading(false)}
-          resizeMode="cover"
+          resizeMode="contain"
           style={styles.backgroundVideo}
         />
-        {back && <View style={styles.topLeftContainer}>
-          <TouchableWithoutFeedback onPress={() => back()}>
-            <AntDesign
-              name="arrowleft"
-              size={30}
-              color='white'
-              style={{
-                marginTop: 20,
-              }}
-            />
-          </TouchableWithoutFeedback>
-        </View> }
+        {back && (
+          <View style={styles.topLeftContainer}>
+            <TouchableWithoutFeedback onPress={() => back()}>
+              <AntDesign
+                name="arrowleft"
+                size={30}
+                color="white"
+                style={{
+                  marginTop: 20,
+                }}
+              />
+            </TouchableWithoutFeedback>
+          </View>
+        )}
+
+        {paused && (
+          <View style={styles.center}>
+            <AntDesign name="caretright" size={30} color="white" />
+          </View>
+        )}
+
         <View style={styles.textContainer}>
           <Text style={{color: '#fff'}}>
             @{post.user.user_name} . {timeDiff(post.createdAt)}
@@ -238,6 +258,7 @@ export default function VideoPost({post, currentShowId, back, fullHeight}) {
           </Text>
           <Text style={{color: '#fff'}}>{post.caption}</Text>
         </View>
+
         <View style={styles.rightContainer}>
           <Avatar
             style={styles.avatarStyle}
@@ -307,6 +328,7 @@ export default function VideoPost({post, currentShowId, back, fullHeight}) {
           />
           <Text style={{color: '#fff'}}>Share</Text>
         </View>
+
         <RBSheet
           ref={refRBSheet}
           height={600}
@@ -451,6 +473,9 @@ var styles = StyleSheet.create({
     right: 0,
     width: '100%',
   },
+  center: {
+    margin: 'auto',
+  },
   textContainer: {
     position: 'absolute',
     bottom: '2%',
@@ -462,7 +487,7 @@ var styles = StyleSheet.create({
     bottom: '2%',
     alignItems: 'center',
     justifyContent: 'center',
-    width: '15%'
+    width: '15%',
   },
   topLeftContainer: {
     position: 'absolute',

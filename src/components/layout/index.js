@@ -1,61 +1,60 @@
-import React, {useEffect, useMemo} from 'react';
+import React, {useEffect} from 'react';
 import {
   CardStyleInterpolators,
   createStackNavigator,
 } from '@react-navigation/stack';
-import {MainScreen} from './MainScreen';
+import {useSelector} from 'react-redux';
+import {ChatBox, WebRTCCall} from '../../screens/inbox';
+import NotifyService from '../../firebase/NotifyService';
+import RNBootSplash from 'react-native-bootsplash';
+import Toast from 'react-native-toast-message';
+import MainStack from './MainStack';
+import AuthStack from '../../screens/auth/AuthStack';
 import {
-  DirectMessage,
-  ChatBox,
-  NewChatScreen,
-  RecordScreen,
-  SigninScreen,
-  SignupScreen,
-  ProfileEditScreen,
-  WelcomeScreen,
   CreatePost,
-  HomeScreen,
   DiscoverySearchUser,
-  ProfileVideoPostScreen
+  ProfileEditScreen,
+  ProfileVideoPostScreen,
+  RecordScreen,
 } from '../../screens';
-import {useDispatch, useSelector} from 'react-redux';
-import {isAuthenticated} from '../../redux/reducers';
+import ProfileStack from '../../screens/profile/ProfileStack';
 import ProfileRelationship from '../../screens/profile/relationship';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {Spinner, View} from 'native-base';
-import {WebRTCCall} from '../../screens/inbox';
 
-const Stack = createNativeStackNavigator();
-// const Stack = createStackNavigator();
+const Stack = createStackNavigator();
 
 const Layout = () => {
-  const dispatch = useDispatch();
-  const userReducer = useSelector(state => state.user);
+  const isAuth = useSelector(state => state.user.authenticated);
+  const loading = useSelector(state => state.user.loading);
 
   useEffect(() => {
-    if (!userReducer.loaded) {
-      dispatch(isAuthenticated({}));
+    // const notify = NotifyService.getInstance();
+    const notify = new NotifyService();
+    notify.testNotify({
+      title: 'Notification',
+      subTitle: 'new',
+      content: 'You have new videos today',
+      message: ' Welcome to video short!',
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!loading) {
+      RNBootSplash.hide({fade: true});
     }
-  }, [userReducer.loaded]);
+  }, [loading]);
+
+  if (loading) {
+    return null;
+  }
 
   return (
     <>
-      {!userReducer.loaded ? (
-        <View
-          style={{
-            flex: 1,
-            justifyContent: 'center',
-          }}>
-          <Spinner size="lg" color={'#000'} />
-        </View>
-      ) : !userReducer.authenticated ? (
+      {!isAuth ? (
         <Stack.Navigator
           screenOptions={{
             headerShown: false,
           }}>
-          <Stack.Screen name="Welcome" component={WelcomeScreen} />
-          <Stack.Screen name="Signin" component={SigninScreen} />
-          <Stack.Screen name="Signup" component={SignupScreen} />
+          <Stack.Screen name="Auth" component={AuthStack} />
         </Stack.Navigator>
       ) : (
         <Stack.Navigator
@@ -65,13 +64,11 @@ const Layout = () => {
             }),
             headerShown: false,
           }}>
-          <Stack.Screen name="Main" component={MainScreen} />
+          <Stack.Screen name="Main" component={MainStack} />
           <Stack.Screen name="Record" component={RecordScreen} />
           <Stack.Screen name="CreatePost" component={CreatePost} />
-          <Stack.Screen name="DirectMessage" component={DirectMessage} />
-          <Stack.Screen name="ChatBox" component={ChatBox} />
-          <Stack.Screen name="NewChat" component={NewChatScreen} />
           <Stack.Screen name="WebRTCCall" component={WebRTCCall} />
+          <Stack.Screen name="ChatBox" component={ChatBox} />
           <Stack.Screen name="ProfileEdit" component={ProfileEditScreen} />
           <Stack.Screen
             name="ProfileRelationship"
@@ -81,7 +78,7 @@ const Layout = () => {
             name="DiscoverySearchUser"
             component={DiscoverySearchUser}
           />
-          <Stack.Screen 
+          <Stack.Screen
             name="ProfileVideoPost"
             component={ProfileVideoPostScreen}
           />

@@ -9,17 +9,28 @@ import {
   Modal,
   Pressable,
   Alert,
+  Dimensions,
 } from 'react-native';
 import {v4 as uuidv4} from 'uuid';
+import {Icon} from 'react-native-elements';
 import Video from 'react-native-video';
 import {axiosAuth, baseURL, socketClient, parseImageToBlob} from '../../libs';
 // import {Storage, API, graphqlOperation, Auth} from 'aws-amplify';
 import {useRoute, useNavigation} from '@react-navigation/native';
 import EncryptedStorage from 'react-native-encrypted-storage';
+import TagInput from 'react-native-tags-input';
 import styles from './styles';
+import {useDispatch, useSelector} from 'react-redux';
 
 const CreatePost = () => {
+  const mainColor = '#3ca897';
   const [modalVisible, setModalVisible] = useState(false);
+  const [tags, updateTagState] = useState({
+    tag: '',
+    tagsArray: [],
+  });
+  const [tagsColor, setTagsColor] = useState(mainColor);
+  const [tagsText, setTagsText] = useState('#fff');
   const [description, setDescription] = useState('');
   const [videoKey, setVideoKey] = useState(null);
   const [text, onChangeText] = useState('');
@@ -27,6 +38,11 @@ const CreatePost = () => {
   const [auth, setAuth] = useState(null);
   const route = useRoute();
   const navigation = useNavigation();
+  const user = useSelector(state => state.user.user);
+
+  useEffect(() => {
+    console.log(tags);
+  }, tags);
   const togglePause = () => {
     setPaused(!paused);
   };
@@ -36,7 +52,7 @@ const CreatePost = () => {
 
   const uploadToStorage = async () => {
     try {
-      // console.log(route.params.video);
+      console.log(tags.tagsArray);
       let data = new FormData();
       data.append('caption', description);
       data.append('media', {
@@ -44,11 +60,17 @@ const CreatePost = () => {
         uri: route.params.video.path,
         type: 'video/mp4',
       });
-      
-      let authToken = JSON.parse(
-        await EncryptedStorage.getItem('user_session'),
-      ).token;
-      if(authToken) {
+      if (tags.tagsArray) {
+        let tagsString = '';
+        tags.tagsArray.forEach(item => {
+          tagsString += item.toString() + ', ';
+        });
+        console.log(tagsString);
+        data.append('tags', tagsString);
+      }
+
+      const authToken = user.token;
+      if (authToken) {
         fetch(`${baseURL}/upload-media`, {
           headers: {
             Accept: 'application/json',
@@ -63,7 +85,17 @@ const CreatePost = () => {
             Alert.alert('Message', 'Video uploaded successfully', [
               {text: 'OK'},
             ]);
-            navigation.navigate('Main')
+            let {id} = data;
+            if (id) {
+              navigation.navigate('ProfileVideoPost', {
+                userId: user.id,
+                videoPostId: id,
+              });
+            } else {
+              navigation.navigate('Tab_Profile', {
+                userId: user.id,
+              });
+            }
           })
           .catch(error => console.log(error));
       }
@@ -71,10 +103,6 @@ const CreatePost = () => {
       console.error(e);
     }
   };
-
-  useEffect(() => {
-    // retrieveUserSession();
-  }, []);
 
   return (
     <View style={styles.container}>
@@ -86,7 +114,7 @@ const CreatePost = () => {
           controls={false}
           muted={false}
           repeat={true}
-          resizeMode="cover"
+          resizeMode="contain"
         />
       </TouchableWithoutFeedback>
       <View style={styles.buttonContainer}>
@@ -101,18 +129,18 @@ const CreatePost = () => {
           </View>
         </TouchableOpacity>
       </View>
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          setModalVisible(!modalVisible);
+      <TouchableOpacity
+        style={styles.container}
+        activeOpacity={1}
+        onPressOut={() => {
+          setModalVisible(false);
         }}>
-        <TouchableOpacity
-          style={styles.container}
-          activeOpacity={1}
-          onPressOut={() => {
-            setModalVisible(false);
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => {
+            setModalVisible(!modalVisible);
           }}>
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
@@ -125,6 +153,33 @@ const CreatePost = () => {
                 textAlignVertical={'top'}
                 placeholder="Say something about you video"
               />
+              <View>
+                <TagInput
+                  updateState={updateTagState}
+                  tags={tags}
+                  placeholder="Press space to add a tag"
+                  label="Press space to add a tag"
+                  labelStyle={{color: '#fff'}}
+                  leftElement={
+                    <Icon
+                      name={'tag-multiple'}
+                      type={'material-community'}
+                      color={tags.tagsText}
+                    />
+                  }
+                  leftElementContainerStyle={{marginLeft: 3}}
+                  containerStyle={{width: Dimensions.get('window').width - 40}}
+                  inputContainerStyle={[
+                    styles.textInput,
+                    {backgroundColor: tagsColor},
+                  ]}
+                  inputStyle={{color: tagsText}}
+                  autoCorrect={false}
+                  tagStyle={styles.tag}
+                  tagTextStyle={styles.tagText}
+                  keysForTag={' '}
+                />
+              </View>
 
               <Pressable
                 style={[styles.button, styles.buttonClose]}
@@ -133,8 +188,8 @@ const CreatePost = () => {
               </Pressable>
             </View>
           </View>
-        </TouchableOpacity>
-      </Modal>
+        </Modal>
+      </TouchableOpacity>
     </View>
   );
 };

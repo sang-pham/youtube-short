@@ -16,12 +16,18 @@ import {
 import {useNavigation} from '@react-navigation/native';
 import {RecordButton} from '../button';
 import {socketClient} from '../../libs';
-import {receiveMessage, sentMessage} from '../../redux/reducers';
+import {
+  getNumberOfUnRead,
+  receiveMessage,
+  sentMessage,
+} from '../../redux/reducers';
 import {Badge} from '../Atoms';
+import MessengerStack from '../../screens/inbox/MessengerStack';
+import ProfileStack from '../../screens/profile/ProfileStack';
 
 const Tab = createBottomTabNavigator();
 
-const MainScreen = () => {
+const MainStack = () => {
   const [home, setHome] = useState(true);
   const userReducer = useSelector(state => state.user);
   const callReducer = useSelector(state => state.call);
@@ -32,9 +38,11 @@ const MainScreen = () => {
   useEffect(() => {
     socketClient.auth = {userId: userReducer.user.id};
     socketClient.connect();
+    dispatch(getNumberOfUnRead({}));
 
     socketClient.on('receive-message', data => {
       dispatch(receiveMessage(data));
+      dispatch(getNumberOfUnRead({}));
     });
 
     socketClient.on('sent-message', data => {
@@ -87,7 +95,7 @@ const MainScreen = () => {
   }, [home]);
 
   const backToProfile = () => {
-    navigation.navigate('Profile', {
+    navigation.navigate('Tab_Profile', {
       userId: userReducer.user.id,
     });
   };
@@ -104,7 +112,7 @@ const MainScreen = () => {
       }}
       initialRouteName="Home">
       <Tab.Screen
-        name="Home"
+        name="Tab_Home"
         component={HomeScreen}
         listeners={{
           focus: () => setHome(true),
@@ -118,7 +126,7 @@ const MainScreen = () => {
         }}
       />
       <Tab.Screen
-        name="Discover"
+        name="Tab_Discover"
         component={DiscoveryScreen}
         options={{
           tabBarLabel: 'Discover',
@@ -128,7 +136,7 @@ const MainScreen = () => {
         }}
       />
       <Tab.Screen
-        name="Live"
+        name="Tab_Live"
         component={RecordScreen}
         listeners={({navigation}) => ({
           tabPress: e => {
@@ -142,8 +150,8 @@ const MainScreen = () => {
         }}
       />
       <Tab.Screen
-        name="Inbox"
-        component={InboxScreen}
+        name="Tab_Inbox"
+        component={MessengerStack}
         options={{
           tabBarLabel: 'Inbox',
           tabBarIcon: ({color}) => (
@@ -158,7 +166,7 @@ const MainScreen = () => {
         }}
       />
       <Tab.Screen
-        name="Profile"
+        name="Tab_Profile"
         component={ProfileScreen}
         options={{
           tabBarLabel: 'Profile',
@@ -171,10 +179,9 @@ const MainScreen = () => {
             />
           ),
         }}
-        initialParams={{userId: userReducer.user.id}}
       />
     </Tab.Navigator>
   );
 };
 
-export {MainScreen};
+export default MainStack;

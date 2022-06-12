@@ -122,7 +122,6 @@ export function WebRTCCall({route, navigation}) {
       ({senderId, receiverId, candidate}) => {
         if (pc.current) {
           pc.current.addIceCandidate(new RTCIceCandidate(candidate));
-          console.log('back candidate', candidate);
         }
       },
     );
@@ -183,7 +182,6 @@ export function WebRTCCall({route, navigation}) {
 
       if (pc.current) {
         const offer = await pc.current.createOffer();
-        console.log('offer', offer);
         await pc.current.setLocalDescription(offer);
 
         socketClient.emit('video-call-start', {
@@ -205,7 +203,6 @@ export function WebRTCCall({route, navigation}) {
     console.log('Joining the call');
     setGettingCall(false);
     const offer = sdp;
-    console.log('receive', offer);
     if (offer) {
       try {
         await setupWebrtc();
@@ -218,7 +215,6 @@ export function WebRTCCall({route, navigation}) {
           );
           const answer = await pc.current.createAnswer();
           await pc.current.setLocalDescription(answer);
-          console.log('answer', answer);
           sendToPeer('video-call-answer', answer);
         }
       } catch (error) {

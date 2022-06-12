@@ -6,7 +6,7 @@ import GiftedChatCustom from './GiftedChatCustom';
 import {useDispatch, useSelector} from 'react-redux';
 import {clearChatBox, readMessage, setChatBox} from '../../../redux/reducers';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
-import {BackButton, HeaderCustom, Container} from '../../../components';
+import {BackButton, HeaderCustom, Container, Badge} from '../../../components';
 
 const ChatBox = ({route, navigation}) => {
   const personId = route.params.personId;
@@ -65,12 +65,18 @@ const ChatBox = ({route, navigation}) => {
                 onPress={startVoiceCall}
                 style={{marginRight: 15}}
               />
-              <AntDesign
-                name="videocamera"
-                size={24}
-                color="black"
-                onPress={startVideoCall}
-              />
+              <Badge
+                color="green"
+                title={' '}
+                size={8}
+                style={{top: -5, right: -5}}>
+                <AntDesign
+                  name="videocamera"
+                  size={24}
+                  color="black"
+                  onPress={startVideoCall}
+                />
+              </Badge>
             </View>
           )
         }

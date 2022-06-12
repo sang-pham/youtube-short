@@ -49,7 +49,7 @@ const DiscoveryScreen = ({navigation}) => {
           flexDirection: 'row',
         }}>
         <Feather
-          name="send"
+          name="search"
           size={24}
           color="black"
           onPress={() => {

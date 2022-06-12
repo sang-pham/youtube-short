@@ -92,7 +92,7 @@ const HomeFollowing = () => {
             renderItem={renderItem}
             keyExtractor={item => item.id}
             showsVerticalScrollIndicator={false}
-            snapToInterval={Dimensions.get('window').height - 30}
+            snapToInterval={Dimensions.get('window').height}
             snapToAlignment="start"
             decelerationRate={'fast'}
             onEndReachedThreshold={0.5}
@@ -100,7 +100,8 @@ const HomeFollowing = () => {
             maxToRenderPerBatch={3}
             windowSize={5}
             removeClippedSubviews={true}
-            ListFooterComponent={() => isLoading && <Loading />}
+            // ListFooterComponent={() => isLoading && <Loading />}
+            contentContainerStyle={{paddingBottom: 45}}
           />
         ) : (
           <>
@@ -114,7 +115,7 @@ const HomeFollowing = () => {
               Start following others for watching more videos
             </Text>
             <Button
-              onPress={() => navigation.navigate('Discover')}
+              onPress={() => navigation.navigate('Tab_Discover')}
               size="md"
               style={{
                 marginTop: '5%',

@@ -1,8 +1,8 @@
 import React from 'react';
-import { Animated, View, TouchableOpacity, Text, StyleSheet } from 'react-native';
-import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import { ProfileFollowersScreen } from './follower';
-import { ProfileFollowingsScreen } from './following';
+import {Animated, View, TouchableOpacity, Text, StyleSheet} from 'react-native';
+import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
+import {ProfileFollowersScreen} from './follower';
+import {ProfileFollowingsScreen} from './following';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
 function MyTabBar({
@@ -27,7 +27,7 @@ function MyTabBar({
           name="arrowleft"
           size={24}
           onPress={() =>
-            navigation.navigate('Profile', {
+            navigation.navigate('Tab_Profile', {
               userId,
             })
           }
@@ -42,15 +42,15 @@ function MyTabBar({
           {userName}
         </Text>
       </View>
-      <View style={{ flexDirection: 'row', width: '100%' }}>
+      <View style={{flexDirection: 'row', width: '100%'}}>
         {state.routes.map((route, index) => {
-          const { options } = descriptors[route.key];
+          const {options} = descriptors[route.key];
           const label =
             options.tabBarLabel !== undefined
               ? options.tabBarLabel
               : options.title !== undefined
-                ? options.title
-                : route.name;
+              ? options.title
+              : route.name;
 
           const isFocused = state.index === index;
 
@@ -63,7 +63,7 @@ function MyTabBar({
 
             if (!isFocused && !event.defaultPrevented) {
               // The `merge: true` option makes sure that the params inside the tab screen are preserved
-              navigation.navigate({ name: route.name, merge: true });
+              navigation.navigate({name: route.name, merge: true});
             }
           };
 
@@ -77,7 +77,7 @@ function MyTabBar({
           return (
             <TouchableOpacity
               accessibilityRole="button"
-              accessibilityState={isFocused ? { selected: true } : {}}
+              accessibilityState={isFocused ? {selected: true} : {}}
               accessibilityLabel={options.tabBarAccessibilityLabel}
               testID={options.tabBarTestID}
               onPress={onPress}
@@ -100,8 +100,8 @@ function MyTabBar({
 
 const Tab = createMaterialTopTabNavigator();
 
-export default function ProfileRelationship({ route }) {
-  const { userId, userName, defaultTab } = route.params;
+export default function ProfileRelationship({route}) {
+  const {userId, userName, defaultTab} = route.params;
   return (
     <Tab.Navigator
       initialRouteName={defaultTab || 'ProfileFollowing'}
@@ -110,13 +110,17 @@ export default function ProfileRelationship({ route }) {
       )}>
       <Tab.Screen
         name="ProfileFollowing"
-        children={() => <ProfileFollowingsScreen userId={userId} />}
-        options={{ tabBarLabel: 'Followings' }}
+        children={props => (
+          <ProfileFollowingsScreen {...props} userId={userId} />
+        )}
+        options={{tabBarLabel: 'Followings'}}
       />
       <Tab.Screen
         name="ProfileFollower"
-        component={() => <ProfileFollowersScreen userId={userId} />}
-        options={{ tabBarLabel: 'Followers' }}
+        component={props => (
+          <ProfileFollowersScreen {...props} userId={userId} />
+        )}
+        options={{tabBarLabel: 'Followers'}}
       />
     </Tab.Navigator>
   );

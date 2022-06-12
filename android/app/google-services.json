@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "426877290475",
+    "project_id": "mobile-app-722c1",
+    "storage_bucket": "mobile-app-722c1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:426877290475:android:73babda7f1fcc011b9fbae",
+        "android_client_info": {
+          "package_name": "com.youtubeshort"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "426877290475-8r6s5i1l4h8g7cmdedr9aamv3e3sa30l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDF2fbAVKwOqu1hVCc-HTV-fqVzvrqeAtg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "426877290475-8r6s5i1l4h8g7cmdedr9aamv3e3sa30l.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

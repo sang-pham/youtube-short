@@ -1,17 +1,25 @@
-import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, {useState, useEffect} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
 import {
-  Center, Input, Stack, Button, View, Text,
-  Heading, VStack, FormControl, Box, Link, HStack,
+  Center,
+  Input,
+  Stack,
+  Button,
+  View,
+  Text,
+  Heading,
+  VStack,
+  FormControl,
+  Box,
+  Link,
+  HStack,
 } from 'native-base';
-import { globalStyle } from '../../styles';
-import { useForm, Controller } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
+import {globalStyle} from '../../styles';
+import {useForm, Controller} from 'react-hook-form';
+import {yupResolver} from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { axiosInstance } from '../../libs/utils';
-import { signin } from '../../redux/reducers/user';
-
-
+import {axiosInstance} from '../../libs/utils';
+import {signin} from '../../redux/reducers/user';
 
 const schema = yup
   .object({
@@ -23,13 +31,13 @@ const schema = yup
   })
   .required();
 
-const SigninScreen = ({ navigation }) => {
+const SigninScreen = ({navigation}) => {
   const dispatch = useDispatch();
   const userReducer = useSelector(state => state.user);
   const {
     control,
     handleSubmit,
-    formState: { errors },
+    formState: {errors},
   } = useForm({
     defaultValues: {
       email: '',
@@ -44,7 +52,7 @@ const SigninScreen = ({ navigation }) => {
     try {
       let res = await axiosInstance.post('/signin', data);
       if (res.status === 200) {
-        dispatch(signin({ data: res.data }));
+        dispatch(signin({data: res.data}));
       }
     } catch (err) {
       console.log(err);
@@ -56,23 +64,26 @@ const SigninScreen = ({ navigation }) => {
     }
   };
 
-  // useEffect(() => {
-  //   if (userReducer.authenticated) {
-  //     navigation.navigate('Home');
-  //   }
-  // }, [userReducer.authenticated]);
-
   return (
-    <Center w="100%" >
+    <Center w="100%">
       <Box safeArea p="2" py="8" w="90%" maxW="290">
-        <Heading size="lg" fontWeight="600" color="coolGray.800" _dark={{
-          color: "warmGray.50"
-        }}>
+        <Heading
+          size="lg"
+          fontWeight="600"
+          color="coolGray.800"
+          _dark={{
+            color: 'warmGray.50',
+          }}>
           Welcome
         </Heading>
-        <Heading mt="1" _dark={{
-          color: "warmGray.200"
-        }} color="coolGray.600" fontWeight="medium" size="xs">
+        <Heading
+          mt="1"
+          _dark={{
+            color: 'warmGray.200',
+          }}
+          color="coolGray.600"
+          fontWeight="medium"
+          size="xs">
           Sign in to continue!
         </Heading>
 
@@ -84,14 +95,13 @@ const SigninScreen = ({ navigation }) => {
               rules={{
                 required: true,
               }}
-              render={({ field: { onChange, onBlur, value } }) => (
+              render={({field: {onChange, onBlur, value}}) => (
                 <Input
                   onBlur={onBlur}
                   onChangeText={onChange}
                   value={value}
                   placeholder="Email"
                   type="email"
-                  
                 />
               )}
               name="email"
@@ -114,14 +124,13 @@ const SigninScreen = ({ navigation }) => {
               rules={{
                 required: true,
               }}
-              render={({ field: { onChange, onBlur, value } }) => (
+              render={({field: {onChange, onBlur, value}}) => (
                 <Input
                   onBlur={onBlur}
                   onChangeText={onChange}
                   value={value}
                   placeholder="Password"
                   type="password"
-
                 />
               )}
               name="password"
@@ -146,39 +155,43 @@ const SigninScreen = ({ navigation }) => {
                 {error}
               </Text>
             )}
-            <Link _text={{
-              fontSize: "xs",
-              fontWeight: "500",
-              color: "indigo.500"
-            }} alignSelf="flex-end" mt="1">
+            <Link
+              _text={{
+                fontSize: 'xs',
+                fontWeight: '500',
+                color: 'indigo.500',
+              }}
+              alignSelf="flex-end"
+              mt="1">
               Forget Password?
             </Link>
           </FormControl>
-          <Button mt="2" colorScheme="indigo"
-            onPress={handleSubmit(onSubmit)}>
+          <Button mt="2" colorScheme="indigo" onPress={handleSubmit(onSubmit)}>
             Sign in
           </Button>
           <HStack mt="6" justifyContent="center">
-            <Text fontSize="sm" color="coolGray.600" _dark={{
-              color: "warmGray.200"
-            }}>
-              I'm a new user.{" "}
+            <Text
+              fontSize="sm"
+              color="coolGray.600"
+              _dark={{
+                color: 'warmGray.200',
+              }}>
+              I'm a new user.{' '}
             </Text>
-            <Link _text={{
-              color: "indigo.500",
-              fontWeight: "medium",
-              fontSize: "sm"
-            }}
-              onPress={() => navigation.navigate('Signup')}
-            >
+            <Link
+              _text={{
+                color: 'indigo.500',
+                fontWeight: 'medium',
+                fontSize: 'sm',
+              }}
+              onPress={() => navigation.navigate('Signup')}>
               Sign Up
             </Link>
           </HStack>
-        </VStack >
-      </Box >
-    </Center >
-
+        </VStack>
+      </Box>
+    </Center>
   );
 };
 
-export { SigninScreen };
+export {SigninScreen};

@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { ScrollView, View, Text, TouchableOpacity } from 'react-native';
-import { Button, Box, Center, Avatar, Input, FormControl } from 'native-base';
-import { globalStyle } from '../../styles';
-import { useForm, Controller } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
+import React, {useEffect, useState} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
+import {ScrollView, View, Text, TouchableOpacity} from 'react-native';
+import {Button, Box, Center, Avatar, Input, FormControl} from 'native-base';
+import {globalStyle} from '../../styles';
+import {useForm, Controller} from 'react-hook-form';
+import {yupResolver} from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { logout } from '../../redux/reducers/user';
-import { baseURL } from '../../libs/config';
+import {logout} from '../../redux/reducers/user';
+import {baseURL} from '../../libs/config';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import ImagePicker from 'react-native-image-crop-picker';
-import { updateProfile } from '../../redux/reducers';
+import {updateProfile} from '../../redux/reducers';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import { v4 } from 'uuid';
+import {v4} from 'uuid';
 
 const schema = yup
   .object({
@@ -23,7 +23,7 @@ const schema = yup
   })
   .required();
 
-const ProfileEditScreen = ({ navigation }) => {
+const ProfileEditScreen = ({navigation}) => {
   const userReducer = useSelector(state => state.user);
   const [avatar, setAvatar] = useState('');
   const [reload, setReload] = useState(v4());
@@ -32,7 +32,7 @@ const ProfileEditScreen = ({ navigation }) => {
     control,
     setValue,
     handleSubmit,
-    formState: { errors },
+    formState: {errors},
   } = useForm({
     defaultValues: {
       email: userReducer.user.email,
@@ -83,12 +83,12 @@ const ProfileEditScreen = ({ navigation }) => {
 
   useEffect(() => {
     if (!userReducer.authenticated) {
-      navigation.navigate('Home');
+      navigation.navigate('Tab_Home');
     }
   }, [userReducer.authenticated]);
 
   const backToProfile = () => {
-    navigation.navigate('Profile');
+    navigation.navigate('Tab_Profile');
   };
 
   return (
@@ -132,9 +132,9 @@ const ProfileEditScreen = ({ navigation }) => {
           rules={{
             required: true,
           }}
-          render={({ field: { onChange, onBlur, value } }) => (
+          render={({field: {onChange, onBlur, value}}) => (
             <FormControl
-              style={{ marginBottom: '5%' }}
+              style={{marginBottom: '5%'}}
               w={{
                 base: '80%',
                 md: '25%',
@@ -166,9 +166,9 @@ const ProfileEditScreen = ({ navigation }) => {
           rules={{
             required: true,
           }}
-          render={({ field: { onChange, onBlur, value } }) => (
+          render={({field: {onChange, onBlur, value}}) => (
             <FormControl
-              style={{ marginBottom: '5%' }}
+              style={{marginBottom: '5%'}}
               w={{
                 base: '80%',
                 md: '25%',
@@ -200,9 +200,9 @@ const ProfileEditScreen = ({ navigation }) => {
           rules={{
             required: true,
           }}
-          render={({ field: { onChange, onBlur, value } }) => (
+          render={({field: {onChange, onBlur, value}}) => (
             <FormControl
-              style={{ marginBottom: '5%' }}
+              style={{marginBottom: '5%'}}
               w={{
                 base: '80%',
                 md: '25%',
@@ -234,9 +234,9 @@ const ProfileEditScreen = ({ navigation }) => {
           rules={{
             required: true,
           }}
-          render={({ field: { onChange, onBlur, value } }) => (
+          render={({field: {onChange, onBlur, value}}) => (
             <FormControl
-              style={{ marginBottom: '5%' }}
+              style={{marginBottom: '5%'}}
               w={{
                 base: '80%',
                 md: '25%',
@@ -295,4 +295,4 @@ const ProfileEditScreen = ({ navigation }) => {
   );
 };
 
-export { ProfileEditScreen };
+export {ProfileEditScreen};

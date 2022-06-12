@@ -1,32 +1,28 @@
-import { format, isSameDay, isSameWeek, formatDistance, } from "date-fns";
+import {format, isSameDay, isSameWeek, formatDistance} from 'date-fns';
 
-const timeDiff = mysqlTime => {
-
-  return formatDistance(new Date(mysqlTime), new Date(), { addSuffix: true });
+const timeDiff = timeStr => {
+  return formatDistance(new Date(timeStr), new Date(), {addSuffix: true});
 };
 
-const formatMessageTime = mysqlTime => {
+const formatMessageTime = timeStr => {
   let now = new Date();
-  let time = new Date(mysqlTime);
+  let time = new Date(timeStr);
 
   if (isSameDay(time, now)) {
-    return format(time, "hh:mm aa");
+    return format(time, 'hh:mm aa');
   }
 
-  if (isSameWeek(time, now, { weekStartsOn: 1 })) {
-    return format(time, "dd/MM");
+  if (isSameWeek(time, now, {weekStartsOn: 1})) {
+    return format(time, 'dd/MM');
   }
 
-  return format(time, "dd/MM/yyyy");
-}
+  return format(time, 'dd/MM/yyyy');
+};
 
 const shortTimeDiff = mysqlTime => {
   let _time = new Date(mysqlTime).getTime();
   let second = Math.round((Date.now() - _time) / 1000);
   let time = 0;
-  // if (second < 60) {
-  //   return "Just now";
-  // }
   if (second < 3600) {
     time = Math.round(second / 60);
     return time + 'm';
@@ -47,4 +43,4 @@ const shortTimeDiff = mysqlTime => {
   return time + 'y';
 };
 
-export { timeDiff, shortTimeDiff, formatMessageTime };
+export {timeDiff, shortTimeDiff, formatMessageTime};
