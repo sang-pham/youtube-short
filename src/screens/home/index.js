@@ -80,7 +80,7 @@ const HomeScreen = ({navigation}) => {
         headerShown: false,
       }}
       tabBar={props => <MyTabBar {...props} />}
-      initialRouteName="HomeSuggest">
+      initialRouteName="HomeFollowing">
       <Tab.Screen
         name="HomeFollowing"
         component={HomeFollowing}

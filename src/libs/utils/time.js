@@ -23,6 +23,11 @@ const shortTimeDiff = mysqlTime => {
   let _time = new Date(mysqlTime).getTime();
   let second = Math.round((Date.now() - _time) / 1000);
   let time = 0;
+
+  if (second < 3600) {
+    return '1m';
+  }
+
   if (second < 3600) {
     time = Math.round(second / 60);
     return time + 'm';

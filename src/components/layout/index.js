@@ -4,7 +4,7 @@ import {
   createStackNavigator,
 } from '@react-navigation/stack';
 import {useSelector} from 'react-redux';
-import {ChatBox, WebRTCCall} from '../../screens/inbox';
+import {ChatBox, NewChatScreen, WebRTCCall} from '../../screens/inbox';
 import NotifyService from '../../firebase/NotifyService';
 import RNBootSplash from 'react-native-bootsplash';
 import Toast from 'react-native-toast-message';
@@ -69,6 +69,7 @@ const Layout = () => {
           <Stack.Screen name="CreatePost" component={CreatePost} />
           <Stack.Screen name="WebRTCCall" component={WebRTCCall} />
           <Stack.Screen name="ChatBox" component={ChatBox} />
+          <Stack.Screen name="NewChat" component={NewChatScreen} />
           <Stack.Screen name="ProfileEdit" component={ProfileEditScreen} />
           <Stack.Screen
             name="ProfileRelationship"

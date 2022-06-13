@@ -187,7 +187,7 @@ export default function Comment({comment, dispatchReply}) {
               <Text
                 style={{
                   marginRight: '8%',
-                  color: isLiked ? 'blue' : 'black',
+                  color: isLiked ? '#198ae6' : 'black',
                 }}
                 onPress={toggleReaction}>
                 Like
@@ -209,7 +209,7 @@ export default function Comment({comment, dispatchReply}) {
                     name="like1"
                     size={16}
                     style={{
-                      color: 'blue',
+                      color: '#198ae6',
                     }}
                   />
                 </TouchableWithoutFeedback>
@@ -291,7 +291,8 @@ export default function Comment({comment, dispatchReply}) {
             <Text
               onPress={toggleCollapsed}
               style={{
-                color: '#42aaf5',
+                // color: '#42aaf5',
+                fontWeight: 'bold',
               }}>
               {collapsed ? 'See more' : 'See less'}
             </Text>

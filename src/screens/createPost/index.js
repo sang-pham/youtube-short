@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useRef, useState} from 'react';
 import {
   View,
   Text,
@@ -21,6 +21,7 @@ import EncryptedStorage from 'react-native-encrypted-storage';
 import TagInput from 'react-native-tags-input';
 import styles from './styles';
 import {useDispatch, useSelector} from 'react-redux';
+import Toast from 'react-native-toast-message';
 
 const CreatePost = () => {
   const mainColor = '#3ca897';
@@ -40,9 +41,6 @@ const CreatePost = () => {
   const navigation = useNavigation();
   const user = useSelector(state => state.user.user);
 
-  useEffect(() => {
-    console.log(tags);
-  }, tags);
   const togglePause = () => {
     setPaused(!paused);
   };
@@ -53,7 +51,7 @@ const CreatePost = () => {
   const uploadToStorage = async () => {
     try {
       console.log(tags.tagsArray);
-      let data = new FormData();
+      const data = new FormData();
       data.append('caption', description);
       data.append('media', {
         name: `${Date.now()}.mp4`,
@@ -82,9 +80,11 @@ const CreatePost = () => {
         })
           .then(response => response.json())
           .then(data => {
-            Alert.alert('Message', 'Video uploaded successfully', [
-              {text: 'OK'},
-            ]);
+            Toast.show({
+              type: 'success',
+              text1: 'Message',
+              text2: 'Video uploaded successfully',
+            });
             let {id} = data;
             if (id) {
               navigation.navigate('ProfileVideoPost', {
