@@ -15,11 +15,11 @@ import {useNavigation} from '@react-navigation/native';
 import {AlertDialog, Button} from 'native-base';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Toast from 'react-native-toast-message';
-import { useIsFocused } from '@react-navigation/core'
+import {useIsFocused} from '@react-navigation/core';
 
 const RecordScreen = ({navigation}) => {
   // const {isFocused} = navigation;
-  const [hasPermission, setHasPermission] = React.useState(false)
+  const [hasPermission, setHasPermission] = React.useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [videoUri, setVideoUri] = useState('');
   // React.useEffect(() => {
@@ -29,33 +29,30 @@ const RecordScreen = ({navigation}) => {
   //   })()
   // }, [])
   useEffect(() => {
-    if(videoUri) {
+    if (videoUri) {
       navigation.navigate('CreatePost', {videoUri});
     }
-  }, [videoUri])
+  }, [videoUri]);
   const camera = useRef(null);
   // const devices = useCameraDevices();
   // const device = devices.back;
-  const isFocused = useIsFocused()
+  const isFocused = useIsFocused();
   const checkPermission = async () => {
     const newCameraPermission = await Camera.requestCameraPermission();
     const newMicrophonePermission = await Camera.requestMicrophonePermission();
   };
   const onRecord = async () => {
-      if(!isRecording){
-        setIsRecording(true);
-        const { uri, codec = "mp4" } = await camera.current.recordAsync();
-        if(uri) {
-          setVideoUri(uri);
-          console.info(uri);
-        }
+    if (!isRecording) {
+      setIsRecording(true);
+      const {uri, codec = 'mp4'} = await camera.current.recordAsync();
+      if (uri) {
+        setVideoUri(uri);
+        console.info(uri);
       }
-      else {
-        setIsRecording(false)
-        camera.current.stopRecording();
-
-      }
-  
+    } else {
+      setIsRecording(false);
+      camera.current.stopRecording();
+    }
 
     // if (camera.current) {
     //   camera.current.startRecording({
@@ -76,7 +73,30 @@ const RecordScreen = ({navigation}) => {
   };
 
   const openPicker = async () => {
-    ImagePicker.openPicker({
+    try {
+      ImagePicker.openPicker({
+        mediaType: 'video',
+      })
+        .then(video => {
+          console.log(video);
+          // 15 MB
+          if (video.size > 15 * 1024 * 1024) {
+            throw 'Video upload is not larger than 15MB';
+          }
+          navigation.navigate('CreatePost', {video});
+        })
+        .catch(error => {
+          // Toast.show({
+          //   type: 'error',
+          //   text1: 'File upload',
+          //   text2: error,
+          // });
+          Alert.alert('Warning', error, [{text: 'OK'}]);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+    {ImagePicker.openPicker({
       mediaType: 'video',
     })
       .then(video => {
@@ -94,7 +114,7 @@ const RecordScreen = ({navigation}) => {
         //   text2: error,
         // });
         Alert.alert('Warning', error, [{text: 'OK'}]);
-      });
+      });}
   };
 
   // if (device == null) {
@@ -103,33 +123,33 @@ const RecordScreen = ({navigation}) => {
   // checkPermission();
   return (
     <View style={styles.container}>
-     
       <RNCamera
-      ref={camera}
-      style={styles.preview}
-      type={RNCamera.Constants.Type.back}
-      flashMode={RNCamera.Constants.FlashMode.on}
-      androidCameraPermissionOptions={{
-        title: 'Permission to use camera',
-        message: 'We need your permission to use your camera',
-        buttonPositive: 'Ok',
-        buttonNegative: 'Cancel',
-      }}
-      androidRecordAudioPermissionOptions={{
-        title: 'Permission to use audio recording',
-        message: 'We need your permission to use your audio',
-        buttonPositive: 'Ok',
-        buttonNegative: 'Cancel',
-      }}
+        ref={camera}
+        style={styles.preview}
+        type={RNCamera.Constants.Type.back}
+        flashMode={RNCamera.Constants.FlashMode.on}
+        androidCameraPermissionOptions={{
+          title: 'Permission to use camera',
+          message: 'We need your permission to use your camera',
+          buttonPositive: 'Ok',
+          buttonNegative: 'Cancel',
+        }}
+        androidRecordAudioPermissionOptions={{
+          title: 'Permission to use audio recording',
+          message: 'We need your permission to use your audio',
+          buttonPositive: 'Ok',
+          buttonNegative: 'Cancel',
+        }}
+      />
 
-    />
-     
       <TouchableOpacity
-        onPress={() => onRecord()}
+        // onPress={() => onRecord()}
+        onPress={() => setIsRecording(!isRecording)}
+
         style={isRecording ? styles.buttonStop : styles.buttonRecord}
       />
       <TouchableOpacity style={styles.pickButton} onPress={openPicker}>
-        <AntDesign name="upload" size={24} color={'white'} />
+        <Image source={require('../../public/images/icon-image.png')} style={styles.imageButton} />
       </TouchableOpacity>
     </View>
   );
