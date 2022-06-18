@@ -143,8 +143,8 @@ const RecordScreen = ({navigation}) => {
       />
 
       <TouchableOpacity
-        // onPress={() => onRecord()}
-        onPress={() => setIsRecording(!isRecording)}
+        onPress={() => onRecord()}
+        // onPress={() => setIsRecording(!isRecording)}
 
         style={isRecording ? styles.buttonStop : styles.buttonRecord}
       />
