@@ -221,7 +221,7 @@ const ProfileScreen = ({navigation, route}) => {
             borderTopColor: '#ccc',
             borderTopWidth: 1,
           }}>
-          {videoPosts.slice(0, 3).map(videoPost => (
+          {videoPosts?.slice(0, 3)?.map(videoPost => (
             <VideoWrapper
               key={videoPost.id}
               source={{
