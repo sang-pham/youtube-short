@@ -1,6 +1,6 @@
 import React from "react"
 import { StyleSheet, Text } from "react-native"
-import { useCameraDevices, Camera } from "react-native-vision-camera"
+// import { useCameraDevices, Camera } from "react-native-vision-camera"
 
 export function CameraScreen() {
   const devices = useCameraDevices()
@@ -10,10 +10,11 @@ export function CameraScreen() {
 
   if (device == null) return <Text>Hello</Text>
   return (
-    <Camera
-      style={StyleSheet.absoluteFill}
-      device={device}
-    // isActive={true}
-    />
+    // <Camera
+    //   style={StyleSheet.absoluteFill}
+    //   device={device}
+    // // isActive={true}
+    // />
+    <View></View>
   )
 }

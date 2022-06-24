@@ -50,12 +50,11 @@ const CreatePost = () => {
 
   const uploadToStorage = async () => {
     try {
-      console.log(tags.tagsArray);
       const data = new FormData();
       data.append('caption', description);
       data.append('media', {
         name: `${Date.now()}.mp4`,
-        uri: route.params.video.path,
+        uri: route.params.videoUri || route.params.video.path,
         type: 'video/mp4',
       });
       if (tags.tagsArray) {
@@ -63,7 +62,6 @@ const CreatePost = () => {
         tags.tagsArray.forEach(item => {
           tagsString += item.toString() + ', ';
         });
-        console.log(tagsString);
         data.append('tags', tagsString);
       }
 
@@ -109,7 +107,7 @@ const CreatePost = () => {
       <TouchableWithoutFeedback style={styles.container} onPress={togglePause}>
         <Video
           style={styles.player}
-          source={{uri: route.params.video.path}}
+          source={{uri: route.params.videoUri || route.params.video.path }}
           paused={paused}
           controls={false}
           muted={false}
