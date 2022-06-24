@@ -1,8 +1,8 @@
-import { baseURL } from "../config"
+import {baseURL} from '../config';
 
-export const getAvatarUrl = (id) => {
-  return `${baseURL}/user/${id}/avatar`;
-}
+export const getAvatarUrl = id => {
+  return `${baseURL}/user/${id}/avatar?${new Date()}`;
+};
 
 export const swapItemArray = (array, fromIdx, toIdx) => {
   const item = array[fromIdx];
@@ -10,10 +10,10 @@ export const swapItemArray = (array, fromIdx, toIdx) => {
 
   array.splice(fromIdx, 1);
   array.splice(toIdx, 0, item);
-}
+};
 
-export const parseImageToBlob = async (path) => {
+export const parseImageToBlob = async path => {
   const res = await fetch(path);
   const blob = await res.blob();
   return blob;
-}
+};

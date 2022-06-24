@@ -31,7 +31,7 @@ const DirectMessage = ({navigation}) => {
   };
 
   const randStatusColor = id => {
-    const colors = ['green', 'orange', '#b5b5b5', 'transparent'];
+    const colors = ['green', 'orange', 'red', 'transparent'];
     let idx = Math.floor(Math.random() * colors.length);
     return colors[idx];
   };

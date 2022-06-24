@@ -99,7 +99,11 @@ export function WebRTCCall({route, navigation}) {
 
     socketClient.on('video-call-stop', ({senderId, receiverId, chatBoxId}) => {
       console.log('stop-call');
-      navigation.replace('DirectMessage');
+      // navigation.push('ChatBox');
+      navigation.navigate('ChatBox', {
+        personId: senderId,
+        chatBoxId: chatBoxId,
+      });
     });
 
     socketClient.on(
@@ -226,7 +230,10 @@ export function WebRTCCall({route, navigation}) {
   const hangup = () => {
     cleanUp();
     socketClient.emit('video-call-stop', {senderId, receiverId, chatBoxId});
-    navigation.replace('DirectMessage');
+    navigation.navigate('ChatBox', {
+      personId: senderId,
+      chatBoxId: chatBoxId,
+    });
   };
 
   const mute = () => {

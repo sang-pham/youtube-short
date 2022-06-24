@@ -175,11 +175,6 @@ export const inboxSlice = createSlice({
 
       if (msg) msg._id = message.id;
 
-      // use for test
-      // const notify = NotifyService.getInstance();
-      // const notify = new NotifyService();
-      // notify.messageNotify({senderName: person.full_name, message});
-
       const chatBoxList = state.chatBoxList;
       const idx = chatBoxList.findIndex(
         item => item.id === message.conversation_id,
@@ -258,6 +253,8 @@ export const inboxSlice = createSlice({
     },
     [deleteMessage.fulfilled]: (state, action) => {
       const {messageId} = action.payload;
+      const idx = state.messages.find(item => item._id === messageId);
+      idx && state.messages.splice(1, idx);
     },
     [deleteMessage.rejected]: (state, action) => {
       console.log(action);

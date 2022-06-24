@@ -16,7 +16,6 @@ const ChatBox = ({route, navigation}) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    // const navigation = useNavigation();
     dispatch(setChatBox({chatBoxId, personId, userId: userInfo.id}));
 
     return () => {
@@ -53,7 +52,7 @@ const ChatBox = ({route, navigation}) => {
   return (
     <Container>
       <HeaderCustom
-        title={chatBox.full_name}
+        title={<Text>{chatBox.full_name}</Text>}
         leftElement={<BackButton />}
         rightElement={
           chatBoxId && (

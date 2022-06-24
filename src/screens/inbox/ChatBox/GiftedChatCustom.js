@@ -32,6 +32,7 @@ import {
   getMessages,
   addMessages,
   clearMessages,
+  deleteMessage,
 } from '../../../redux/reducers';
 import {parseImageToBlob, socketClient, useVirtualListApi} from '../../../libs';
 import {useFocusEffect} from '@react-navigation/native';
@@ -116,7 +117,7 @@ export default function GiftedChatCustom({chatBox}) {
             },
             buttonIndex => {
               if (options[buttonIndex] === 'Delete') {
-                dispatch(deleteMessage());
+                dispatch(deleteMessage({messageId: message._id}));
               }
             },
           );
